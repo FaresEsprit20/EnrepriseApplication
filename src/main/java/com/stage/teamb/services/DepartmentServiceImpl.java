@@ -2,9 +2,13 @@ package com.stage.teamb.services;
 
 
 import com.stage.teamb.dtos.DepartmentDTO;
+import com.stage.teamb.dtos.EmployeeDTO;
 import com.stage.teamb.mappers.DepartmentMapper;
+import com.stage.teamb.mappers.EmployeeMapper;
 import com.stage.teamb.models.Department;
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.repository.DepartmentRepository;
+import com.stage.teamb.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +23,12 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
   private final DepartmentRepository departmentRepository;
+  private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository, EmployeeRepository employeeRepository) {
         this.departmentRepository = departmentRepository;
+        this.employeeRepository = employeeRepository;
     }
 
 
@@ -75,6 +81,44 @@ public class DepartmentServiceImpl implements DepartmentService {
             log.error("Could not update "+exception.getMessage());
             throw new RuntimeException("Could not update "+exception.getMessage());
         }
+    }
+
+
+    @Override
+    public List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        return EmployeeMapper.toListDTO(department.getEmployees());
+    }
+
+    @Override
+    public EmployeeDTO addEmployeeToDepartment(Long departmentId, EmployeeDTO employeeDTO) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        Employee employee = EmployeeMapper.toEntity(employeeDTO);
+        employee.setDepartment(department);
+        try {
+            Employee savedEmployee = employeeRepository.save(employee);
+            return EmployeeMapper.toDTO(savedEmployee);
+        } catch (Exception exception) {
+            log.error("Could not add employee to department: " + exception.getMessage());
+            throw new RuntimeException("Could not add employee to department: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public EmployeeDTO removeEmployeeFromDepartment(Long departmentId, Long employeeId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        if (!department.getEmployees().contains(employee)) {
+            log.error("Employee is not associated with the department.");
+            throw new RuntimeException("Employee is not associated with the department.");
+        }
+        employee.setDepartment(null);
+        employeeRepository.save(employee);
+        return EmployeeMapper.toDTO(employee);
     }
 
     @Override

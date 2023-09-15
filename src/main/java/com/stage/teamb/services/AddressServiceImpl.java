@@ -4,7 +4,9 @@ package com.stage.teamb.services;
 import com.stage.teamb.dtos.AddressDTO;
 import com.stage.teamb.mappers.AddressMapper;
 import com.stage.teamb.models.Address;
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.repository.AddressRepository;
+import com.stage.teamb.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,12 @@ import java.util.Optional;
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public AddressServiceImpl(AddressRepository addressRepository) {
+    public AddressServiceImpl(AddressRepository addressRepository, EmployeeRepository employeeRepository) {
         this.addressRepository = addressRepository;
+        this.employeeRepository = employeeRepository;
     }
 
 
@@ -84,6 +88,49 @@ public class AddressServiceImpl implements AddressService {
             log.error("Address not found ");
             return new RuntimeException("Address not found with id ");
         }));
+    }
+
+    @Override
+    public AddressDTO associateEmployeeWithAddress(Long addressId, Long employeeId) {
+        if (addressId == null || addressId <= 0 || employeeId == null || employeeId <= 0) {
+            String errorMessage = "Invalid addressId or employeeId.";
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
+        try {
+            Address address = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
+
+            Employee employee = employeeRepository.findById(employeeId)
+                    .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+            // Associate the employee with the address
+            address.setEmployee(employee);
+            return AddressMapper.toDTO(addressRepository.save(address));
+        } catch (Exception ex) {
+            String errorMessage = "Error associating employee with address: " + ex.getMessage();
+            log.error(errorMessage, ex);
+            throw new RuntimeException(errorMessage, ex);
+        }
+    }
+
+    @Override
+    public AddressDTO disassociateEmployeeFromAddress(Long addressId) {
+        if (addressId == null || addressId <= 0) {
+            String errorMessage = "Invalid addressId.";
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
+        try {
+            Address address = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
+            // Disassociate the employee from the address
+            address.setEmployee(null);
+            return AddressMapper.toDTO(addressRepository.save(address));
+        } catch (Exception ex) {
+            String errorMessage = "Error disassociating employee from address: " + ex.getMessage();
+            log.error(errorMessage, ex);
+            throw new RuntimeException(errorMessage, ex);
+        }
     }
 
 

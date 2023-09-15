@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 public class Employee extends Users implements Serializable  {
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   private Department department;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)

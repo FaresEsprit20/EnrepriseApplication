@@ -45,4 +45,6 @@ public class Department implements Serializable {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+
 }

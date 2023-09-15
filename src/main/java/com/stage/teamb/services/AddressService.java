@@ -21,6 +21,10 @@ public interface AddressService {
     AddressDTO findAddressByEmployeeId(Long id);
 
 
+    AddressDTO associateEmployeeWithAddress(Long addressId, Long employeeId);
+
+    AddressDTO disassociateEmployeeFromAddress(Long addressId);
+
     List<Address> findAll();
 
     Optional<Address> findOne(Long id);
