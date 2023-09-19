@@ -3,15 +3,13 @@ package com.stage.teamb.services;
 import com.stage.teamb.dtos.AddressDTO;
 import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.RatingDTO;
 import com.stage.teamb.mappers.AddressMapper;
 import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EmployeeMapper;
-import com.stage.teamb.models.Address;
-import com.stage.teamb.models.Department;
-import com.stage.teamb.models.Employee;
-import com.stage.teamb.repository.AddressRepository;
-import com.stage.teamb.repository.DepartmentRepository;
-import com.stage.teamb.repository.EmployeeRepository;
+import com.stage.teamb.mappers.RatingMapper;
+import com.stage.teamb.models.*;
+import com.stage.teamb.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +24,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final AddressRepository addressRepository;
     private final DepartmentRepository departmentRepository;
-
+    private final RatingRepository ratingRepository;
+    private final PublicationRepository publicationRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, AddressRepository addressRepository, DepartmentRepository departmentRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, AddressRepository addressRepository, DepartmentRepository departmentRepository, RatingRepository ratingRepository, PublicationRepository publicationRepository) {
         this.employeeRepository = employeeRepository;
         this.addressRepository = addressRepository;
         this.departmentRepository = departmentRepository;
+        this.ratingRepository = ratingRepository;
+        this.publicationRepository = publicationRepository;
     }
 
 
@@ -120,16 +121,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
+    public List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        return EmployeeMapper.toListDTO(department.getEmployees());
+    }
+
+
+    @Override
     public DepartmentDTO assignDepartmentToEmployee(Long employeeId, Long departmentId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
 
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-
         // Assign the department to the employee
         employee.setDepartment(department);
-
         try {
             return DepartmentMapper.toDTO(departmentRepository.save(department));
         } catch (Exception exception) {
@@ -142,10 +149,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public DepartmentDTO unassignDepartmentFromEmployee(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-
         // Unassign the department from the employee
         employee.setDepartment(null);
-
         try {
             return DepartmentMapper.toDTO(departmentRepository.save(employee.getDepartment()));
         } catch (Exception exception) {
@@ -153,6 +158,46 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new RuntimeException("Could not unassign department: " + exception.getMessage());
         }
     }
+
+    @Override
+    public RatingDTO createRating(Long employeeId, Long publicationId, RatingDTO ratingDTO) {
+        // Find the employee
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        // Find the publication
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        // Create a new Rating entity and set its values
+        Rating newRating = new Rating();
+        newRating.setEmployee(employee);
+        newRating.setPublished(publication);
+        newRating.setValue(ratingDTO.getValue());
+        // Save the new rating to the database
+        Rating savedRating = ratingRepository.save(newRating);
+        // Map the saved rating back to a DTO and return it
+        return RatingMapper.toDTO(savedRating);
+    }
+
+    @Override
+    public RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO) {
+        Rating existingRating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+        // Update the existing rating with the values from the DTO
+        existingRating.setValue(ratingDTO.getValue());
+        // Save the updated rating to the database
+        Rating savedRating = ratingRepository.save(existingRating);
+        // Map the saved rating back to a DTO and return it
+        return RatingMapper.toDTO(savedRating);
+    }
+
+    @Override
+    public void deleteRating(Long ratingId) {
+        Rating existingRating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+        // Delete the rating
+        ratingRepository.delete(existingRating);
+    }
+
 
     @Override
     public List<Employee> findAll() {

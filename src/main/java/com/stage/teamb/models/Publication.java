@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @DynamicUpdate
 @Builder
-public class Published implements Serializable  {
+public class Publication implements Serializable  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,7 @@ public class Published implements Serializable  {
     @OneToMany(mappedBy = "published")
     private List<Event> events;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Employee employee;
 
     @OneToMany

@@ -26,7 +26,7 @@ public class Event implements Serializable  {
     private LocalDateTime dateE;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Published published;
+    private Publication publication;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Responsible responsible;

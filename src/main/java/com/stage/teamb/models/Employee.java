@@ -23,11 +23,11 @@ public class Employee extends Users implements Serializable  {
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
   private List<Address> addresses;
 
-  @OneToMany(mappedBy = "employee")
+  @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
   private List<Rating> ratings;
 
   @OneToMany(mappedBy = "employee")
-  private List<Published> publications;
+  private List<Publication> publications;
 
   @Column
   private LocalDateTime createdAt;

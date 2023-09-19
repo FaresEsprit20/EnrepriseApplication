@@ -22,7 +22,7 @@ public class Rating implements Serializable  {
     private Long id;
     private Boolean value;
     @ManyToOne
-    private Published published;
+    private Publication published;
     @ManyToOne
     private Employee employee;
 

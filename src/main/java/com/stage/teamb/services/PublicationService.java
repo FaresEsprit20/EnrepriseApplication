@@ -1,7 +1,7 @@
 package com.stage.teamb.services;
 
-import com.stage.teamb.dtos.PublishedDTO;
-import com.stage.teamb.models.Published;
+import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.models.Publication;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,21 +9,21 @@ import java.util.Optional;
 public interface PublicationService {
 
 
-    List<PublishedDTO> findAllPublications();
+    List<PublicationDTO> findAllPublications();
 
-    PublishedDTO findPublishedById(Long id);
+    PublicationDTO findPublishedById(Long id);
 
-    PublishedDTO savePublished(PublishedDTO PublishedDTO);
+    PublicationDTO savePublished(PublicationDTO PublishedDTO);
 
     void deletePublishedById(Long id);
 
-    PublishedDTO updatePublished(PublishedDTO publishedDTO);
+    PublicationDTO updatePublished(PublicationDTO publishedDTO);
 
-    List<Published> findAll();
+    List<Publication> findAll();
 
-    Optional<Published> findOne(Long id);
+    Optional<Publication> findOne(Long id);
 
-    Published saveOne(Published Published);
+    Publication saveOne(Publication Published);
 
     void deleteOne(Long id);
 

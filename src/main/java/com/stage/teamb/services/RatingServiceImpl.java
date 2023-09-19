@@ -1,11 +1,15 @@
 package com.stage.teamb.services;
 
+
 import com.stage.teamb.dtos.RatingDTO;
 import com.stage.teamb.mappers.RatingMapper;
+import com.stage.teamb.models.Employee;
+import com.stage.teamb.models.Publication;
 import com.stage.teamb.models.Rating;
+import com.stage.teamb.repository.EmployeeRepository;
+import com.stage.teamb.repository.PublicationRepository;
 import com.stage.teamb.repository.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,62 +20,75 @@ import java.util.Optional;
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
+    private final PublicationRepository publishedRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    public RatingServiceImpl(RatingRepository ratingRepository) {
+    public RatingServiceImpl(RatingRepository ratingRepository, PublicationRepository publishedRepository, EmployeeRepository employeeRepository) {
         this.ratingRepository = ratingRepository;
+        this.publishedRepository = publishedRepository;
+        this.employeeRepository = employeeRepository;
     }
 
 
     @Override
-    public List<RatingDTO> findAllRatings() {
-        return RatingMapper.toListDTO(ratingRepository.findAll());
+    public List<RatingDTO> findRatingsByEmployeeId(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        List<Rating> ratings = employee.getRatings();
+        return RatingMapper.toListDTO(ratings);
     }
 
     @Override
-    public RatingDTO findRatingById(Long id) {
-        return RatingMapper.toDTO(ratingRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+    public List<RatingDTO> findRatingsByPublicationId(Long publicationId) {
+        Publication publication = publishedRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        List<Rating> ratings = publication.getRating();
+        return RatingMapper.toListDTO(ratings);
     }
 
     @Override
-    public RatingDTO saveRating(RatingDTO ratingDTO) {
-        try {
-            return RatingMapper.toDTO(ratingRepository.save(RatingMapper.toEntity(ratingDTO)));
-        }catch (Exception exception){
-            log.error("Rating with not found.");
-            throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
+    public RatingDTO createRating(Long publicationId, Long employeeId, Boolean value) {
+        Publication publication = publishedRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+
+        if (employee.getRatings().stream().anyMatch(rating -> rating.getPublished().getId().equals(publicationId))) {
+            throw new IllegalArgumentException("Employee has already rated this publication.");
         }
+
+        Rating rating = new Rating();
+        rating.setPublished(publication);
+        rating.setEmployee(employee);
+        rating.setValue(value);
+
+        return RatingMapper.toDTO(ratingRepository.save(rating));
     }
 
     @Override
-    public void deleteRatingById(Long id) {
-        if (ratingRepository.existsById(id)) {
-            try{
-                ratingRepository.deleteById(id);
-            }catch (Exception exception) {
-                log.error("Can not delete this entity"+exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   "+exception.getMessage());
-            }
-        } else {
-            log.error("Entity Not Exist");
-            throw new RuntimeException("Entity Not Exist");
+    public RatingDTO updateRating(Long ratingId, Boolean value, Long employeeId) {
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+
+        if (!rating.getEmployee().getId().equals(employeeId)) {
+            throw new IllegalArgumentException("You can only update your own ratings.");
         }
+
+        rating.setValue(value);
+        return RatingMapper.toDTO(ratingRepository.save(rating));
     }
 
     @Override
-    public RatingDTO updateRating(RatingDTO ratingDTO) {
-        Rating existingRating= ratingRepository.findById(ratingDTO.getId())
-                .orElseThrow(() -> {
-                    log.error("entity not found ");
-                    return new RuntimeException("entity not found with id " + ratingDTO.getId());
-                });
-        existingRating.setValue(ratingDTO.getValue());
-        try {
-            return RatingMapper.toDTO(ratingRepository.save(existingRating));
-        }catch (Exception exception){
-            log.error("Could not update "+exception.getMessage());
-            throw new RuntimeException("Could not update "+exception.getMessage());
+    public void deleteRating(Long ratingId, Long employeeId) {
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+
+        if (!rating.getEmployee().getId().equals(employeeId)) {
+            throw new IllegalArgumentException("You can only delete your own ratings.");
         }
+
+        ratingRepository.deleteById(ratingId);
     }
 
     @Override
@@ -85,8 +102,8 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Rating saveOne(Rating Rating) {
-        return ratingRepository.save(Rating);
+    public Rating saveOne(Rating rating) {
+        return ratingRepository.save(rating);
     }
 
     @Override
@@ -98,7 +115,4 @@ public class RatingServiceImpl implements RatingService {
     public Boolean existsById(Long id) {
         return ratingRepository.existsById(id);
     }
-
-
-
 }

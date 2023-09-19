@@ -1,17 +1,17 @@
 package com.stage.teamb.mappers;
 
-import com.stage.teamb.models.Published;
-import com.stage.teamb.dtos.PublishedDTO;
+import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.models.Publication;
 import lombok.Builder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Builder
-public class PublishedMapper {
+public class PublicationMapper {
 
-    public static PublishedDTO toDTO(Published published) {
-        return PublishedDTO.builder()
+    public static PublicationDTO toDTO(Publication published) {
+        return PublicationDTO.builder()
                 .id(published.getId())
                 .nom(published.getNom())
                 .description(published.getDescription())
@@ -21,14 +21,14 @@ public class PublishedMapper {
                 .build();
     }
 
-    public static List<PublishedDTO> toListDTO(List<Published> publishedList) {
+    public static List<PublicationDTO> toListDTO(List<Publication> publishedList) {
         return publishedList.stream()
-                .map(PublishedMapper::toDTO)
+                .map(PublicationMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public static Published toEntity(PublishedDTO publishedDTO) {
-        return Published.builder()
+    public static Publication toEntity(PublicationDTO publishedDTO) {
+        return Publication.builder()
                 .id(publishedDTO.getId())
                 .nom(publishedDTO.getNom())
                 .description(publishedDTO.getDescription())
@@ -37,9 +37,9 @@ public class PublishedMapper {
                 .build();
     }
 
-    public static List<Published> toListEntity(List<PublishedDTO> publishedDTOList) {
+    public static List<Publication> toListEntity(List<PublicationDTO> publishedDTOList) {
         return publishedDTOList.stream()
-                .map(PublishedMapper::toEntity)
+                .map(PublicationMapper::toEntity)
                 .collect(Collectors.toList());
     }
 }

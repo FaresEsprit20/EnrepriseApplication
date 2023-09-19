@@ -1,8 +1,8 @@
 package com.stage.teamb.services;
 
-import com.stage.teamb.dtos.PublishedDTO;
-import com.stage.teamb.mappers.PublishedMapper;
-import com.stage.teamb.models.Published;
+import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.mappers.PublicationMapper;
+import com.stage.teamb.models.Publication;
 import com.stage.teamb.repository.PublicationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +23,19 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public List<PublishedDTO> findAllPublications() {
-        return PublishedMapper.toListDTO(publicationRepository.findAll());
+    public List<PublicationDTO> findAllPublications() {
+        return PublicationMapper.toListDTO(publicationRepository.findAll());
     }
 
     @Override
-    public PublishedDTO findPublishedById(Long id) {
-        return PublishedMapper.toDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+    public PublicationDTO findPublishedById(Long id) {
+        return PublicationMapper.toDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 
     @Override
-    public PublishedDTO savePublished(PublishedDTO PublishedDTO) {
+    public PublicationDTO savePublished(PublicationDTO PublishedDTO) {
         try {
-            return PublishedMapper.toDTO(publicationRepository.save(PublishedMapper.toEntity(PublishedDTO)));
+            return PublicationMapper.toDTO(publicationRepository.save(PublicationMapper.toEntity(PublishedDTO)));
         }catch (Exception exception){
             log.error("Address with not found.");
             throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
@@ -58,8 +58,8 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public PublishedDTO updatePublished(PublishedDTO publishedDTO) {
-        Published existingPublished= publicationRepository.findById(publishedDTO.getId())
+    public PublicationDTO updatePublished(PublicationDTO publishedDTO) {
+        Publication existingPublished= publicationRepository.findById(publishedDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + publishedDTO.getId());
@@ -67,7 +67,7 @@ public class PublicationServiceImpl implements PublicationService {
        existingPublished.setNom(publishedDTO.getNom());
        existingPublished.setDescription(publishedDTO.getDescription());
         try {
-            return PublishedMapper.toDTO(publicationRepository.save(existingPublished));
+            return PublicationMapper.toDTO(publicationRepository.save(existingPublished));
         }catch (Exception exception){
             log.error("Could not update "+exception.getMessage());
             throw new RuntimeException("Could not update "+exception.getMessage());
@@ -75,17 +75,17 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public List<Published> findAll() {
+    public List<Publication> findAll() {
         return publicationRepository.findAll();
     }
 
     @Override
-    public Optional<Published> findOne(Long id) {
+    public Optional<Publication> findOne(Long id) {
         return publicationRepository.findById(id);
     }
 
     @Override
-    public Published saveOne(Published Published) {
+    public Publication saveOne(Publication Published) {
         return publicationRepository.save(Published);
     }
 

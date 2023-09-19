@@ -1,5 +1,6 @@
 package com.stage.teamb.services;
 
+
 import com.stage.teamb.dtos.RatingDTO;
 import com.stage.teamb.models.Rating;
 
@@ -8,22 +9,21 @@ import java.util.Optional;
 
 public interface RatingService {
 
+    List<RatingDTO> findRatingsByEmployeeId(Long employeeId);
 
-    List<RatingDTO> findAllRatings();
+    List<RatingDTO> findRatingsByPublicationId(Long publicationId);
 
-    RatingDTO findRatingById(Long id);
+    RatingDTO createRating(Long publicationId, Long employeeId, Boolean value);
 
-    RatingDTO saveRating(RatingDTO ratingDTO);
+    RatingDTO updateRating(Long ratingId, Boolean value, Long employeeId);
 
-    void deleteRatingById(Long id);
-
-    RatingDTO updateRating(RatingDTO ratingDTO);
+    void deleteRating(Long ratingId, Long employeeId);
 
     List<Rating> findAll();
 
     Optional<Rating> findOne(Long id);
 
-    Rating saveOne(Rating Rating);
+    Rating saveOne(Rating rating);
 
     void deleteOne(Long id);
 

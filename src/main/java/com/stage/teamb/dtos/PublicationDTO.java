@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PublishedDTO {
+public class PublicationDTO {
     private Long id;
     private String nom;
     private String description;
