@@ -3,12 +3,16 @@ package com.stage.teamb.services;
 
 import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.EnterpriseDTO;
 import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EmployeeMapper;
+import com.stage.teamb.mappers.EnterpriseMapper;
 import com.stage.teamb.models.Department;
 import com.stage.teamb.models.Employee;
+import com.stage.teamb.models.Enterprise;
 import com.stage.teamb.repository.DepartmentRepository;
 import com.stage.teamb.repository.EmployeeRepository;
+import com.stage.teamb.repository.EnterpriseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +28,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   private final DepartmentRepository departmentRepository;
   private final EmployeeRepository employeeRepository;
+  private final EnterpriseRepository enterpriseRepository;
+
+
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository, EmployeeRepository employeeRepository) {
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository, EmployeeRepository employeeRepository, EnterpriseRepository enterpriseRepository) {
         this.departmentRepository = departmentRepository;
         this.employeeRepository = employeeRepository;
+        this.enterpriseRepository = enterpriseRepository;
     }
 
 
@@ -120,6 +128,55 @@ public class DepartmentServiceImpl implements DepartmentService {
         employeeRepository.save(employee);
         return EmployeeMapper.toDTO(employee);
     }
+
+    @Override
+    public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, Long departmentId) {
+        // Find the enterprise
+        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
+                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+        // Find the department
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        // Associate the department with the enterprise
+        department.setEnterprise(enterprise);
+        // Save the department to update the association
+        Department savedDepartment = departmentRepository.save(department);
+        // Map the saved department back to a DTO and return it
+        return DepartmentMapper.toDTO(savedDepartment);
+    }
+
+    @Override
+    public DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId) {
+        // Find the department
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        // Disassociate the department from the enterprise
+        department.setEnterprise(null);
+        // Save the department to update the association
+        Department savedDepartment = departmentRepository.save(department);
+        // Map the saved department back to a DTO and return it
+        return DepartmentMapper.toDTO(savedDepartment);
+    }
+
+    @Override
+    public EnterpriseDTO getEnterpriseByDepartmentId(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        Enterprise enterprise = department.getEnterprise();
+        if (enterprise == null) {
+            throw new RuntimeException("Enterprise not found for department with id " + departmentId);
+        }
+        return EnterpriseMapper.toDTO(enterprise);
+    }
+
+    @Override
+    public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
+        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
+                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+        List<Department> departments = enterprise.getDepartments();
+        return DepartmentMapper.toListDTO(departments);
+    }
+
 
     @Override
     public List<Department> findAll() {

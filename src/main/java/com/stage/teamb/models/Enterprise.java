@@ -24,7 +24,7 @@ public class Enterprise implements Serializable {
     private String enterpriseName;
     private String localEnterprise;
 
-    @OneToMany(mappedBy = "enterprise")
+    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Department> departments;
 
     @Column

@@ -1,13 +1,7 @@
 package com.stage.teamb.services;
 
-import com.stage.teamb.dtos.AddressDTO;
-import com.stage.teamb.dtos.DepartmentDTO;
-import com.stage.teamb.dtos.EmployeeDTO;
-import com.stage.teamb.dtos.RatingDTO;
-import com.stage.teamb.mappers.AddressMapper;
-import com.stage.teamb.mappers.DepartmentMapper;
-import com.stage.teamb.mappers.EmployeeMapper;
-import com.stage.teamb.mappers.RatingMapper;
+import com.stage.teamb.dtos.*;
+import com.stage.teamb.mappers.*;
 import com.stage.teamb.models.*;
 import com.stage.teamb.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -196,6 +190,50 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
         // Delete the rating
         ratingRepository.delete(existingRating);
+    }
+
+    @Override
+    public PublicationDTO createPublication(Long employeeId, PublicationDTO publicationDTO) {
+        // Find the employee
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+
+        // Create a new Publication entity and set its values
+        Publication newPublication = new Publication();
+        newPublication.setEmployee(employee);
+        newPublication.setNom(publicationDTO.getNom());
+        newPublication.setDescription(publicationDTO.getDescription());
+
+        // Save the new publication to the database
+        Publication savedPublication = publicationRepository.save(newPublication);
+
+        // Map the saved publication back to a DTO and return it
+        return PublicationMapper.toDTO(savedPublication);
+    }
+
+    @Override
+    public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
+        Publication existingPublication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+
+        // Update the existing publication with the values from the DTO
+        existingPublication.setNom(publicationDTO.getNom());
+        existingPublication.setDescription(publicationDTO.getDescription());
+
+        // Save the updated publication to the database
+        Publication savedPublication = publicationRepository.save(existingPublication);
+
+        // Map the saved publication back to a DTO and return it
+        return PublicationMapper.toDTO(savedPublication);
+    }
+
+    @Override
+    public void deletePublication(Long publicationId) {
+        Publication existingPublication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+
+        // Delete the publication
+        publicationRepository.delete(existingPublication);
     }
 
 

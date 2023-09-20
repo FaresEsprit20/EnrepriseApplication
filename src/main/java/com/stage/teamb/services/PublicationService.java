@@ -11,13 +11,17 @@ public interface PublicationService {
 
     List<PublicationDTO> findAllPublications();
 
-    PublicationDTO findPublishedById(Long id);
+    PublicationDTO findPublicationById(Long id);
 
-    PublicationDTO savePublished(PublicationDTO PublishedDTO);
+    List<PublicationDTO> findAllByEmployeeId(Long employeeId);
 
-    void deletePublishedById(Long id);
+    PublicationDTO savePublication(Long employeeId, PublicationDTO publicationDTO);
 
-    PublicationDTO updatePublished(PublicationDTO publishedDTO);
+    PublicationDTO createPublication(PublicationDTO publicationDTO);
+
+    PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
+
+    void deletePublication(Long publicationId);
 
     List<Publication> findAll();
 

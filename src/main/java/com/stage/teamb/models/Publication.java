@@ -27,7 +27,7 @@ public class Publication implements Serializable  {
     @OneToMany(mappedBy = "published")
     private List<Event> events;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private Employee employee;
 
     @OneToMany

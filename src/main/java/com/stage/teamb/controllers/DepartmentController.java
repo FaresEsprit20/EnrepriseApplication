@@ -1,66 +1,9 @@
-package com.stage.teamb.controllers;//package com.stage.teamb.controllers;
-//
-//
-//import com.stage.teamb.dtos.DepartmentDTO;
-//import com.stage.teamb.services.DepartmentService;
-//import com.stage.teamb.services.EmployeeService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@RequestMapping("/departement")
-//@RestController
-//public class DepartementController {
-//    private final DepartmentService departementService;
-//    private final EmployeeService employeeService;
-//
-//
-//    @Autowired
-//    public DepartementController(DepartmentService departementService, EmployeeService employeeService) {
-//        this.departementService = departementService;
-//        this.employeeService = employeeService;
-//    }
-//
-//
-//    @PostMapping("/addOne")
-//    public DepartmentDTO addOne(@RequestBody DepartmentDTO departementDTO) {
-//        return (departementService.saveOne(departementDTO));
-//    }
-//
-//    @GetMapping("/{id}")
-//    public Optional<DepartmentDTO> findOne(@PathVariable Long id) {
-//        return (departementService.findOne(id));
-//    }
-//
-//    @GetMapping()
-//    public Optional<List<DepartmentDTO>> findAll() {
-//        return Optional.ofNullable(departementService.findAll());
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<String> addEmployeeToDepartement(@RequestBody DepartementWithEmployeesDTO departementWithEmployeesDTO) {
-//           DepartmentDTO departmentDTO = departementService.addEmployeeToDepartment(departementWithEmployeesDTO.getId(),departementWithEmployeesDTO.getEmployeeAddId());
-//            return ResponseEntity.ok().build();
-//
-//    }
-//
-//    @PutMapping
-//    public DepartmentDTO update(@org.springframework.web.bind.annotation.RequestBody DepartmentDTO departement) {
-//        return departementService.saveOne(departement);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public void deleteOne(@PathVariable Long id) {
-//        departementService.deleteOne(id);
-//    }
-//}
+package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.DepartmentDTO;
+import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.EnterpriseDTO;
 import com.stage.teamb.services.DepartmentService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departments")
-@Slf4j
+@RequestMapping("/departments")
 public class DepartmentController {
 
     private final DepartmentService departmentService;
@@ -80,65 +22,79 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllDepartments() {
-        try {
-            List<DepartmentDTO> departmentDTOList = departmentService.findAllDepartments();
-            return ResponseEntity.ok(departmentDTOList);
-        } catch (RuntimeException exception) {
-            log.error("Error retrieving departments: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error retrieving departments: " + exception.getMessage());
-        }
+    @GetMapping
+    public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
+        List<DepartmentDTO> departments = departmentService.findAllDepartments();
+        return ResponseEntity.ok(departments);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDepartmentById(@PathVariable Long id) {
-        try {
-            DepartmentDTO departmentDTO = departmentService.findDepartmentById(id);
-            return ResponseEntity.ok(departmentDTO);
-        } catch (RuntimeException exception) {
-            log.error("Department not found: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Department not found with id: " + id);
-        }
+    public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable Long id) {
+        DepartmentDTO department = departmentService.findDepartmentById(id);
+        return ResponseEntity.ok(department);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<?> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
-        try {
-            DepartmentDTO createdDepartment = departmentService.saveDepartment(departmentDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
-        } catch (RuntimeException exception) {
-            log.error("Could not create department: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not create department: " + exception.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<DepartmentDTO> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
+        DepartmentDTO createdDepartment = departmentService.saveDepartment(departmentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO departmentDTO) {
-        try {
-            departmentDTO.setId(id); // Ensure the ID matches the path variable
-            DepartmentDTO updatedDepartment = departmentService.updateDepartment(departmentDTO);
-            return ResponseEntity.ok(updatedDepartment);
-        } catch (RuntimeException exception) {
-            log.error("Could not update department: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not update department: " + exception.getMessage());
-        }
+    public ResponseEntity<DepartmentDTO> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO departmentDTO) {
+        DepartmentDTO updatedDepartment = departmentService.updateDepartment(departmentDTO);
+        return ResponseEntity.ok(updatedDepartment);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDepartmentById(@PathVariable Long id) {
-        try {
-            departmentService.deleteDepartmentById(id);
-            return ResponseEntity.ok("Department deleted successfully");
-        } catch (RuntimeException exception) {
-            log.error("Could not delete department: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not delete department: " + exception.getMessage());
-        }
+    public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
+        departmentService.deleteDepartmentById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{departmentId}/employees")
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesByDepartmentId(@PathVariable Long departmentId) {
+        List<EmployeeDTO> employees = departmentService.findEmployeesByDepartmentId(departmentId);
+        return ResponseEntity.ok(employees);
+    }
+
+    @PostMapping("/{departmentId}/employees")
+    public ResponseEntity<EmployeeDTO> addEmployeeToDepartment(
+            @PathVariable Long departmentId, @RequestBody EmployeeDTO employeeDTO) {
+        EmployeeDTO addedEmployee = departmentService.addEmployeeToDepartment(departmentId, employeeDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedEmployee);
+    }
+
+    @DeleteMapping("/{departmentId}/employees/{employeeId}")
+    public ResponseEntity<EmployeeDTO> removeEmployeeFromDepartment(
+            @PathVariable Long departmentId, @PathVariable Long employeeId) {
+        EmployeeDTO removedEmployee = departmentService.removeEmployeeFromDepartment(departmentId, employeeId);
+        return ResponseEntity.ok(removedEmployee);
+    }
+
+    @GetMapping("/{departmentId}/enterprise")
+    public ResponseEntity<EnterpriseDTO> getEnterpriseByDepartmentId(@PathVariable Long departmentId) {
+        EnterpriseDTO enterprise = departmentService.getEnterpriseByDepartmentId(departmentId);
+        return ResponseEntity.ok(enterprise);
+    }
+
+    @PostMapping("/{departmentId}/enterprise/{enterpriseId}")
+    public ResponseEntity<DepartmentDTO> associateDepartmentWithEnterprise(
+            @PathVariable Long departmentId, @PathVariable Long enterpriseId) {
+        DepartmentDTO department = departmentService.associateDepartmentWithEnterprise(departmentId, enterpriseId);
+        return ResponseEntity.ok(department);
+    }
+
+    @DeleteMapping("/{departmentId}/enterprise")
+    public ResponseEntity<DepartmentDTO> disassociateDepartmentFromEnterprise(@PathVariable Long departmentId) {
+        DepartmentDTO department = departmentService.disassociateDepartmentFromEnterprise(departmentId);
+        return ResponseEntity.ok(department);
+    }
+
+    @GetMapping("/enterprise/{enterpriseId}/departments")
+    public ResponseEntity<List<DepartmentDTO>> findDepartmentsByEnterpriseId(@PathVariable Long enterpriseId) {
+        List<DepartmentDTO> departments = departmentService.findDepartmentsByEnterpriseId(enterpriseId);
+        return ResponseEntity.ok(departments);
     }
 
 

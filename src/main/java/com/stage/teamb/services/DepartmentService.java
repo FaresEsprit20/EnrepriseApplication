@@ -2,6 +2,7 @@ package com.stage.teamb.services;
 
 import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.EnterpriseDTO;
 import com.stage.teamb.models.Department;
 
 import java.util.List;
@@ -25,6 +26,14 @@ public interface DepartmentService {
     EmployeeDTO addEmployeeToDepartment(Long departmentId, EmployeeDTO employeeDTO);
 
     EmployeeDTO removeEmployeeFromDepartment(Long departmentId, Long employeeId);
+
+    DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, Long departmentId);
+
+    DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId);
+
+    EnterpriseDTO getEnterpriseByDepartmentId(Long departmentId);
+
+    List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId);
 
     List<Department> findAll();
 

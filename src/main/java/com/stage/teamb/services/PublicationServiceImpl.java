@@ -2,7 +2,9 @@ package com.stage.teamb.services;
 
 import com.stage.teamb.dtos.PublicationDTO;
 import com.stage.teamb.mappers.PublicationMapper;
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Publication;
+import com.stage.teamb.repository.EmployeeRepository;
 import com.stage.teamb.repository.PublicationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,14 @@ import java.util.Optional;
 public class PublicationServiceImpl implements PublicationService {
 
     private final PublicationRepository publicationRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public PublicationServiceImpl(PublicationRepository publicationRepository) {
+    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
         this.publicationRepository = publicationRepository;
+        this.employeeRepository = employeeRepository;
     }
+
 
     @Override
     public List<PublicationDTO> findAllPublications() {
@@ -28,51 +33,74 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public PublicationDTO findPublishedById(Long id) {
+    public PublicationDTO findPublicationById(Long id) {
         return PublicationMapper.toDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 
     @Override
-    public PublicationDTO savePublished(PublicationDTO PublishedDTO) {
+    public List<PublicationDTO> findAllByEmployeeId(Long employeeId) {
+        List<Publication> publications = Optional.ofNullable(publicationRepository.findByEmployeeId(employeeId))
+                .orElseThrow(() -> new RuntimeException("Publications not found for employee with id " + employeeId));
+        return PublicationMapper.toListDTO(publications);
+    }
+
+
+    @Override
+    public PublicationDTO savePublication(Long employeeId, PublicationDTO publicationDTO) {
+        // Find the employee
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        // Create a new Publication entity and set its values
+        Publication newPublication = PublicationMapper.toEntity(publicationDTO);
+        newPublication.setEmployee(employee);
         try {
-            return PublicationMapper.toDTO(publicationRepository.save(PublicationMapper.toEntity(PublishedDTO)));
-        }catch (Exception exception){
-            log.error("Address with not found.");
-            throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
+            // Save the new publication to the database
+            Publication savedPublication = publicationRepository.save(newPublication);
+            // Map the saved publication back to a DTO and return it
+            return PublicationMapper.toDTO(savedPublication);
+        } catch (Exception exception) {
+            log.error("Error while creating publication: " + exception.getMessage());
+            throw new RuntimeException("Error while creating publication: " + exception.getMessage());
+        }
+    }
+
+
+    @Override
+    public PublicationDTO createPublication(PublicationDTO publicationDTO) {
+        try {
+            return PublicationMapper.toDTO(publicationRepository.save(PublicationMapper.toEntity(publicationDTO)));
+        } catch (Exception exception) {
+            log.error("Error while creating publication: " + exception.getMessage());
+            throw new RuntimeException("Error while creating publication: " + exception.getMessage());
         }
     }
 
     @Override
-    public void deletePublishedById(Long id) {
-        if (publicationRepository.existsById(id)) {
-            try{
-                publicationRepository.deleteById(id);
-            }catch (Exception exception) {
-                log.error("Can not delete this entity"+exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   "+exception.getMessage());
-            }
-        } else {
-            log.error("Entity Not Exist");
-            throw new RuntimeException("Entity Not Exist");
+    public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
+        Publication existingPublication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+
+        // Update the existing publication with the values from the DTO
+        existingPublication.setNom(publicationDTO.getNom());
+        existingPublication.setDescription(publicationDTO.getDescription());
+
+        try {
+            return PublicationMapper.toDTO(publicationRepository.save(existingPublication));
+        } catch (Exception exception) {
+            log.error("Could not update publication: " + exception.getMessage());
+            throw new RuntimeException("Could not update publication: " + exception.getMessage());
         }
     }
 
     @Override
-    public PublicationDTO updatePublished(PublicationDTO publishedDTO) {
-        Publication existingPublished= publicationRepository.findById(publishedDTO.getId())
-                .orElseThrow(() -> {
-                    log.error("entity not found ");
-                    return new RuntimeException("entity not found with id " + publishedDTO.getId());
-                });
-       existingPublished.setNom(publishedDTO.getNom());
-       existingPublished.setDescription(publishedDTO.getDescription());
-        try {
-            return PublicationMapper.toDTO(publicationRepository.save(existingPublished));
-        }catch (Exception exception){
-            log.error("Could not update "+exception.getMessage());
-            throw new RuntimeException("Could not update "+exception.getMessage());
-        }
+    public void deletePublication(Long publicationId) {
+        Publication existingPublication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+
+        // Delete the publication
+        publicationRepository.delete(existingPublication);
     }
+
 
     @Override
     public List<Publication> findAll() {

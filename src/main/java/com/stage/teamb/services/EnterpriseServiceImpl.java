@@ -1,9 +1,12 @@
 package com.stage.teamb.services;
 
-
+import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EnterpriseDTO;
+import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EnterpriseMapper;
+import com.stage.teamb.models.Department;
 import com.stage.teamb.models.Enterprise;
+import com.stage.teamb.repository.DepartmentRepository;
 import com.stage.teamb.repository.EnterpriseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +20,13 @@ import java.util.Optional;
 public class EnterpriseServiceImpl implements EnterpriseService {
 
     private final EnterpriseRepository enterpriseRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Autowired
-    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository) {
+    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository, DepartmentRepository departmentRepository) {
         this.enterpriseRepository = enterpriseRepository;
+        this.departmentRepository = departmentRepository;
     }
-
 
     @Override
     public List<EnterpriseDTO> findAllEnterprises() {
@@ -38,20 +42,20 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     public EnterpriseDTO saveEnterprise(EnterpriseDTO enterpriseDTO) {
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(EnterpriseMapper.toEntity(enterpriseDTO)));
-        }catch (Exception exception){
+        } catch (Exception exception) {
             log.error("Address with not found.");
-            throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
+            throw new RuntimeException("Can not save this entity  :   " + exception.getMessage());
         }
     }
 
     @Override
     public void deleteEnterpriseById(Long id) {
         if (enterpriseRepository.existsById(id)) {
-            try{
+            try {
                 enterpriseRepository.deleteById(id);
-            }catch (Exception exception) {
-                log.error("Can not delete this entity"+exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   "+exception.getMessage());
+            } catch (Exception exception) {
+                log.error("Can not delete this entity" + exception.getMessage());
+                throw new RuntimeException("Can not delete this entity  :   " + exception.getMessage());
             }
         } else {
             log.error("Entity Not Exist");
@@ -70,9 +74,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         existingEnterprise.setEnterpriseName(enterpriseDTO.getNomEntreprise());
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
-        }catch (Exception exception){
-            log.error("Could not update "+exception.getMessage());
-            throw new RuntimeException("Could not update "+exception.getMessage());
+        } catch (Exception exception) {
+            log.error("Could not update " + exception.getMessage());
+            throw new RuntimeException("Could not update " + exception.getMessage());
         }
     }
 
@@ -93,13 +97,61 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public void deleteOne(Long id) {
-       enterpriseRepository.deleteById(id);
+        enterpriseRepository.deleteById(id);
     }
 
     @Override
     public Boolean existsById(Long id) {
         return enterpriseRepository.existsById(id);
     }
+
+    @Override
+    public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
+        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
+                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+        return DepartmentMapper.toListDTO(enterprise.getDepartments());
+    }
+
+    @Override
+    public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {
+        // Find the enterprise
+        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
+                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+        // Create a new Department entity and set its values
+        Department newDepartment = DepartmentMapper.toEntity(departmentDTO);
+        // Associate the department with the enterprise
+        newDepartment.setEnterprise(enterprise);
+        // Save the new department to the database
+        Department savedDepartment = departmentRepository.save(newDepartment);
+        // Map the saved department back to a DTO and return it
+        return DepartmentMapper.toDTO(savedDepartment);
+    }
+
+    @Override
+    public DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId) {
+        // Find the department
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        // Disassociate the department from the enterprise
+        department.setEnterprise(null);
+        // Save the department to update the association
+        Department savedDepartment = departmentRepository.save(department);
+        // Map the saved department back to a DTO and return it
+        return DepartmentMapper.toDTO(savedDepartment);
+    }
+
+
+    @Override
+    public EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+        if (department.getEnterprise() == null) {
+            throw new RuntimeException("No enterprise associated with department " + departmentId);
+        }
+        return EnterpriseMapper.toDTO(department.getEnterprise());
+    }
+
+
 
 
 }

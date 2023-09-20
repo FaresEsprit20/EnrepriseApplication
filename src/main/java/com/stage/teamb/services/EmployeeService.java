@@ -1,9 +1,6 @@
 package com.stage.teamb.services;
 
-import com.stage.teamb.dtos.AddressDTO;
-import com.stage.teamb.dtos.DepartmentDTO;
-import com.stage.teamb.dtos.EmployeeDTO;
-import com.stage.teamb.dtos.RatingDTO;
+import com.stage.teamb.dtos.*;
 import com.stage.teamb.models.Employee;
 
 import java.util.List;
@@ -36,6 +33,12 @@ public interface EmployeeService {
     RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO);
 
     void deleteRating(Long ratingId);
+
+    PublicationDTO createPublication(Long employeeId, PublicationDTO publicationDTO);
+
+    PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
+
+    void deletePublication(Long publicationId);
 
     List<Employee> findAll();
 

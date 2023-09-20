@@ -1,5 +1,6 @@
 package com.stage.teamb.services;
 
+import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EnterpriseDTO;
 import com.stage.teamb.models.Enterprise;
 
@@ -30,5 +31,12 @@ public interface EnterpriseService {
 
     Boolean existsById(Long id);
 
+    List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId);
+
+    DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO);
+
+    DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId);
+
+    EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId);
 }
 
