@@ -1,100 +1,8 @@
-package com.stage.teamb.controllers;//package com.stage.teamb.controllers;
-//
-//import com.stage.teamb.dtos.DepartmentDTO;
-//import com.stage.teamb.dtos.EnterpriseDTO;
-//import com.stage.teamb.services.DepartmentService;
-//import com.stage.teamb.services.EntrepriseService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/entreprise")
-//public class EntrepriseController {
-//
-//    private final EntrepriseService entrepriseService;
-//    private final DepartmentService departmentService;
-//
-//    @Autowired
-//    public EntrepriseController(EntrepriseService entrepriseService, DepartmentService departmentService) {
-//        this.entrepriseService = entrepriseService;
-//        this.departmentService = departmentService;
-//    }
-//
-//
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<EnterpriseDTO> findOne(@PathVariable Long id) {
-//        EnterpriseDTO entreprise = entrepriseService.findOne(id);
-//        if (entreprise != null) {
-//            return ResponseEntity.ok(entreprise);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//    @GetMapping()
-//    public List<EnterpriseDTO> findAll() {
-//        return entrepriseService.findAll();
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<EnterpriseDTO> saveOne(@RequestBody EnterpriseDTO entreprise) {
-//        EnterpriseDTO savedEntreprise = entrepriseService.saveOne(entreprise);
-//        return ResponseEntity.ok(savedEntreprise);
-//    }
-//
-////    @PostMapping("/addDepartementToEntreprise")
-////    public ResponseEntity<String> addDepartementToEntreprise(@RequestBody EntrepriseWithDepDTO entrepriseWithDepDto) {
-////        List<DepartmentDTO> departement = departementService.findDepartements(entrepriseWithDepDto.getDepartementsIds());
-////
-////        if (!departement.isEmpty()) {
-////            Entreprise entreprise = entrepriseMapper.toEntrepriseWithDepsEntity(entrepriseWithDepDto);
-////            entreprise.setDepartement(departement);
-////            entrepriseService.save(entreprise);
-////            return ResponseEntity.ok("Départements ajoutés à l'entreprise avec succès.");
-////        } else {
-////            return ResponseEntity.notFound().build();
-////        }
-////    }
-//
-//    @PutMapping("/update")
-//    public ResponseEntity<EnterpriseDTO> update(@RequestBody EnterpriseDTO entreprise) {
-//        EnterpriseDTO updatedEntreprise = entrepriseService.update(entreprise);
-//        return ResponseEntity.ok(updatedEntreprise);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> deleteOne(@PathVariable Long id) {
-//        entrepriseService.deleteOne(id);
-//        return ResponseEntity.ok("Entreprise supprimée avec succès.");
-//    }
-//
-//    @GetMapping("/getEntreprise/{id}")
-//    public ResponseEntity<EntrepriseWithDepsDTO> getEntreprise(@PathVariable Long id) {
-//        EnterpriseDTO entreprise = entrepriseService.findOne(id);
-//        EntrepriseWithDepsDTO entrepriseWithDepsDTO = new EntrepriseWithDepsDTO();
-//         entrepriseWithDepsDTO.setId(entreprise.getId());
-//         entrepriseWithDepsDTO.setNomEnreprise(entreprise.getNomEntreprise());
-//         entrepriseWithDepsDTO.setLocalEnreprise(entreprise.getLocalEntreprise());
-//
-//        if (entreprise != null) {
-//          List<DepartmentDTO> departementList = departementService.findDepByEnrepId(id);
-//           entrepriseWithDepsDTO.setDepartementDTOList(departementList);
-//            return ResponseEntity.ok(entrepriseWithDepsDTO);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//}
-//
-//
+package com.stage.teamb.controllers;
 
+import com.stage.teamb.dtos.DepartmentDTO;
 import com.stage.teamb.dtos.EnterpriseDTO;
 import com.stage.teamb.services.EnterpriseService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/enterprises")
-@Slf4j
 public class EnterpriseController {
 
     private final EnterpriseService enterpriseService;
@@ -114,66 +21,62 @@ public class EnterpriseController {
         this.enterpriseService = enterpriseService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllEnterprises() {
-        try {
-            List<EnterpriseDTO> enterpriseDTOList = enterpriseService.findAllEnterprises();
-            return ResponseEntity.ok(enterpriseDTOList);
-        } catch (RuntimeException exception) {
-            log.error("Error retrieving enterprises: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error retrieving enterprises: " + exception.getMessage());
-        }
+    @GetMapping
+    public ResponseEntity<List<EnterpriseDTO>> getAllEnterprises() {
+        List<EnterpriseDTO> enterprises = enterpriseService.findAllEnterprises();
+        return ResponseEntity.ok(enterprises);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEnterpriseById(@PathVariable Long id) {
-        try {
-            EnterpriseDTO enterpriseDTO = enterpriseService.findEnterpriseById(id);
-            return ResponseEntity.ok(enterpriseDTO);
-        } catch (RuntimeException exception) {
-            log.error("Enterprise not found: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Enterprise not found with id: " + id);
-        }
+    public ResponseEntity<EnterpriseDTO> getEnterpriseById(@PathVariable Long id) {
+        EnterpriseDTO enterprise = enterpriseService.findEnterpriseById(id);
+        return ResponseEntity.ok(enterprise);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<?> createEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
-        try {
-            EnterpriseDTO createdEnterprise = enterpriseService.saveEnterprise(enterpriseDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdEnterprise);
-        } catch (RuntimeException exception) {
-            log.error("Could not create enterprise: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not create enterprise: " + exception.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<EnterpriseDTO> createEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
+        EnterpriseDTO createdEnterprise = enterpriseService.saveEnterprise(enterpriseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdEnterprise);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEnterprise(@PathVariable Long id, @RequestBody EnterpriseDTO enterpriseDTO) {
-        try {
-            enterpriseDTO.setId(id); // Ensure the ID matches the path variable
-            EnterpriseDTO updatedEnterprise = enterpriseService.updateEnterprise(enterpriseDTO);
-            return ResponseEntity.ok(updatedEnterprise);
-        } catch (RuntimeException exception) {
-            log.error("Could not update enterprise: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not update enterprise: " + exception.getMessage());
-        }
+    public ResponseEntity<EnterpriseDTO> updateEnterprise(@PathVariable Long id, @RequestBody EnterpriseDTO enterpriseDTO) {
+        enterpriseDTO.setId(id);
+        EnterpriseDTO updatedEnterprise = enterpriseService.updateEnterprise(enterpriseDTO);
+        return ResponseEntity.ok(updatedEnterprise);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEnterpriseById(@PathVariable Long id) {
-        try {
-            enterpriseService.deleteEnterpriseById(id);
-            return ResponseEntity.ok("Enterprise deleted successfully");
-        } catch (RuntimeException exception) {
-            log.error("Could not delete enterprise: " + exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not delete enterprise: " + exception.getMessage());
-        }
+    public ResponseEntity<Void> deleteEnterprise(@PathVariable Long id) {
+        enterpriseService.deleteEnterpriseById(id);
+        return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{enterpriseId}/departments")
+    public ResponseEntity<List<DepartmentDTO>> getDepartmentsByEnterpriseId(@PathVariable Long enterpriseId) {
+        List<DepartmentDTO> departments = enterpriseService.findDepartmentsByEnterpriseId(enterpriseId);
+        return ResponseEntity.ok(departments);
+    }
+
+    @PostMapping("/{enterpriseId}/departments")
+    public ResponseEntity<DepartmentDTO> associateDepartmentForEnterprise(
+            @PathVariable Long enterpriseId, @RequestBody DepartmentDTO departmentDTO) {
+        DepartmentDTO createdDepartment = enterpriseService.associateDepartmentWithEnterprise(enterpriseId, departmentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
+    }
+
+    @DeleteMapping("/departments/{departmentId}")
+    public ResponseEntity<DepartmentDTO> disassociateDepartmentFromEnterprise(@PathVariable Long departmentId) {
+        DepartmentDTO disassociatedDepartment = enterpriseService.disassociateDepartmentFromEnterprise(departmentId);
+        return ResponseEntity.ok(disassociatedDepartment);
+    }
+
+    @GetMapping("/departments/{departmentId}/enterprise")
+    public ResponseEntity<EnterpriseDTO> getEnterpriseByDepartmentId(@PathVariable Long departmentId) {
+        EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
+        return ResponseEntity.ok(enterprise);
+    }
+
 
 
 }
