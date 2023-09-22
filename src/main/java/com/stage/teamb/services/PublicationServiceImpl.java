@@ -1,11 +1,21 @@
 package com.stage.teamb.services;
 
+import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.EventDTO;
 import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.dtos.RatingDTO;
+import com.stage.teamb.mappers.EmployeeMapper;
+import com.stage.teamb.mappers.EventMapper;
 import com.stage.teamb.mappers.PublicationMapper;
+import com.stage.teamb.mappers.RatingMapper;
 import com.stage.teamb.models.Employee;
+import com.stage.teamb.models.Event;
 import com.stage.teamb.models.Publication;
+import com.stage.teamb.models.Rating;
 import com.stage.teamb.repository.EmployeeRepository;
+import com.stage.teamb.repository.EventRepository;
 import com.stage.teamb.repository.PublicationRepository;
+import com.stage.teamb.repository.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +29,15 @@ public class PublicationServiceImpl implements PublicationService {
 
     private final PublicationRepository publicationRepository;
     private final EmployeeRepository employeeRepository;
+    private final EventRepository eventRepository;
+    private final RatingRepository ratingRepository;
 
     @Autowired
-    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
+    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository, EventRepository eventRepository, RatingRepository ratingRepository) {
         this.publicationRepository = publicationRepository;
         this.employeeRepository = employeeRepository;
+        this.eventRepository = eventRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 
@@ -67,19 +81,31 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public PublicationDTO createPublication(PublicationDTO publicationDTO) {
+        Long employeeId = publicationDTO.getEmployeeId(); // Get employeeId from the DTO
+
+        // Find the employee
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        // Create a new Publication entity and set its values
+        Publication newPublication = PublicationMapper.toEntity(publicationDTO);
+        newPublication.setEmployee(employee);
         try {
-            return PublicationMapper.toDTO(publicationRepository.save(PublicationMapper.toEntity(publicationDTO)));
+            // Save the new publication to the database
+            Publication savedPublication = publicationRepository.save(newPublication);
+
+            // Map the saved publication back to a DTO and return it
+            return PublicationMapper.toDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Error while creating publication: " + exception.getMessage());
             throw new RuntimeException("Error while creating publication: " + exception.getMessage());
         }
     }
 
+
     @Override
     public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
         Publication existingPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-
         // Update the existing publication with the values from the DTO
         existingPublication.setNom(publicationDTO.getNom());
         existingPublication.setDescription(publicationDTO.getDescription());
@@ -96,11 +122,143 @@ public class PublicationServiceImpl implements PublicationService {
     public void deletePublication(Long publicationId) {
         Publication existingPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-
         // Delete the publication
         publicationRepository.delete(existingPublication);
     }
 
+
+    @Override
+    public List<EventDTO> findEventsByPublicationId(Long publicationId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        return EventMapper.toListDTO(publication.getEvents());
+    }
+
+    @Override
+    public EventDTO addEventToPublication(Long publicationId, EventDTO eventDTO) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        Event event = EventMapper.toEntity(eventDTO); // Use your EventMapper to convert EventDTO to Event
+        event.setPublication(publication);
+        Event savedEvent = eventRepository.save(event);
+        return EventMapper.toDTO(savedEvent); // Use your EventMapper to convert Event to EventDTO
+    }
+
+
+    @Override
+    public void removeEventFromPublication(Long publicationId, Long eventId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
+        if (!publication.getEvents().contains(event)) {
+            log.error("Event is not associated with the publication.");
+            throw new RuntimeException("Event is not associated with the publication.");
+        }
+        event.setPublication(null);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public PublicationDTO findPublicationByEventId(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
+        Publication publication = event.getPublication();
+        if (publication == null) {
+            throw new RuntimeException("No publication associated with event " + eventId);
+        }
+        return PublicationMapper.toDTO(publication);
+    }
+
+    @Override
+    public EmployeeDTO findEmployeeByPublicationId(Long publicationId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        Employee employee = publication.getEmployee();
+        return EmployeeMapper.toDTO(employee);
+    }
+
+    @Override
+    public PublicationDTO associateEmployeeWithPublication(Long publicationId, Long employeeId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+        // Associate the publication with the employee
+        publication.setEmployee(employee);
+        try {
+            // Save the updated publication to the database using publicationRepository
+            Publication savedPublication = publicationRepository.save(publication);
+            return PublicationMapper.toDTO(savedPublication);
+        } catch (Exception exception) {
+            log.error("Could not associate employee with publication: " + exception.getMessage());
+            throw new RuntimeException("Could not associate employee with publication: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public PublicationDTO disassociateEmployeeFromPublication(Long publicationId) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        // Dissociate the publication from the employee
+        publication.setEmployee(null);
+        try {
+            // Save the updated publication to the database using publicationRepository
+            Publication savedPublication = publicationRepository.save(publication);
+            return PublicationMapper.toDTO(savedPublication);
+        } catch (Exception exception) {
+            log.error("Could not disassociate employee from publication: " + exception.getMessage());
+            throw new RuntimeException("Could not disassociate employee from publication: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public RatingDTO createRating(RatingDTO ratingDTO) {
+        // Find the publication by ID
+        Publication publication = publicationRepository.findById(ratingDTO.getPublicationId())
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + ratingDTO.getPublicationId()));
+        // Find the employee by ID
+        Employee employee = employeeRepository.findById(ratingDTO.getEmployeeId())
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + ratingDTO.getEmployeeId()));
+        // Create a new Rating entity and set its values
+        Rating newRating = RatingMapper.toEntity(ratingDTO);
+        newRating.setPublication(publication);
+        newRating.setEmployee(employee);
+        try {
+            // Save the new rating to the database
+            Rating savedRating = ratingRepository.save(newRating);
+            // Map the saved rating back to a DTO and return it
+            return RatingMapper.toDTO(savedRating);
+        } catch (Exception exception) {
+            log.error("Error while creating rating: " + exception.getMessage());
+            throw new RuntimeException("Error while creating rating: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO) {
+        Rating existingRating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+        // Update the existing rating with the values from the DTO
+        existingRating.setValue(ratingDTO.getValue());
+        try {
+            // Save the updated rating to the database
+            Rating savedRating = ratingRepository.save(existingRating);
+            // Map the saved rating back to a DTO and return it
+            return RatingMapper.toDTO(savedRating);
+        } catch (Exception exception) {
+            log.error("Could not update rating: " + exception.getMessage());
+            throw new RuntimeException("Could not update rating: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteRating(Long ratingId) {
+        Rating existingRating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+        // Delete the rating
+        ratingRepository.delete(existingRating);
+    }
 
     @Override
     public List<Publication> findAll() {

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,8 +16,6 @@ public class PublicationDTO {
     private String nom;
     private String description;
     private Long employeeId;
-    private List<Long> ratingIds;
-    private List<Long> eventIds;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

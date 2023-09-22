@@ -1,6 +1,9 @@
 package com.stage.teamb.services;
 
+import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.EventDTO;
 import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.dtos.RatingDTO;
 import com.stage.teamb.models.Publication;
 
 import java.util.List;
@@ -22,6 +25,27 @@ public interface PublicationService {
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
 
     void deletePublication(Long publicationId);
+
+    List<EventDTO> findEventsByPublicationId(Long publicationId);
+
+    EventDTO addEventToPublication(Long publicationId, EventDTO eventDTO);
+
+
+    void removeEventFromPublication(Long publicationId, Long eventId);
+
+    PublicationDTO findPublicationByEventId(Long eventId);
+
+    EmployeeDTO findEmployeeByPublicationId(Long publicationId);
+
+    PublicationDTO associateEmployeeWithPublication(Long publicationId, Long employeeId);
+
+    PublicationDTO disassociateEmployeeFromPublication(Long publicationId);
+
+    RatingDTO createRating(RatingDTO ratingDTO);
+
+    RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO);
+
+    void deleteRating(Long ratingId);
 
     List<Publication> findAll();
 

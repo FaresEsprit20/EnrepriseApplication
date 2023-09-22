@@ -24,13 +24,13 @@ public class Publication implements Serializable  {
     private String nom;
     private String description;
 
-    @OneToMany(mappedBy = "published")
+    @OneToMany(mappedBy = "publication")
     private List<Event> events;
 
     @ManyToOne(cascade = {CascadeType.MERGE})
     private Employee employee;
 
-    @OneToMany
+    @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE})
     private List<Rating> rating;
 
     @Column

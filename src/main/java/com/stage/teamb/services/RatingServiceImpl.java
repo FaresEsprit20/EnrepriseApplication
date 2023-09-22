@@ -54,12 +54,12 @@ public class RatingServiceImpl implements RatingService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
 
-        if (employee.getRatings().stream().anyMatch(rating -> rating.getPublished().getId().equals(publicationId))) {
-            throw new IllegalArgumentException("Employee has already rated this publication.");
+        if (employee.getRatings().stream().anyMatch(rating -> rating.getPublication().getId().equals(publicationId))) {
+            throw new RuntimeException("Employee has already rated this publication.");
         }
 
         Rating rating = new Rating();
-        rating.setPublished(publication);
+        rating.setPublication(publication);
         rating.setEmployee(employee);
         rating.setValue(value);
 

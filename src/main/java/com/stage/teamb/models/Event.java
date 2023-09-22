@@ -25,10 +25,10 @@ public class Event implements Serializable  {
     @Column
     private LocalDateTime dateE;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Publication publication;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Responsible responsible;
 
     @Column
@@ -46,4 +46,5 @@ public class Event implements Serializable  {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

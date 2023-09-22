@@ -164,7 +164,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Create a new Rating entity and set its values
         Rating newRating = new Rating();
         newRating.setEmployee(employee);
-        newRating.setPublished(publication);
+        newRating.setPublication(publication);
         newRating.setValue(ratingDTO.getValue());
         // Save the new rating to the database
         Rating savedRating = ratingRepository.save(newRating);

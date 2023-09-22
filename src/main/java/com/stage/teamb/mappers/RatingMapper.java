@@ -10,42 +10,37 @@ import java.util.List;
 @NoArgsConstructor
 public class RatingMapper {
 
-
     public static RatingDTO toDTO(Rating rating) {
-         RatingDTO ratingDTO = new RatingDTO();
-         ratingDTO.setId(rating.getId());
-         ratingDTO.setValue(rating.getValue());
-         ratingDTO.setEmployeeId(rating.getEmployee()!=null ? rating.getEmployee().getId() : null );
-         ratingDTO.setCreatedAt(rating.getCreatedAt());
-         ratingDTO.setUpdatedAt(rating.getUpdatedAt());
-         return ratingDTO;
+        return RatingDTO.builder()
+                .id(rating.getId())
+                .value(rating.getValue())
+                .employeeId(rating.getEmployee() != null ? rating.getEmployee().getId() : null)
+                .publicationId(rating.getPublication() != null ? rating.getPublication().getId() : null)
+                .createdAt(rating.getCreatedAt())
+                .updatedAt(rating.getUpdatedAt())
+                .build();
     }
 
     public static List<RatingDTO> toListDTO(List<Rating> ratings) {
-         List<RatingDTO> ratingDTOList = new ArrayList<>();
-         ratings.forEach(rating -> {
-             ratingDTOList.add(toDTO(rating));
-         });
-         return ratingDTOList;
+        List<RatingDTO> ratingDTOList = new ArrayList<>();
+        ratings.forEach(rating -> ratingDTOList.add(toDTO(rating)));
+        return ratingDTOList;
     }
 
     public static Rating toEntity(RatingDTO ratingDTO) {
-        Rating rating = new Rating();
-        rating.setId(ratingDTO.getId());
-        rating.setValue(ratingDTO.getValue());
-        rating.setCreatedAt(ratingDTO.getCreatedAt());
-        rating.setUpdatedAt(ratingDTO.getUpdatedAt());
-        return rating;
+        return Rating.builder()
+                .id(ratingDTO.getId())
+                .value(ratingDTO.getValue())
+                .createdAt(ratingDTO.getCreatedAt())
+                .updatedAt(ratingDTO.getUpdatedAt())
+                .build();
     }
 
     public static List<Rating> toListEntity(List<RatingDTO> ratingDTOList) {
-          List<Rating> ratingList = new ArrayList<>();
-        ratingDTOList.forEach(ratingDTO -> {
-            ratingList.add(toEntity(ratingDTO));
-        });
+        List<Rating> ratingList = new ArrayList<>();
+        ratingDTOList.forEach(ratingDTO -> ratingList.add(toEntity(ratingDTO)));
         return ratingList;
     }
-
 
 
 
