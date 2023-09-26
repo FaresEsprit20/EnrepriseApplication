@@ -13,7 +13,7 @@ public class PublicationMapper {
     public static PublicationDTO toDTO(Publication published) {
         return PublicationDTO.builder()
                 .id(published.getId())
-                .nom(published.getNom())
+                .name(published.getName())
                 .description(published.getDescription())
                 .employeeId(published.getEmployee() != null ? published.getEmployee().getId() : null)
                 .createdAt(published.getCreatedAt())
@@ -30,7 +30,7 @@ public class PublicationMapper {
     public static Publication toEntity(PublicationDTO publishedDTO) {
         return Publication.builder()
                 .id(publishedDTO.getId())
-                .nom(publishedDTO.getNom())
+                .name(publishedDTO.getName())
                 .description(publishedDTO.getDescription())
                 .createdAt(publishedDTO.getCreatedAt())
                 .updatedAt(publishedDTO.getUpdatedAt())

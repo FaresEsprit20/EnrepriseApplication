@@ -17,25 +17,20 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @Builder
 public class Event implements Serializable  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String titre;
+    private String title;
+    private LocalDateTime eventDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    @Column
-    private LocalDateTime dateE;
-
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } , fetch = FetchType.LAZY)
     private Publication publication;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
     private Responsible responsible;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
@@ -46,5 +41,6 @@ public class Event implements Serializable  {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 
 }

@@ -18,25 +18,23 @@ import java.util.List;
 @DynamicUpdate
 @Builder
 public class Publication implements Serializable  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nom;
+    private String name;
     private String description;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "publication")
+    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY)
     private List<Event> events;
 
-    @ManyToOne(cascade = {CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Employee employee;
 
-    @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Rating> rating;
-
-    @Column
-    private LocalDateTime createdAt;
-    @Column
-    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {

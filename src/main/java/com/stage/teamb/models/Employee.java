@@ -9,30 +9,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
 @Builder
 public class Employee extends Users implements Serializable  {
 
-  @ManyToOne(cascade = CascadeType.MERGE)
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+
+  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   private Department department;
 
-  @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
-  private List<Address> addresses;
-
-  @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
+  @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   private List<Rating> ratings;
 
-  @OneToMany(mappedBy = "employee")
+  @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
   private List<Publication> publications;
-
-  @Column
-  private LocalDateTime createdAt;
-  @Column
-  private LocalDateTime updatedAt;
 
   @PrePersist
   protected void onCreate() {

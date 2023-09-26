@@ -10,6 +10,7 @@ import com.stage.teamb.repository.EmployeeRepository;
 import com.stage.teamb.repository.PublicationRepository;
 import com.stage.teamb.repository.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class RatingServiceImpl implements RatingService {
     private final PublicationRepository publishedRepository;
     private final EmployeeRepository employeeRepository;
 
+    @Autowired
     public RatingServiceImpl(RatingRepository ratingRepository, PublicationRepository publishedRepository, EmployeeRepository employeeRepository) {
         this.ratingRepository = ratingRepository;
         this.publishedRepository = publishedRepository;
@@ -50,19 +52,15 @@ public class RatingServiceImpl implements RatingService {
     public RatingDTO createRating(Long publicationId, Long employeeId, Boolean value) {
         Publication publication = publishedRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-
         if (employee.getRatings().stream().anyMatch(rating -> rating.getPublication().getId().equals(publicationId))) {
             throw new RuntimeException("Employee has already rated this publication.");
         }
-
         Rating rating = new Rating();
         rating.setPublication(publication);
         rating.setEmployee(employee);
         rating.setValue(value);
-
         return RatingMapper.toDTO(ratingRepository.save(rating));
     }
 
@@ -70,11 +68,9 @@ public class RatingServiceImpl implements RatingService {
     public RatingDTO updateRating(Long ratingId, Boolean value, Long employeeId) {
         Rating rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-
         if (!rating.getEmployee().getId().equals(employeeId)) {
             throw new IllegalArgumentException("You can only update your own ratings.");
         }
-
         rating.setValue(value);
         return RatingMapper.toDTO(ratingRepository.save(rating));
     }
@@ -83,11 +79,9 @@ public class RatingServiceImpl implements RatingService {
     public void deleteRating(Long ratingId, Long employeeId) {
         Rating rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-
         if (!rating.getEmployee().getId().equals(employeeId)) {
             throw new IllegalArgumentException("You can only delete your own ratings.");
         }
-
         ratingRepository.deleteById(ratingId);
     }
 

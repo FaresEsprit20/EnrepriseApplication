@@ -15,7 +15,8 @@ public class EventMapper {
     public static EventDTO toDTO(Event event) {
         return EventDTO.builder()
                 .id(event.getId())
-                .titre(event.getTitre())
+                .title(event.getTitle())
+                .eventDate(event.getEventDate())
                 .responsableID(event.getResponsible() != null ? event.getResponsible().getId() : null)
                 .createdAt(event.getCreatedAt())
                 .updatedAt(event.getUpdatedAt())
@@ -31,7 +32,8 @@ public class EventMapper {
     public static Event toEntity(EventDTO eventDTO) {
         return Event.builder()
                 .id(eventDTO.getId())
-                .titre(eventDTO.getTitre())
+                .title(eventDTO.getTitle())
+                .eventDate(eventDTO.getEventDate())
                 .createdAt(eventDTO.getCreatedAt())
                 .updatedAt(eventDTO.getUpdatedAt())
                 .build();

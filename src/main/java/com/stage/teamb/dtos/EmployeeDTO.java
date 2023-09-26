@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
 @Builder
 public class EmployeeDTO {
     private Long id;
-    private String nom;
-    private String prenom;
+    private int registrationNumber;
+    private String name;
+    private String lastName;
     private String email;
-    private Long departementId;
+    private Long departmentId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

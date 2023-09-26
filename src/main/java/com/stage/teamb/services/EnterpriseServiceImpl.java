@@ -70,8 +70,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + enterpriseDTO.getId());
                 });
-        existingEnterprise.setLocalEnterprise(enterpriseDTO.getLocalEntreprise());
-        existingEnterprise.setEnterpriseName(enterpriseDTO.getNomEntreprise());
+        existingEnterprise.setEnterpriseLocal(enterpriseDTO.getEnterpriseLocal());
+        existingEnterprise.setEnterpriseName(enterpriseDTO.getEnterpriseName());
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {

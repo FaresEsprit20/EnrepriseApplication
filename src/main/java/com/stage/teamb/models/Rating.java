@@ -17,19 +17,19 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @Builder
 public class Rating implements Serializable  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean value;
-    @ManyToOne
-    private Publication publication;
-    @ManyToOne
-    private Employee employee;
-
-    @Column
     private LocalDateTime createdAt;
-    @Column
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Publication publication;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Employee employee;
 
     @PrePersist
     protected void onCreate() {

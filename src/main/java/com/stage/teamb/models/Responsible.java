@@ -17,17 +17,11 @@ import java.util.List;
 @Builder
 public class Responsible extends Users implements Serializable  {
 
-    @Column(unique = true)
-    private int matricule;
-
-    @OneToMany(mappedBy = "responsible", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Event> events;
-
-    @Column
     private LocalDateTime createdAt;
-
-    @Column
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "responsible", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<Event> events;
 
     @PrePersist
     protected void onCreate() {

@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResponsableDTO {
+public class ResponsibleDTO {
     private Long id;
-    private int matricule;
-    private String nom;
-    private String prenom;
+    private int registrationNumber;
+    private String name;
+    private String lastName;
     private List<Long> eventsId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

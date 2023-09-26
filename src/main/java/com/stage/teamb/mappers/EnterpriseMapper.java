@@ -15,8 +15,8 @@ public class EnterpriseMapper {
     public static EnterpriseDTO toDTO(Enterprise enterprise) {
         return EnterpriseDTO.builder()
                 .id(enterprise.getId())
-                .nomEntreprise(enterprise.getEnterpriseName())
-                .localEntreprise(enterprise.getLocalEnterprise())
+                .enterpriseName(enterprise.getEnterpriseName())
+                .enterpriseLocal(enterprise.getEnterpriseLocal())
                 .createdAt(enterprise.getCreatedAt())
                 .updatedAt(enterprise.getUpdatedAt())
                 .build();
@@ -31,8 +31,8 @@ public class EnterpriseMapper {
     public static Enterprise toEntity(EnterpriseDTO enterpriseDTO) {
         return Enterprise.builder()
                 .id(enterpriseDTO.getId())
-                .enterpriseName(enterpriseDTO.getNomEntreprise())
-                .localEnterprise(enterpriseDTO.getLocalEntreprise())
+                .enterpriseName(enterpriseDTO.getEnterpriseName())
+                .enterpriseLocal(enterpriseDTO.getEnterpriseLocal())
                 .createdAt(enterpriseDTO.getCreatedAt())
                 .updatedAt(enterpriseDTO.getUpdatedAt())
                 .build();

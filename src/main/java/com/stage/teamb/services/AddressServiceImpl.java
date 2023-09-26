@@ -71,8 +71,9 @@ public class AddressServiceImpl implements AddressService {
                   log.error("Address not found ");
                     return new RuntimeException("Address not found with id " + addressDto.getId());
                 });
-        existingAddress.setRue(addressDto.getRue());
-        existingAddress.setVille(addressDto.getVille());
+        existingAddress.setStreet(addressDto.getStreet());
+        existingAddress.setStreetCode(addressDto.getStreetCode());
+        existingAddress.setTown(addressDto.getTown());
         try {
             return AddressMapper.toDTO(addressRepository.save(existingAddress));
         }catch (Exception exception){
@@ -83,7 +84,6 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressDTO findAddressByEmployeeId(Long employeeId) {
-
         return AddressMapper.toDTO(addressRepository.findAddressByEmployeeId(employeeId)  .orElseThrow(() -> {
             log.error("Address not found ");
             return new RuntimeException("Address not found with id ");
@@ -100,11 +100,10 @@ public class AddressServiceImpl implements AddressService {
         try {
             Address address = addressRepository.findById(addressId)
                     .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
-
             Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
             // Associate the employee with the address
-            address.setEmployee(employee);
+            address.setUser(employee);
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error associating employee with address: " + ex.getMessage();
@@ -124,7 +123,7 @@ public class AddressServiceImpl implements AddressService {
             Address address = addressRepository.findById(addressId)
                     .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
             // Disassociate the employee from the address
-            address.setEmployee(null);
+            address.setUser(null);
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error disassociating employee from address: " + ex.getMessage();

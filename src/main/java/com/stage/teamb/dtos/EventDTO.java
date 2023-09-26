@@ -14,9 +14,9 @@ import java.util.List;
 @Builder
 public class EventDTO {
     private Long id;
-    private String titre;
+    private String title;
     @JsonProperty("event_date")
-    private LocalDateTime dateE;
+    private LocalDateTime eventDate;
     private List<Long> publishedsId;
     private Long responsableID;
     private LocalDateTime createdAt;

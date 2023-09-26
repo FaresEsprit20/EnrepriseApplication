@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PublicationDTO {
     private Long id;
-    private String nom;
+    private String name;
     private String description;
     private Long employeeId;
     private LocalDateTime createdAt;

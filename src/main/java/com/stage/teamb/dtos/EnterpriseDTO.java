@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class EnterpriseDTO {
     private Long id;
-    private String nomEntreprise;
-    private String localEntreprise;
+    private String enterpriseName;
+    private String enterpriseLocal;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

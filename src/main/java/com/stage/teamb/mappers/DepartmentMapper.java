@@ -15,7 +15,7 @@ public class DepartmentMapper {
     public static DepartmentDTO toDTO(Department department) {
         return DepartmentDTO.builder()
                 .id(department.getId())
-                .nomDep(department.getNomDep())
+                .departmentName(department.getDepartmentName())
                 .entrepriseId(department.getEnterprise() != null ? department.getEnterprise().getId() : null)
                 .createdAt(department.getCreatedAt())
                 .updatedAt(department.getUpdatedAt())
@@ -31,7 +31,7 @@ public class DepartmentMapper {
     public static Department toEntity(DepartmentDTO departmentDTO) {
         return Department.builder()
                 .id(departmentDTO.getId())
-                .nomDep(departmentDTO.getNomDep())
+                .departmentName(departmentDTO.getDepartmentName())
                 .createdAt(departmentDTO.getCreatedAt())
                 .updatedAt(departmentDTO.getUpdatedAt())
                 .build();

@@ -13,9 +13,10 @@ public class AddressMapper {
     public static AddressDTO toDTO(Address address) {
         return AddressDTO.builder()
                 .id(address.getId())
-                .rue(address.getRue())
-                .ville(address.getVille())
-                .employeeId(address.getEmployee() != null ? address.getEmployee().getId() : null)
+                .street(address.getStreet())
+                .streetCode(address.getStreetCode())
+                .town(address.getTown())
+                .employeeId(address.getUser() != null ? address.getUser().getId() : null)
                 .build();
     }
 
@@ -28,8 +29,9 @@ public class AddressMapper {
     public static Address toEntity(AddressDTO addressDTO) {
         return Address.builder()
                 .id(addressDTO.getId())
-                .rue(addressDTO.getRue())
-                .ville(addressDTO.getVille())
+                .street(addressDTO.getStreet())
+                .streetCode(addressDTO.getStreetCode())
+                .town(addressDTO.getTown())
                 .build();
     }
 
@@ -38,4 +40,5 @@ public class AddressMapper {
                 .map(AddressMapper::toEntity)
                 .collect(Collectors.toList());
     }
+
 }

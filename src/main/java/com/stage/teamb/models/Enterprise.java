@@ -18,27 +18,27 @@ import java.util.List;
 @DynamicUpdate
 @Builder
 public class Enterprise implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "enterprise_sequence")
     private Long id;
     private String enterpriseName;
-    private String localEnterprise;
-
-    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Department> departments;
-
-    @Column
+    private String enterpriseLocal;
     private LocalDateTime createdAt;
-    @Column
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    private List<Department> departments;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+
+
 }

@@ -107,9 +107,8 @@ public class PublicationServiceImpl implements PublicationService {
         Publication existingPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         // Update the existing publication with the values from the DTO
-        existingPublication.setNom(publicationDTO.getNom());
+        existingPublication.setName(publicationDTO.getName());
         existingPublication.setDescription(publicationDTO.getDescription());
-
         try {
             return PublicationMapper.toDTO(publicationRepository.save(existingPublication));
         } catch (Exception exception) {

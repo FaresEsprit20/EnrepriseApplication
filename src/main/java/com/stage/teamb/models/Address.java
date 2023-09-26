@@ -20,17 +20,20 @@ public class Address implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String rue;
+    private String street;
     @Column(unique = true, nullable = false)
-    private String codeRue;
-    private String ville;
-    @ManyToOne
-    private Employee employee;
+    private String streetCode;
+    private String town;
 
-    public Address(Long id, String rue, String codeRue, String ville) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Users user;
+
+    public Address(Long id, String street, String streetCode, String town) {
         this.id = id;
-        this.rue = rue;
-        this.codeRue = codeRue;
-        this.ville = ville;
+        this.street = street;
+        this.streetCode = streetCode;
+        this.town = town;
     }
+
+
 }

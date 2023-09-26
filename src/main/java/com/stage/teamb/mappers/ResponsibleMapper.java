@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
+import com.stage.teamb.dtos.ResponsibleDTO;
 import com.stage.teamb.models.Responsible;
-import com.stage.teamb.dtos.ResponsableDTO;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -10,37 +10,37 @@ import java.util.List;
 @NoArgsConstructor
 public class ResponsibleMapper {
 
-    public static ResponsableDTO toDTO(Responsible responsible) {
-        ResponsableDTO responsableDTO = new ResponsableDTO();
+    public static ResponsibleDTO toDTO(Responsible responsible) {
+        ResponsibleDTO responsableDTO = new ResponsibleDTO();
         responsableDTO.setId(responsible.getId());
-        responsableDTO.setNom(responsible.getNom());
-        responsableDTO.setPrenom(responsible.getPrenom());
-        responsableDTO.setMatricule(responsible.getMatricule());
+        responsableDTO.setName(responsible.getName());
+        responsableDTO.setLastName(responsible.getLastName());
+        responsableDTO.setRegistrationNumber(responsible.getRegistrationNumber());
         responsableDTO.setCreatedAt(responsible.getCreatedAt());
         responsableDTO.setUpdatedAt(responsible.getUpdatedAt());
         return responsableDTO;
     }
 
-    public static List<ResponsableDTO> toListDTO(List<Responsible> responsibleList) {
-        List<ResponsableDTO> responsableDTOList = new ArrayList<>();
+    public static List<ResponsibleDTO> toListDTO(List<Responsible> responsibleList) {
+        List<ResponsibleDTO> responsableDTOList = new ArrayList<>();
         responsibleList.forEach(responsible -> {
             responsableDTOList.add(toDTO(responsible));
         });
         return responsableDTOList;
     }
 
-    public static Responsible  toEntity(ResponsableDTO responsableDTO) {
+    public static Responsible  toEntity(ResponsibleDTO responsableDTO) {
         Responsible responsible = new Responsible();
         responsible.setId(responsableDTO.getId());
-        responsible.setNom(responsableDTO.getNom());
-        responsible.setPrenom(responsableDTO.getPrenom());
-        responsible.setMatricule(responsableDTO.getMatricule());
+        responsible.setName(responsableDTO.getName());
+        responsible.setLastName(responsableDTO.getLastName());
+        responsible.setRegistrationNumber(responsableDTO.getRegistrationNumber());
         responsible.setCreatedAt(responsableDTO.getCreatedAt());
         responsible.setUpdatedAt(responsableDTO.getUpdatedAt());
         return responsible;
     }
 
-    public static List<Responsible> toListEntity(List<ResponsableDTO> responsableDTOList) {
+    public static List<Responsible> toListEntity(List<ResponsibleDTO> responsableDTOList) {
         List<Responsible> responsableList = new ArrayList<>();
         responsableDTOList.forEach(responsibleDto -> {
             responsableList.add(toEntity(responsibleDto));

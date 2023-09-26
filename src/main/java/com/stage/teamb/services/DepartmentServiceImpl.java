@@ -75,6 +75,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
+
     @Override
     public DepartmentDTO updateDepartment(DepartmentDTO departmentDTO) {
         Department existingDepartment= departmentRepository.findById(departmentDTO.getId())
@@ -82,7 +83,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + departmentDTO.getId());
                 });
-        existingDepartment.setNomDep(departmentDTO.getNomDep());
+        existingDepartment.setDepartmentName(departmentDTO.getDepartmentName());
         try {
             return DepartmentMapper.toDTO(departmentRepository.save(existingDepartment));
         }catch (Exception exception){
@@ -113,6 +114,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             throw new RuntimeException("Could not add employee to department: " + exception.getMessage());
         }
     }
+
 
     @Override
     public EmployeeDTO removeEmployeeFromDepartment(Long departmentId, Long employeeId) {

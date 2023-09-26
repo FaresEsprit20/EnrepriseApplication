@@ -1,6 +1,6 @@
 package com.stage.teamb.services;
 
-import com.stage.teamb.dtos.ResponsableDTO;
+import com.stage.teamb.dtos.ResponsibleDTO;
 import com.stage.teamb.models.Responsible;
 
 import java.util.List;
@@ -9,15 +9,15 @@ import java.util.Optional;
 public interface ResponsibleService {
 
 
-    List<ResponsableDTO> findAllResponsibles();
+    List<ResponsibleDTO> findAllResponsibles();
 
-    ResponsableDTO findResponsibleById(Long id);
+    ResponsibleDTO findResponsibleById(Long id);
 
-    ResponsableDTO saveResponsible(ResponsableDTO responsableDTO);
+    ResponsibleDTO saveResponsible(ResponsibleDTO responsableDTO);
 
     void deleteResponsibleById(Long id);
 
-    ResponsableDTO updateResponsible(ResponsableDTO responsableDTO);
+    ResponsibleDTO updateResponsible(ResponsibleDTO responsableDTO);
 
     List<Responsible> findAll();
 

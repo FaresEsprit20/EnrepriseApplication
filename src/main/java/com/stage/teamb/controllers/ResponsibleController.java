@@ -62,7 +62,7 @@ package com.stage.teamb.controllers;//package com.stage.teamb.controllers;
 //
 
 
-import com.stage.teamb.dtos.ResponsableDTO;
+import com.stage.teamb.dtos.ResponsibleDTO;
 import com.stage.teamb.services.ResponsibleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class ResponsibleController {
     @GetMapping("/")
     public ResponseEntity<?> getAllResponsibles() {
         try {
-            List<ResponsableDTO> responsableDTOList = responsibleService.findAllResponsibles();
+            List<ResponsibleDTO> responsableDTOList = responsibleService.findAllResponsibles();
             return ResponseEntity.ok(responsableDTOList);
         } catch (RuntimeException exception) {
             log.error("Error retrieving responsibles: " + exception.getMessage());
@@ -99,7 +99,7 @@ public class ResponsibleController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getResponsibleById(@PathVariable Long id) {
         try {
-            ResponsableDTO responsableDTO = responsibleService.findResponsibleById(id);
+            ResponsibleDTO responsableDTO = responsibleService.findResponsibleById(id);
             return ResponseEntity.ok(responsableDTO);
         } catch (RuntimeException exception) {
             log.error("Responsible not found: " + exception.getMessage());
@@ -109,9 +109,9 @@ public class ResponsibleController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createResponsible(@RequestBody ResponsableDTO responsableDTO) {
+    public ResponseEntity<?> createResponsible(@RequestBody ResponsibleDTO responsableDTO) {
         try {
-            ResponsableDTO createdResponsible = responsibleService.saveResponsible(responsableDTO);
+            ResponsibleDTO createdResponsible = responsibleService.saveResponsible(responsableDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdResponsible);
         } catch (RuntimeException exception) {
             log.error("Could not create responsible: " + exception.getMessage());
@@ -121,10 +121,10 @@ public class ResponsibleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateResponsible(@PathVariable Long id, @RequestBody ResponsableDTO responsableDTO) {
+    public ResponseEntity<?> updateResponsible(@PathVariable Long id, @RequestBody ResponsibleDTO responsableDTO) {
         try {
             responsableDTO.setId(id); // Ensure the ID matches the path variable
-            ResponsableDTO updatedResponsible = responsibleService.updateResponsible(responsableDTO);
+            ResponsibleDTO updatedResponsible = responsibleService.updateResponsible(responsableDTO);
             return ResponseEntity.ok(updatedResponsible);
         } catch (RuntimeException exception) {
             log.error("Could not update responsible: " + exception.getMessage());

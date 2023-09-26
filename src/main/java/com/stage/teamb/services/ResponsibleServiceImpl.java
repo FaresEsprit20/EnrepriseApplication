@@ -1,7 +1,7 @@
 package com.stage.teamb.services;
 
 
-import com.stage.teamb.dtos.ResponsableDTO;
+import com.stage.teamb.dtos.ResponsibleDTO;
 import com.stage.teamb.mappers.ResponsibleMapper;
 import com.stage.teamb.models.Responsible;
 import com.stage.teamb.repository.ResponsibleRepository;
@@ -25,17 +25,17 @@ public class ResponsibleServiceImpl implements ResponsibleService {
 
 
     @Override
-    public List<ResponsableDTO> findAllResponsibles() {
+    public List<ResponsibleDTO> findAllResponsibles() {
         return ResponsibleMapper.toListDTO(responsibleRepository.findAll());
     }
 
     @Override
-    public ResponsableDTO findResponsibleById(Long id) {
+    public ResponsibleDTO findResponsibleById(Long id) {
         return ResponsibleMapper.toDTO(responsibleRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 
     @Override
-    public ResponsableDTO saveResponsible(ResponsableDTO responsableDTO) {
+    public ResponsibleDTO saveResponsible(ResponsibleDTO responsableDTO) {
         try {
             return ResponsibleMapper.toDTO(responsibleRepository.save(ResponsibleMapper.toEntity(responsableDTO)));
         }catch (Exception exception){
@@ -60,15 +60,15 @@ public class ResponsibleServiceImpl implements ResponsibleService {
     }
 
     @Override
-    public ResponsableDTO updateResponsible(ResponsableDTO responsableDTO) {
+    public ResponsibleDTO updateResponsible(ResponsibleDTO responsableDTO) {
         Responsible existingResponsible= responsibleRepository.findById(responsableDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + responsableDTO.getId());
                 });
-         existingResponsible.setMatricule(responsableDTO.getMatricule());
-         existingResponsible.setNom(existingResponsible.getNom());
-         existingResponsible.setPrenom(existingResponsible.getPrenom());
+         existingResponsible.setRegistrationNumber(responsableDTO.getRegistrationNumber());
+         existingResponsible.setName(existingResponsible.getName());
+         existingResponsible.setLastName(existingResponsible.getLastName());
         try {
             return ResponsibleMapper.toDTO(responsibleRepository.save(existingResponsible));
         }catch (Exception exception){

@@ -15,10 +15,11 @@ public class EmployeeMapper {
     public static EmployeeDTO toDTO(Employee employee) {
         return EmployeeDTO.builder()
                 .id(employee.getId())
-                .nom(employee.getNom())
-                .prenom(employee.getPrenom())
+                .registrationNumber(employee.getRegistrationNumber())
+                .name(employee.getName())
+                .lastName(employee.getLastName())
                 .email(employee.getEmail())
-                .departementId(employee.getDepartment() != null ? employee.getDepartment().getId() : null)
+                .departmentId(employee.getDepartment() != null ? employee.getDepartment().getId() : null)
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())
                 .build();
@@ -33,8 +34,9 @@ public class EmployeeMapper {
     public static Employee toEntity(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         employee.setId(employeeDTO.getId());
-        employee.setNom(employeeDTO.getNom());
-        employee.setPrenom(employeeDTO.getPrenom());
+        employee.setRegistrationNumber(employeeDTO.getRegistrationNumber());
+        employee.setName(employeeDTO.getName());
+        employee.setLastName(employeeDTO.getLastName());
         employee.setEmail(employeeDTO.getEmail());
         employee.setCreatedAt(employee.getCreatedAt());
         employee.setUpdatedAt(employee.getUpdatedAt());
@@ -45,4 +47,5 @@ public class EmployeeMapper {
                 .map(EmployeeMapper::toEntity)
                 .collect(Collectors.toList());
     }
+
 }

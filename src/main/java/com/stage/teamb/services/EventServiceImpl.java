@@ -67,8 +67,8 @@ public class EventServiceImpl implements EventService {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + eventDTO.getId());
                 });
-        existingEvent.setTitre(eventDTO.getTitre());
-        existingEvent.setDateE(eventDTO.getDateE());
+        existingEvent.setTitle(eventDTO.getTitle());
+        existingEvent.setEventDate(eventDTO.getEventDate());
         try {
             return EventMapper.toDTO(eventRepository.save(existingEvent));
         }catch (Exception exception){
