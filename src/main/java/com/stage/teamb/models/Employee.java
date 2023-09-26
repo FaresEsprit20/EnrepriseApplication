@@ -29,6 +29,8 @@ public class Employee extends Users implements Serializable  {
   @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
   private List<Publication> publications;
 
+  @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+  private List<Address> addresses;
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();

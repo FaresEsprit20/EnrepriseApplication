@@ -16,7 +16,7 @@ public class AddressMapper {
                 .street(address.getStreet())
                 .streetCode(address.getStreetCode())
                 .town(address.getTown())
-                .employeeId(address.getUser() != null ? address.getUser().getId() : null)
+                .employeeId(address.getEmployee() != null ? address.getEmployee().getId() : null)
                 .build();
     }
 

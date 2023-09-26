@@ -93,11 +93,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Perform validation here, if necessary
-        if (address.getUser() != null) {
+        if (address.getEmployee() != null) {
             throw new IllegalArgumentException("Address is already associated with an employee.");
         }
         // Associate the employee with the address
-        address.setUser(employee);
+        address.setEmployee(employee);
         return AddressMapper.toDTO(addressRepository.save(address));
     }
 
@@ -106,11 +106,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
         // Perform validation here, if necessary
-        if (address.getUser() == null) {
+        if (address.getEmployee() == null) {
             throw new IllegalArgumentException("Address is not associated with an employee.");
         }
         // Disassociate the employee from the address
-        address.setUser(null);
+        address.setEmployee(null);
         return AddressMapper.toDTO(addressRepository.save(address));
     }
 

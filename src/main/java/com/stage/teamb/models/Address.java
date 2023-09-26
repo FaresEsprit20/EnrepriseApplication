@@ -26,7 +26,7 @@ public class Address implements Serializable {
     private String town;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users user;
+    private Employee employee;
 
     public Address(Long id, String street, String streetCode, String town) {
         this.id = id;

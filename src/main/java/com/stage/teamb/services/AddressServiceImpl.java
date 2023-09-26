@@ -103,7 +103,7 @@ public class AddressServiceImpl implements AddressService {
             Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
             // Associate the employee with the address
-            address.setUser(employee);
+            address.setEmployee(employee);
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error associating employee with address: " + ex.getMessage();
@@ -123,7 +123,7 @@ public class AddressServiceImpl implements AddressService {
             Address address = addressRepository.findById(addressId)
                     .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
             // Disassociate the employee from the address
-            address.setUser(null);
+            address.setEmployee(null);
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error disassociating employee from address: " + ex.getMessage();
@@ -153,10 +153,9 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.deleteById(id);
     }
 
-
     @Override
     public Boolean existsById(Long id) {
-        return existsById(id);
+        return addressRepository.existsById(id);
     }
 
 

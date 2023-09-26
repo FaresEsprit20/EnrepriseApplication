@@ -25,8 +25,7 @@ public abstract class Users implements Serializable  {
     private Integer tel;
     private String occupation;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Address> addresses;
+
 
 
 }
