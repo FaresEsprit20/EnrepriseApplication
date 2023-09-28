@@ -102,8 +102,8 @@ public class AddressServiceImpl implements AddressService {
                     .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
             Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-            // Associate the employee with the address
-            address.setEmployee(employee);
+            // Use the helper method to associate the employee with the address
+            address.setEmployeeForAddress(employee);
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error associating employee with address: " + ex.getMessage();
@@ -122,8 +122,8 @@ public class AddressServiceImpl implements AddressService {
         try {
             Address address = addressRepository.findById(addressId)
                     .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
-            // Disassociate the employee from the address
-            address.setEmployee(null);
+            // Use the helper method to disassociate the employee from the address
+            address.removeEmployeeFromAddress();
             return AddressMapper.toDTO(addressRepository.save(address));
         } catch (Exception ex) {
             String errorMessage = "Error disassociating employee from address: " + ex.getMessage();
@@ -131,6 +131,8 @@ public class AddressServiceImpl implements AddressService {
             throw new RuntimeException(errorMessage, ex);
         }
     }
+
+
 
 
     @Override

@@ -26,6 +26,7 @@ public class Address implements Serializable {
     private String town;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     public Address(Long id, String street, String streetCode, String town) {
@@ -33,6 +34,14 @@ public class Address implements Serializable {
         this.street = street;
         this.streetCode = streetCode;
         this.town = town;
+    }
+
+    public void setEmployeeForAddress(Employee employee) {
+        this.employee = employee;
+    }
+
+    public void removeEmployeeFromAddress() {
+        this.employee = null;
     }
 
 

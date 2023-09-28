@@ -27,13 +27,14 @@ public class Publication implements Serializable  {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "publication")
     private List<Event> events;
 
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE})
     private List<Rating> rating;
 
     @PrePersist
@@ -46,6 +47,23 @@ public class Publication implements Serializable  {
         updatedAt = LocalDateTime.now();
     }
 
+    public void addEvent(Event event) {
+        event.setPublication(this);
+        this.events.add(event);
+    }
+
+    public void removeEvent(Event event) {
+        event.setPublication(null);
+        this.events.remove(event);
+    }
+
+    public void setEmployeeForPublication(Employee employee) {
+        this.employee = employee;
+    }
+
+    public void removeEmployeeForPublication() {
+        this.employee = null;
+    }
 
 }
 

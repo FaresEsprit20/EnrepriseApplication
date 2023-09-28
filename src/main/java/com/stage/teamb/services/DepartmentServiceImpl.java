@@ -105,7 +105,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
         Employee employee = EmployeeMapper.toEntity(employeeDTO);
-        employee.setDepartment(department);
+        employee.setDepartmentForEmployee(department);
         try {
             Employee savedEmployee = employeeRepository.save(employee);
             return EmployeeMapper.toDTO(savedEmployee);
@@ -126,7 +126,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             log.error("Employee is not associated with the department.");
             throw new RuntimeException("Employee is not associated with the department.");
         }
-        employee.setDepartment(null);
+        employee.removeDepartmentFromEmployee();
         employeeRepository.save(employee);
         return EmployeeMapper.toDTO(employee);
     }
@@ -140,7 +140,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
         // Associate the department with the enterprise
-        department.setEnterprise(enterprise);
+        department.setEnterpriseForDepartment(enterprise);
         // Save the department to update the association
         Department savedDepartment = departmentRepository.save(department);
         // Map the saved department back to a DTO and return it
@@ -153,7 +153,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
         // Disassociate the department from the enterprise
-        department.setEnterprise(null);
+        department.removeEnterpriseFromDepartment();
         // Save the department to update the association
         Department savedDepartment = departmentRepository.save(department);
         // Map the saved department back to a DTO and return it

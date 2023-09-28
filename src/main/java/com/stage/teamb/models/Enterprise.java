@@ -27,7 +27,7 @@ public class Enterprise implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Department> departments;
 
     @PrePersist
@@ -40,5 +40,14 @@ public class Enterprise implements Serializable {
     }
 
 
+    public void addDepartmentToEnterprise(Department department) {
+        this.departments.add(department);
+        department.setEnterpriseForDepartment(this);
+    }
+
+    public void removeDepartmentFromEnterprise(Department department) {
+        this.departments.remove(department);
+        department.removeEnterpriseFromDepartment();
+    }
 
 }

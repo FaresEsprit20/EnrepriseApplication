@@ -97,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Address is already associated with an employee.");
         }
         // Associate the employee with the address
-        address.setEmployee(employee);
+        address.setEmployeeForAddress(employee);
         return AddressMapper.toDTO(addressRepository.save(address));
     }
 
@@ -110,7 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Address is not associated with an employee.");
         }
         // Disassociate the employee from the address
-        address.setEmployee(null);
+        address.removeEmployeeFromAddress();
         return AddressMapper.toDTO(addressRepository.save(address));
     }
 
@@ -131,7 +131,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
         // Assign the department to the employee
-        employee.setDepartment(department);
+        employee.setDepartmentForEmployee(department);
         try {
             return DepartmentMapper.toDTO(departmentRepository.save(department));
         } catch (Exception exception) {
@@ -145,7 +145,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Unassign the department from the employee
-        employee.setDepartment(null);
+        employee.removeDepartmentFromEmployee();
         try {
             return DepartmentMapper.toDTO(departmentRepository.save(employee.getDepartment()));
         } catch (Exception exception) {
@@ -164,8 +164,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         // Create a new Rating entity and set its values
         Rating newRating = new Rating();
-        newRating.setEmployee(employee);
-        newRating.setPublication(publication);
+        newRating.setEmployeeForRating(employee);
+        newRating.setPublicationForRating(publication);
         newRating.setValue(ratingDTO.getValue());
         // Save the new rating to the database
         Rating savedRating = ratingRepository.save(newRating);
@@ -198,16 +198,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-
         // Create a new Publication entity and set its values
         Publication newPublication = new Publication();
-        newPublication.setEmployee(employee);
+        newPublication.setEmployeeForPublication(employee);
         newPublication.setName(publicationDTO.getName());
         newPublication.setDescription(publicationDTO.getDescription());
-
         // Save the new publication to the database
         Publication savedPublication = publicationRepository.save(newPublication);
-
         // Map the saved publication back to a DTO and return it
         return PublicationMapper.toDTO(savedPublication);
     }
@@ -229,7 +226,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deletePublication(Long publicationId) {
         Publication existingPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-
         // Delete the publication
         publicationRepository.delete(existingPublication);
     }
@@ -260,5 +256,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.existsById(id);
     }
    
+
 
 }

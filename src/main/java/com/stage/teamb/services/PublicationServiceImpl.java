@@ -66,7 +66,7 @@ public class PublicationServiceImpl implements PublicationService {
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Create a new Publication entity and set its values
         Publication newPublication = PublicationMapper.toEntity(publicationDTO);
-        newPublication.setEmployee(employee);
+        newPublication.setEmployeeForPublication(employee);
         try {
             // Save the new publication to the database
             Publication savedPublication = publicationRepository.save(newPublication);
@@ -82,17 +82,15 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public PublicationDTO createPublication(PublicationDTO publicationDTO) {
         Long employeeId = publicationDTO.getEmployeeId(); // Get employeeId from the DTO
-
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Create a new Publication entity and set its values
         Publication newPublication = PublicationMapper.toEntity(publicationDTO);
-        newPublication.setEmployee(employee);
+        newPublication.setEmployeeForPublication(employee);
         try {
             // Save the new publication to the database
             Publication savedPublication = publicationRepository.save(newPublication);
-
             // Map the saved publication back to a DTO and return it
             return PublicationMapper.toDTO(savedPublication);
         } catch (Exception exception) {
@@ -138,7 +136,7 @@ public class PublicationServiceImpl implements PublicationService {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         Event event = EventMapper.toEntity(eventDTO); // Use your EventMapper to convert EventDTO to Event
-        event.setPublication(publication);
+        event.setPublicationForEvent(publication);
         Event savedEvent = eventRepository.save(event);
         return EventMapper.toDTO(savedEvent); // Use your EventMapper to convert Event to EventDTO
     }
@@ -154,7 +152,7 @@ public class PublicationServiceImpl implements PublicationService {
             log.error("Event is not associated with the publication.");
             throw new RuntimeException("Event is not associated with the publication.");
         }
-        event.setPublication(null);
+        event.removePublicationForEvent();
         eventRepository.save(event);
     }
 
@@ -184,7 +182,7 @@ public class PublicationServiceImpl implements PublicationService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Associate the publication with the employee
-        publication.setEmployee(employee);
+        publication.setEmployeeForPublication(employee);
         try {
             // Save the updated publication to the database using publicationRepository
             Publication savedPublication = publicationRepository.save(publication);
@@ -200,7 +198,7 @@ public class PublicationServiceImpl implements PublicationService {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         // Dissociate the publication from the employee
-        publication.setEmployee(null);
+        publication.removeEmployeeForPublication();
         try {
             // Save the updated publication to the database using publicationRepository
             Publication savedPublication = publicationRepository.save(publication);
@@ -221,8 +219,8 @@ public class PublicationServiceImpl implements PublicationService {
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + ratingDTO.getEmployeeId()));
         // Create a new Rating entity and set its values
         Rating newRating = RatingMapper.toEntity(ratingDTO);
-        newRating.setPublication(publication);
-        newRating.setEmployee(employee);
+        newRating.setPublicationForRating(publication);
+        newRating.setEmployeeForRating(employee);
         try {
             // Save the new rating to the database
             Rating savedRating = ratingRepository.save(newRating);

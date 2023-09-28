@@ -26,9 +26,11 @@ public class Rating implements Serializable  {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publication_id")
     private Publication publication;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @PrePersist
@@ -39,6 +41,34 @@ public class Rating implements Serializable  {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    // Helper method to associate Publication with Rating
+    public void setPublicationForRating(Publication publication) {
+        this.publication = publication;
+        publication.getRating().add(this);
+    }
+
+    // Helper method to disassociate Publication from Rating
+    public void removePublicationFromRating() {
+        if (this.publication != null) {
+            this.publication.getRating().remove(this);
+            this.publication = null;
+        }
+    }
+
+    // Helper method to associate Employee with Rating
+    public void setEmployeeForRating(Employee employee) {
+        this.employee = employee;
+        employee.getRatings().add(this);
+    }
+
+    // Helper method to disassociate Employee from Rating
+    public void removeEmployeeFromRating() {
+        if (this.employee != null) {
+            this.employee.getRatings().remove(this);
+            this.employee = null;
+        }
     }
 
 }

@@ -27,9 +27,11 @@ public class Event implements Serializable  {
     private LocalDateTime updatedAt;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } , fetch = FetchType.LAZY)
+    @JoinColumn(name = "publication_id")
     private Publication publication;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsible_id")
     private Responsible responsible;
 
     @PrePersist
@@ -42,5 +44,21 @@ public class Event implements Serializable  {
         updatedAt = LocalDateTime.now();
     }
 
+
+    public void setPublicationForEvent(Publication publication) {
+        this.publication = publication;
+    }
+
+    public void setResponsibleForEvent(Responsible responsible) {
+        this.responsible = responsible;
+    }
+
+    public void removePublicationForEvent() {
+        this.publication = null;
+    }
+
+    public void removeResponsibleForEvent() {
+        this.responsible = null;
+    }
 
 }

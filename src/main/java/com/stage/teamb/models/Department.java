@@ -30,7 +30,7 @@ public class Department implements Serializable {
     @JoinColumn(name = "enterprise_id")
     private Enterprise enterprise;
 
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "department")
     private List<Employee> employees;
 
     @PrePersist
@@ -41,6 +41,26 @@ public class Department implements Serializable {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void setEnterpriseForDepartment(Enterprise enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    public void removeEnterpriseFromDepartment() {
+        this.enterprise = null;
+    }
+
+    public void addEmployeeToDepartment(Employee employee) {
+        this.employees.add(employee);
+        employee.setDepartment(this);
+    }
+
+    public void removeEmployeeFromDepartment(Employee employee) {
+        this.employees.remove(employee);
+        employee.removeDepartmentFromEmployee();
+    }
+
+
 
 
 }

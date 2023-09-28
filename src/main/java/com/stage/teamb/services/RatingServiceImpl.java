@@ -58,8 +58,8 @@ public class RatingServiceImpl implements RatingService {
             throw new RuntimeException("Employee has already rated this publication.");
         }
         Rating rating = new Rating();
-        rating.setPublication(publication);
-        rating.setEmployee(employee);
+        rating.setPublicationForRating(publication);
+        rating.setEmployeeForRating(employee);
         rating.setValue(value);
         return RatingMapper.toDTO(ratingRepository.save(rating));
     }

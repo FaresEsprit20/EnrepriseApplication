@@ -5,10 +5,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
-@MappedSuperclass
+
 @Data
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Users implements Serializable  {
 
     @Id
