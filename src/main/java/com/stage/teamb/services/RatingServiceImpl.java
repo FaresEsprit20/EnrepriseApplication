@@ -21,36 +21,30 @@ import java.util.Optional;
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
-    private final PublicationRepository publishedRepository;
+    private final PublicationRepository publicationRepository;
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public RatingServiceImpl(RatingRepository ratingRepository, PublicationRepository publishedRepository, EmployeeRepository employeeRepository) {
+    public RatingServiceImpl(RatingRepository ratingRepository, PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
         this.ratingRepository = ratingRepository;
-        this.publishedRepository = publishedRepository;
+        this.publicationRepository = publicationRepository;
         this.employeeRepository = employeeRepository;
     }
 
 
     @Override
     public List<RatingDTO> findRatingsByEmployeeId(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        List<Rating> ratings = employee.getRatings();
-        return RatingMapper.toListDTO(ratings);
+        return RatingMapper.toListDTO(ratingRepository.findRatingsByEmployeeId(employeeId));
     }
 
     @Override
     public List<RatingDTO> findRatingsByPublicationId(Long publicationId) {
-        Publication publication = publishedRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        List<Rating> ratings = publication.getRating();
-        return RatingMapper.toListDTO(ratings);
+        return RatingMapper.toListDTO(ratingRepository.findRatingsByPublicationId(publicationId));
     }
 
     @Override
     public RatingDTO createRating(Long publicationId, Long employeeId, Boolean value) {
-        Publication publication = publishedRepository.findById(publicationId)
+        Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
@@ -85,6 +79,27 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.deleteById(ratingId);
     }
 
+
+
+
+    @Override
+    public RatingDTO disassociateEmployeeFromRating(Long ratingId) {
+        try {
+            Rating rating = ratingRepository.findById(ratingId)
+                    .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+            // Use the helper method to disassociate the employee from the rating
+            rating.removeEmployeeFromRating();
+            // Save the updated rating
+            Rating updatedRating = ratingRepository.save(rating);
+            return RatingMapper.toDTO(updatedRating);
+        } catch (Exception exception) {
+            log.error("Could not disassociate employee from rating: " + exception.getMessage());
+            throw new RuntimeException("Could not disassociate employee from rating: " + exception.getMessage());
+        }
+    }
+
+
+
     @Override
     public List<Rating> findAll() {
         return ratingRepository.findAll();
@@ -109,4 +124,6 @@ public class RatingServiceImpl implements RatingService {
     public Boolean existsById(Long id) {
         return ratingRepository.existsById(id);
     }
+
+
 }

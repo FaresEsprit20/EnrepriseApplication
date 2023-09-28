@@ -17,7 +17,8 @@ public class EventMapper {
                 .id(event.getId())
                 .title(event.getTitle())
                 .eventDate(event.getEventDate())
-                .responsableID(event.getResponsible() != null ? event.getResponsible().getId() : null)
+                .responsibleID(event.getResponsible() != null ? event.getResponsible().getId() : null)
+                .publicationId(event.getPublication() != null ? event.getResponsible().getId() : null)
                 .createdAt(event.getCreatedAt())
                 .updatedAt(event.getUpdatedAt())
                 .build();

@@ -19,6 +19,14 @@ public interface EventService  {
 
     EventDTO updateEvent(EventDTO eventDTO);
 
+    EventDTO addPublicationToEvent(Long eventId, Long publicationId);
+
+    EventDTO removePublicationFromEvent(Long eventId);
+
+    EventDTO addResponsibleToEvent(Long eventId, Long responsibleId);
+
+    EventDTO removeResponsibleFromEvent(Long eventId);
+
     List<Event> findAll();
 
     Optional<Event> findOne(Long id);

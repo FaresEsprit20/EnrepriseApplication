@@ -92,7 +92,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
-
     @Override
     public List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId) {
         Department department = departmentRepository.findById(departmentId)

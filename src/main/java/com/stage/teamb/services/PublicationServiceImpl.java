@@ -126,10 +126,11 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public List<EventDTO> findEventsByPublicationId(Long publicationId) {
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        return EventMapper.toListDTO(publication.getEvents());
+        List<Event> events = publicationRepository.findEventsByPublicationId(publicationId);
+        return EventMapper.toListDTO(events);
     }
+
+
 
     @Override
     public EventDTO addEventToPublication(Long publicationId, EventDTO eventDTO) {
@@ -169,9 +170,7 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public EmployeeDTO findEmployeeByPublicationId(Long publicationId) {
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        Employee employee = publication.getEmployee();
+        Employee employee = publicationRepository.findEmployeeByPublicationId(publicationId);
         return EmployeeMapper.toDTO(employee);
     }
 
@@ -192,6 +191,7 @@ public class PublicationServiceImpl implements PublicationService {
             throw new RuntimeException("Could not associate employee with publication: " + exception.getMessage());
         }
     }
+
 
     @Override
     public PublicationDTO disassociateEmployeeFromPublication(Long publicationId) {

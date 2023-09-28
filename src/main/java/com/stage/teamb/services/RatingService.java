@@ -19,6 +19,8 @@ public interface RatingService {
 
     void deleteRating(Long ratingId, Long employeeId);
 
+    RatingDTO disassociateEmployeeFromRating(Long ratingId);
+
     List<Rating> findAll();
 
     Optional<Rating> findOne(Long id);

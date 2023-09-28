@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,8 +16,8 @@ public class EventDTO {
     private String title;
     @JsonProperty("event_date")
     private LocalDateTime eventDate;
-    private List<Long> publishedsId;
-    private Long responsableID;
+    private Long publicationId;
+    private Long responsibleID;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
