@@ -1,7 +1,7 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.EventDTO;
-import com.stage.teamb.services.EventService;
+import com.stage.teamb.dtos.event.EventDTO;
+import com.stage.teamb.services.event.EventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

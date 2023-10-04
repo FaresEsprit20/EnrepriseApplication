@@ -67,8 +67,8 @@ package com.stage.teamb.controllers;
 //}
 
 
-import com.stage.teamb.dtos.AddressDTO;
-import com.stage.teamb.services.AddressService;
+import com.stage.teamb.dtos.address.AddressDTO;
+import com.stage.teamb.services.address.AddressService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

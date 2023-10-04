@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
 import com.stage.teamb.models.Employee;
-import com.stage.teamb.dtos.EmployeeDTO;
+import com.stage.teamb.dtos.employee.EmployeeDTO;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 

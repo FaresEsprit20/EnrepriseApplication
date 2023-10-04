@@ -62,8 +62,8 @@ package com.stage.teamb.controllers;//package com.stage.teamb.controllers;
 //
 
 
-import com.stage.teamb.dtos.ResponsibleDTO;
-import com.stage.teamb.services.ResponsibleService;
+import com.stage.teamb.dtos.responsible.ResponsibleDTO;
+import com.stage.teamb.services.responsible.ResponsibleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,10 +1,10 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.EmployeeDTO;
-import com.stage.teamb.dtos.EventDTO;
-import com.stage.teamb.dtos.PublicationDTO;
-import com.stage.teamb.dtos.RatingDTO;
-import com.stage.teamb.services.PublicationService;
+import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.event.EventDTO;
+import com.stage.teamb.dtos.publication.PublicationDTO;
+import com.stage.teamb.dtos.rating.RatingDTO;
+import com.stage.teamb.services.publication.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

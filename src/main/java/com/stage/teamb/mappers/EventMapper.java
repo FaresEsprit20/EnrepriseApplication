@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
 import com.stage.teamb.models.Event;
-import com.stage.teamb.dtos.EventDTO;
+import com.stage.teamb.dtos.event.EventDTO;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 

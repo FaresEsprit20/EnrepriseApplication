@@ -1,6 +1,6 @@
 package com.stage.teamb.mappers;
 
-import com.stage.teamb.dtos.ResponsibleDTO;
+import com.stage.teamb.dtos.responsible.ResponsibleDTO;
 import com.stage.teamb.models.Responsible;
 import lombok.NoArgsConstructor;
 

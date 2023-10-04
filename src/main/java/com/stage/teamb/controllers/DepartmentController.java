@@ -1,9 +1,9 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.DepartmentDTO;
-import com.stage.teamb.dtos.EmployeeDTO;
-import com.stage.teamb.dtos.EnterpriseDTO;
-import com.stage.teamb.services.DepartmentService;
+import com.stage.teamb.dtos.department.DepartmentDTO;
+import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
+import com.stage.teamb.services.department.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

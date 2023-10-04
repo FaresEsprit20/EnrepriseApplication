@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
 import com.stage.teamb.models.Address;
-import com.stage.teamb.dtos.AddressDTO;
+import com.stage.teamb.dtos.address.AddressDTO;
 import lombok.NoArgsConstructor;
 
 import java.util.List;

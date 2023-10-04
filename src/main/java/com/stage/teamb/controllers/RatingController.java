@@ -1,7 +1,7 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.RatingDTO;
-import com.stage.teamb.services.RatingService;
+import com.stage.teamb.dtos.rating.RatingDTO;
+import com.stage.teamb.services.rating.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

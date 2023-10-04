@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
 import com.stage.teamb.models.Rating;
-import com.stage.teamb.dtos.RatingDTO;
+import com.stage.teamb.dtos.rating.RatingDTO;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.stage.teamb.mappers;
 
-import com.stage.teamb.dtos.PublicationDTO;
+import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.models.Publication;
 import lombok.Builder;
 

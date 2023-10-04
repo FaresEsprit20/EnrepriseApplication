@@ -1,7 +1,7 @@
 package com.stage.teamb.mappers;
 
 import com.stage.teamb.models.Enterprise;
-import com.stage.teamb.dtos.EnterpriseDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
