@@ -21,6 +21,7 @@ public class Employee extends Users implements Serializable  {
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
+
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinColumn(name = "department_id")
   private Department department;

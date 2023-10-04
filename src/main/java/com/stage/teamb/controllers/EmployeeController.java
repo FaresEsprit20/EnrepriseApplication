@@ -3,7 +3,6 @@ package com.stage.teamb.controllers;
 import com.stage.teamb.dtos.address.AddressDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.services.employee.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -91,23 +90,5 @@ public class EmployeeController {
         return ResponseEntity.ok(department);
     }
 
-    @PostMapping("/{employeeId}/publication")
-    public ResponseEntity<PublicationDTO> createPublication(
-            @PathVariable Long employeeId, @RequestBody PublicationDTO publicationDTO) {
-        PublicationDTO publication = employeeService.createPublication(employeeId, publicationDTO);
-        return new ResponseEntity<>(publication, HttpStatus.CREATED);
-    }
 
-    @PutMapping("/publication/{publicationId}")
-    public ResponseEntity<PublicationDTO> updatePublication(
-            @PathVariable Long publicationId, @RequestBody PublicationDTO publicationDTO) {
-        PublicationDTO updatedPublication = employeeService.updatePublication(publicationId, publicationDTO);
-        return ResponseEntity.ok(updatedPublication);
-    }
-
-    @DeleteMapping("/publication/{publicationId}")
-    public ResponseEntity<Void> deletePublication(@PathVariable Long publicationId) {
-        employeeService.deletePublication(publicationId);
-        return ResponseEntity.noContent().build();
-    }
 }

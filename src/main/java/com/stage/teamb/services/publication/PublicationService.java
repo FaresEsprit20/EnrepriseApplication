@@ -18,8 +18,6 @@ public interface PublicationService {
 
     List<PublicationDTO> findAllByEmployeeId(Long employeeId);
 
-    PublicationDTO savePublication(Long employeeId, PublicationDTO publicationDTO);
-
     PublicationDTO createPublication(PublicationDTO publicationDTO);
 
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
@@ -41,11 +39,8 @@ public interface PublicationService {
 
     PublicationDTO disassociateEmployeeFromPublication(Long publicationId);
 
-    RatingDTO createRating(RatingDTO ratingDTO);
 
-    RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO);
-
-    void deleteRating(Long ratingId);
+    List<RatingDTO> getRatingForPublication(Long publicationId);
 
     List<Publication> findAll();
 

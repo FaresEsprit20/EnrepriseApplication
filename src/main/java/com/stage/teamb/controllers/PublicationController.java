@@ -3,7 +3,6 @@ package com.stage.teamb.controllers;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.event.EventDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
-import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.services.publication.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/publications")
 public class PublicationController {
+
 
     private final PublicationService publicationService;
 
@@ -62,20 +62,6 @@ public class PublicationController {
         return publicationService.disassociateEmployeeFromPublication(id);
     }
 
-    @PostMapping("/{id}/ratings")
-    public RatingDTO createRating(@PathVariable Long id, @RequestBody RatingDTO ratingDTO) {
-        return publicationService.createRating(ratingDTO);
-    }
-
-    @PutMapping("/ratings/{ratingId}")
-    public RatingDTO updateRating(@PathVariable Long ratingId, @RequestBody RatingDTO ratingDTO) {
-        return publicationService.updateRating(ratingId, ratingDTO);
-    }
-
-    @DeleteMapping("/ratings/{ratingId}")
-    public void deleteRating(@PathVariable Long ratingId) {
-        publicationService.deleteRating(ratingId);
-    }
 
 
 }

@@ -3,10 +3,12 @@ package com.stage.teamb.services.employee;
 import com.stage.teamb.dtos.address.AddressDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.publication.PublicationDTO;
-import com.stage.teamb.dtos.rating.RatingDTO;
-import com.stage.teamb.mappers.*;
-import com.stage.teamb.models.*;
+import com.stage.teamb.mappers.AddressMapper;
+import com.stage.teamb.mappers.DepartmentMapper;
+import com.stage.teamb.mappers.EmployeeMapper;
+import com.stage.teamb.models.Address;
+import com.stage.teamb.models.Department;
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.repository.jpa.address.AddressRepository;
 import com.stage.teamb.repository.jpa.department.DepartmentRepository;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
@@ -84,7 +86,6 @@ public class EmployeeServiceImpl implements EmployeeService {
          existingEmployee.setName(employeeDTO.getName());
          existingEmployee.setLastName(employeeDTO.getLastName());
          existingEmployee.setEmail(employeeDTO.getEmail());
-         existingEmployee.setRegistrationNumber(employeeDTO.getRegistrationNumber());
         try {
             return EmployeeMapper.toDTO(employeeRepository.save(existingEmployee));
         }catch (Exception exception){
@@ -101,9 +102,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Perform validation here, if necessary
-        if (address.getEmployee() != null) {
-            throw new RuntimeException("Address is already associated with an employee.");
-        }
         // Associate the employee with the address
         address.setEmployeeForAddress(employee);
         return AddressMapper.toDTO(addressRepository.save(address));
@@ -111,7 +109,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public AddressDTO disassociateEmployeeFromAddress(Long addressId) {
-        Address address = addressRepository.findById(addressId)
+        Address address = addressRepository.findByIdWithEmployee(addressId)
                 .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
         // Perform validation here, if necessary
         if (address.getEmployee() == null) {
@@ -125,9 +123,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        return EmployeeMapper.toListDTO(department.getEmployees());
+       return EmployeeMapper.toListDTO(employeeRepository.findAllEmployeesByDepartmentId(departmentId));
     }
 
 
@@ -135,7 +131,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public DepartmentDTO assignDepartmentToEmployee(Long employeeId, Long departmentId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
         // Assign the department to the employee
@@ -162,81 +157,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    @Override
-    public RatingDTO createRating(Long employeeId, Long publicationId, RatingDTO ratingDTO) {
-        // Find the employee
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        // Find the publication
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        // Create a new Rating entity and set its values
-        Rating newRating = new Rating();
-        newRating.setEmployeeForRating(employee);
-        newRating.setPublicationForRating(publication);
-        newRating.setValue(ratingDTO.getValue());
-        // Save the new rating to the database
-        Rating savedRating = ratingRepository.save(newRating);
-        // Map the saved rating back to a DTO and return it
-        return RatingMapper.toDTO(savedRating);
-    }
 
-    @Override
-    public RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO) {
-        Rating existingRating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-        // Update the existing rating with the values from the DTO
-        existingRating.setValue(ratingDTO.getValue());
-        // Save the updated rating to the database
-        Rating savedRating = ratingRepository.save(existingRating);
-        // Map the saved rating back to a DTO and return it
-        return RatingMapper.toDTO(savedRating);
-    }
 
-    @Override
-    public void deleteRating(Long ratingId) {
-        Rating existingRating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-        // Delete the rating
-        ratingRepository.delete(existingRating);
-    }
-
-    @Override
-    public PublicationDTO createPublication(Long employeeId, PublicationDTO publicationDTO) {
-        // Find the employee
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        // Create a new Publication entity and set its values
-        Publication newPublication = new Publication();
-        newPublication.setEmployeeForPublication(employee);
-        newPublication.setName(publicationDTO.getName());
-        newPublication.setDescription(publicationDTO.getDescription());
-        // Save the new publication to the database
-        Publication savedPublication = publicationRepository.save(newPublication);
-        // Map the saved publication back to a DTO and return it
-        return PublicationMapper.toDTO(savedPublication);
-    }
-
-    @Override
-    public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
-        Publication existingPublication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        // Update the existing publication with the values from the DTO
-        existingPublication.setName(publicationDTO.getName());
-        existingPublication.setDescription(publicationDTO.getDescription());
-        // Save the updated publication to the database
-        Publication savedPublication = publicationRepository.save(existingPublication);
-        // Map the saved publication back to a DTO and return it
-        return PublicationMapper.toDTO(savedPublication);
-    }
-
-    @Override
-    public void deletePublication(Long publicationId) {
-        Publication existingPublication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        // Delete the publication
-        publicationRepository.delete(existingPublication);
-    }
 
 
     @Override

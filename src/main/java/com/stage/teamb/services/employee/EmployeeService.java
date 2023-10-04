@@ -3,8 +3,6 @@ package com.stage.teamb.services.employee;
 import com.stage.teamb.dtos.address.AddressDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.publication.PublicationDTO;
-import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.models.Employee;
 
 import java.util.List;
@@ -32,17 +30,6 @@ public interface EmployeeService {
 
     DepartmentDTO unassignDepartmentFromEmployee(Long employeeId);
 
-    RatingDTO createRating(Long employeeId, Long publicationId, RatingDTO ratingDTO);
-
-    RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO);
-
-    void deleteRating(Long ratingId);
-
-    PublicationDTO createPublication(Long employeeId, PublicationDTO publicationDTO);
-
-    PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
-
-    void deletePublication(Long publicationId);
 
     List<Employee> findAll();
 

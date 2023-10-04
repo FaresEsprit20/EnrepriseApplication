@@ -101,7 +101,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     public EmployeeDTO addEmployeeToDepartment(Long departmentId, EmployeeDTO employeeDTO) {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        Employee employee = EmployeeMapper.toEntity(employeeDTO);
+        Employee employee = employeeRepository.findById(employeeDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeDTO.getId()));
         employee.setDepartmentForEmployee(department);
         try {
             Employee savedEmployee = employeeRepository.save(employee);
@@ -115,14 +116,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public EmployeeDTO removeEmployeeFromDepartment(Long departmentId, Long employeeId) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        if (!department.getEmployees().contains(employee)) {
-            log.error("Employee is not associated with the department.");
-            throw new RuntimeException("Employee is not associated with the department.");
+        boolean departmentExists = departmentRepository.existsById(departmentId);
+        if(!departmentExists) {
+            throw new RuntimeException("Department not found with id " + departmentId);
         }
+        Employee employee = employeeRepository.findByIdWithDAndDepartment(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+       if(employee == null ) {
+           throw new RuntimeException("Employee is not associated with this department");
+       }
         employee.removeDepartmentFromEmployee();
         employeeRepository.save(employee);
         return EmployeeMapper.toDTO(employee);
@@ -159,21 +161,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public EnterpriseDTO getEnterpriseByDepartmentId(Long departmentId) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        Enterprise enterprise = department.getEnterprise();
-        if (enterprise == null) {
-            throw new RuntimeException("Enterprise not found for department with id " + departmentId);
-        }
+       Enterprise enterprise = enterpriseRepository.findEnterpriseByDepartment(departmentId).orElseThrow(
+               () -> new RuntimeException("Enterprise not found for department with id " + departmentId));
         return EnterpriseMapper.toDTO(enterprise);
     }
 
     @Override
     public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
-        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
-        List<Department> departments = enterprise.getDepartments();
-        return DepartmentMapper.toListDTO(departments);
+        return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));
     }
 
 

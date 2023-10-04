@@ -87,10 +87,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
-        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
-        return DepartmentMapper.toListDTO(enterprise.getDepartments());
+      return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));
     }
+
 
     @Override
     public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {
@@ -124,12 +123,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        if (department.getEnterprise() == null) {
-            throw new RuntimeException("No enterprise associated with department " + departmentId);
-        }
-        return EnterpriseMapper.toDTO(department.getEnterprise());
+        Enterprise enterprise = enterpriseRepository.findEnterpriseByDepartment(departmentId).orElseThrow(
+                () -> new RuntimeException("Enterprise or Department Not Found"));
+        return EnterpriseMapper.toDTO(enterprise);
     }
 
 

@@ -1,7 +1,9 @@
 package com.stage.teamb.services.event;
 
 import com.stage.teamb.dtos.event.EventDTO;
+import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.mappers.EventMapper;
+import com.stage.teamb.mappers.PublicationMapper;
 import com.stage.teamb.models.Event;
 import com.stage.teamb.models.Publication;
 import com.stage.teamb.models.Responsible;
@@ -23,15 +25,13 @@ public class EventServiceImpl implements EventService {
     private final PublicationRepository publicationRepository;
     private final ResponsibleRepository responsibleRepository;
 
+
     @Autowired
     public EventServiceImpl(EventRepository eventRepository, PublicationRepository publicationRepository, ResponsibleRepository responsibleRepository) {
         this.eventRepository = eventRepository;
         this.publicationRepository = publicationRepository;
         this.responsibleRepository = responsibleRepository;
     }
-
-
-
 
     @Override
     public List<EventDTO> findAllEvents() {
@@ -43,6 +43,26 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toDTO(eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 
+    @Override
+    public List<EventDTO> findAllEventsForPublication(Long pubLicationId) {
+        return EventMapper.toListDTO(eventRepository.findAllByPublicationId(pubLicationId));
+    }
+
+    @Override
+    public List<EventDTO> findAllEventsForResponsible(Long responsibleId) {
+        return EventMapper.toListDTO(eventRepository.findAllByResponsibleId(responsibleId));
+    }
+
+    @Override
+    public PublicationDTO findPublicationByEventId(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
+        Publication publication = event.getPublication();
+        if (publication == null) {
+            throw new RuntimeException("No publication associated with event " + eventId);
+        }
+        return PublicationMapper.toDTO(publication);
+    }
     @Override
     public EventDTO saveEvent(EventDTO eventDTO) {
         try {

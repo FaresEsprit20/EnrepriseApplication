@@ -11,7 +11,6 @@ import com.stage.teamb.mappers.RatingMapper;
 import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Event;
 import com.stage.teamb.models.Publication;
-import com.stage.teamb.models.Rating;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.event.EventRepository;
 import com.stage.teamb.repository.jpa.publication.PublicationRepository;
@@ -57,26 +56,6 @@ public class PublicationServiceImpl implements PublicationService {
         List<Publication> publications = Optional.ofNullable(publicationRepository.findByEmployeeId(employeeId))
                 .orElseThrow(() -> new RuntimeException("Publications not found for employee with id " + employeeId));
         return PublicationMapper.toListDTO(publications);
-    }
-
-
-    @Override
-    public PublicationDTO savePublication(Long employeeId, PublicationDTO publicationDTO) {
-        // Find the employee
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        // Create a new Publication entity and set its values
-        Publication newPublication = PublicationMapper.toEntity(publicationDTO);
-        newPublication.setEmployeeForPublication(employee);
-        try {
-            // Save the new publication to the database
-            Publication savedPublication = publicationRepository.save(newPublication);
-            // Map the saved publication back to a DTO and return it
-            return PublicationMapper.toDTO(savedPublication);
-        } catch (Exception exception) {
-            log.error("Error while creating publication: " + exception.getMessage());
-            throw new RuntimeException("Error while creating publication: " + exception.getMessage());
-        }
     }
 
 
@@ -211,52 +190,10 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public RatingDTO createRating(RatingDTO ratingDTO) {
-        // Find the publication by ID
-        Publication publication = publicationRepository.findById(ratingDTO.getPublicationId())
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + ratingDTO.getPublicationId()));
-        // Find the employee by ID
-        Employee employee = employeeRepository.findById(ratingDTO.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + ratingDTO.getEmployeeId()));
-        // Create a new Rating entity and set its values
-        Rating newRating = RatingMapper.toEntity(ratingDTO);
-        newRating.setPublicationForRating(publication);
-        newRating.setEmployeeForRating(employee);
-        try {
-            // Save the new rating to the database
-            Rating savedRating = ratingRepository.save(newRating);
-            // Map the saved rating back to a DTO and return it
-            return RatingMapper.toDTO(savedRating);
-        } catch (Exception exception) {
-            log.error("Error while creating rating: " + exception.getMessage());
-            throw new RuntimeException("Error while creating rating: " + exception.getMessage());
-        }
+    public List<RatingDTO> getRatingForPublication(Long publicationId) {
+        return RatingMapper.toListDTO(publicationRepository.findByIdWithRating(publicationId).getRating());
     }
 
-    @Override
-    public RatingDTO updateRating(Long ratingId, RatingDTO ratingDTO) {
-        Rating existingRating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-        // Update the existing rating with the values from the DTO
-        existingRating.setValue(ratingDTO.getValue());
-        try {
-            // Save the updated rating to the database
-            Rating savedRating = ratingRepository.save(existingRating);
-            // Map the saved rating back to a DTO and return it
-            return RatingMapper.toDTO(savedRating);
-        } catch (Exception exception) {
-            log.error("Could not update rating: " + exception.getMessage());
-            throw new RuntimeException("Could not update rating: " + exception.getMessage());
-        }
-    }
-
-    @Override
-    public void deleteRating(Long ratingId) {
-        Rating existingRating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-        // Delete the rating
-        ratingRepository.delete(existingRating);
-    }
 
     @Override
     public List<Publication> findAll() {

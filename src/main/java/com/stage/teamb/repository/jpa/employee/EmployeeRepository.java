@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
@@ -19,6 +20,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     @Query("SELECT e FROM Employee e LEFT JOIN FETCH e.ratings WHERE e.id = :employeeId")
     Employee findByIdWithRatings(Long employeeId);
+
+    @Query("SELECT e FROM Employee e JOIN FETCH e.department d WHERE e.id = :employeeId")
+    Optional<Employee> findByIdWithDAndDepartment(Long employeeId);
+
 
     @Query("SELECT e FROM Employee e LEFT JOIN FETCH e.publications WHERE e.id = :employeeId")
     Employee findByIdWithPublications(Long employeeId);

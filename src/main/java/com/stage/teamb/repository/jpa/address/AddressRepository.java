@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address,Long> {
@@ -14,7 +15,7 @@ public interface AddressRepository extends JpaRepository<Address,Long> {
     List<Address> findAddressesByEmployeeId(Long employeeId);
 
     @Query("SELECT a FROM Address a LEFT JOIN FETCH a.employee WHERE a.id = :addressId")
-    Address findByIdWithEmployee(Long addressId);
+    Optional<Address> findByIdWithEmployee(Long addressId);
 
     @Query("SELECT a FROM Address a LEFT JOIN FETCH a.employee WHERE a.id = :addressId")
     Address findByIdEagerly(Long addressId);
