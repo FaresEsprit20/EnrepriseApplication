@@ -21,6 +21,7 @@ public class CustomException extends RuntimeException {
     public CustomException(String message, int code) {
         this.message = message;
         this.status_code = code;
+        errors.add(message);
     }
 
 

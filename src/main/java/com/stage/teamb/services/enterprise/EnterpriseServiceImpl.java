@@ -19,7 +19,6 @@ import java.util.Optional;
 @Slf4j
 public class EnterpriseServiceImpl implements EnterpriseService {
 
-
     private final EnterpriseRepository enterpriseRepository;
     private final DepartmentRepository departmentRepository;
 
@@ -83,13 +82,10 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         }
     }
 
-
-
     @Override
     public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
       return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));
     }
-
 
     @Override
     public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {

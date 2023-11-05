@@ -23,8 +23,7 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
     @Query("SELECT p FROM Publication p LEFT JOIN FETCH p.rating WHERE p.id = :publicationId")
     Publication findByIdWithRating(Long publicationId);
 
-    @Query("SELECT p FROM Publication p LEFT JOIN FETCH p.employee LEFT JOIN FETCH p.events WHERE p.id = :id")
-    Publication findByIdEagerly(Long publicationId);
+
 
 
 }

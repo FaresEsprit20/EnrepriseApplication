@@ -14,7 +14,6 @@ import com.stage.teamb.models.Publication;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.event.EventRepository;
 import com.stage.teamb.repository.jpa.publication.PublicationRepository;
-import com.stage.teamb.repository.jpa.rating.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,15 +28,13 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationRepository publicationRepository;
     private final EmployeeRepository employeeRepository;
     private final EventRepository eventRepository;
-    private final RatingRepository ratingRepository;
 
 
     @Autowired
-    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository, EventRepository eventRepository, RatingRepository ratingRepository) {
+    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository, EventRepository eventRepository) {
         this.publicationRepository = publicationRepository;
         this.employeeRepository = employeeRepository;
         this.eventRepository = eventRepository;
-        this.ratingRepository = ratingRepository;
     }
 
 
@@ -125,14 +122,8 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public void removeEventFromPublication(Long publicationId, Long eventId) {
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
-        if (!publication.getEvents().contains(event)) {
-            log.error("Event is not associated with the publication.");
-            throw new RuntimeException("Event is not associated with the publication.");
-        }
         event.removePublicationForEvent();
         eventRepository.save(event);
     }

@@ -107,6 +107,7 @@ public class ResponsibleServiceImpl implements ResponsibleService {
         return responsibleRepository.existsById(id);
     }
 
+
 }
 
 

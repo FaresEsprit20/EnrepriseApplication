@@ -63,6 +63,7 @@ public class EventServiceImpl implements EventService {
         }
         return PublicationMapper.toDTO(publication);
     }
+
     @Override
     public EventDTO saveEvent(EventDTO eventDTO) {
         try {
@@ -91,16 +92,16 @@ public class EventServiceImpl implements EventService {
             Event existingEvent = eventRepository.findById(eventDTO.getId())
                     .orElseThrow(() -> new RuntimeException("Event not found with id " + eventDTO.getId()));
             // Find the publication and responsible entities
-            Publication publication = publicationRepository.findById(eventDTO.getPublicationId())
-                    .orElseThrow(() -> new RuntimeException("Publication not found with id " + eventDTO.getPublicationId()));
-            Responsible responsible = responsibleRepository.findById(eventDTO.getResponsibleID())
-                    .orElseThrow(() -> new RuntimeException("Responsible not found with id " + eventDTO.getResponsibleID()));
+//            Publication publication = publicationRepository.findById(eventDTO.getPublicationId())
+//                    .orElseThrow(() -> new RuntimeException("Publication not found with id " + eventDTO.getPublicationId()));
+//            Responsible responsible = responsibleRepository.findById(eventDTO.getResponsibleID())
+//                    .orElseThrow(() -> new RuntimeException("Responsible not found with id " + eventDTO.getResponsibleID()));
             // Update event fields
             existingEvent.setTitle(eventDTO.getTitle());
             existingEvent.setEventDate(eventDTO.getEventDate());
             // Associate the event with the new publication and responsible using helper methods
-            existingEvent.setPublicationForEvent(publication);
-            existingEvent.setResponsibleForEvent(responsible);
+//            existingEvent.setPublicationForEvent(publication);
+//            existingEvent.setResponsibleForEvent(responsible);
             // Save the updated event
             Event updatedEvent = eventRepository.save(existingEvent);
             return EventMapper.toDTO(updatedEvent);
@@ -224,8 +225,6 @@ public class EventServiceImpl implements EventService {
     public Boolean existsById(Long id) {
         return eventRepository.existsById(id);
     }
-
-
 
 
 }

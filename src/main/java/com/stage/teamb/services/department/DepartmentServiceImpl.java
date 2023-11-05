@@ -25,11 +25,9 @@ import java.util.Optional;
 @Slf4j
 public class DepartmentServiceImpl implements DepartmentService {
 
-
   private final DepartmentRepository departmentRepository;
   private final EmployeeRepository employeeRepository;
   private final EnterpriseRepository enterpriseRepository;
-
 
 
     @Autowired
