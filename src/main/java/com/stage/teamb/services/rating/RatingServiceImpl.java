@@ -99,6 +99,30 @@ public class RatingServiceImpl implements RatingService {
     }
 
 
+    @Override
+    public RatingDTO upVote(Long publicationId, Long employeeId) {
+        return vote(publicationId, employeeId, true);
+    }
+
+    @Override
+    public RatingDTO downVote(Long publicationId, Long employeeId) {
+        return vote(publicationId, employeeId, false);
+    }
+
+    private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
+        Publication publication = publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+
+        Optional<Rating> existingRating = ratingRepository.findByPublicationIdAndEmployeeId(publicationId, employeeId);
+
+        if (existingRating.isPresent()) {
+            return  this.updateRating(existingRating.get().getId(), value, employeeId);
+        } else {
+            return this.createRating(publicationId, employeeId, value);
+        }
+    }
 
     @Override
     public List<Rating> findAll() {

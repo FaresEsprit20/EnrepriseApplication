@@ -21,6 +21,10 @@ public interface RatingService {
 
     RatingDTO disassociateEmployeeFromRating(Long ratingId);
 
+    RatingDTO upVote(Long publicationId, Long employeeId);
+
+    RatingDTO downVote(Long publicationId, Long employeeId);
+
     List<Rating> findAll();
 
     Optional<Rating> findOne(Long id);

@@ -53,7 +53,27 @@ public class RatingController {
     }
 
 
+    @PostMapping("/upvote/{publicationId}/{employeeId}")
+    public ResponseEntity<RatingDTO> upVote(@PathVariable Long publicationId, @PathVariable Long employeeId) {
+        try {
+            RatingDTO ratingDTO = ratingService.upVote(publicationId, employeeId);
+            return new ResponseEntity<>(ratingDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle exception and return appropriate response
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @PostMapping("/downvote/{publicationId}/{employeeId}")
+    public ResponseEntity<RatingDTO> downVote(@PathVariable Long publicationId, @PathVariable Long employeeId) {
+        try {
+            RatingDTO ratingDTO = ratingService.downVote(publicationId, employeeId);
+            return new ResponseEntity<>(ratingDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle exception and return appropriate response
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 

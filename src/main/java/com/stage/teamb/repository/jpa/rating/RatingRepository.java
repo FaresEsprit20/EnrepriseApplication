@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RatingRepository extends JpaRepository<Rating,Long> {
@@ -23,6 +24,8 @@ public interface RatingRepository extends JpaRepository<Rating,Long> {
 
     @Query("SELECT r FROM Rating r LEFT JOIN FETCH r.employee WHERE r.id = :ratingId")
     Rating findByIdWithEmployee(Long ratingId);
+
+    Optional<Rating> findByPublicationIdAndEmployeeId(Long publicationId, Long employeeId);
 
     @Query("SELECT r FROM Rating r LEFT JOIN FETCH r.publication LEFT JOIN FETCH r.employee WHERE r.id = :ratingId")
     Rating findByIdEagerly(Long ratingId);

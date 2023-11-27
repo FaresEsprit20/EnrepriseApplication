@@ -1,10 +1,10 @@
 package com.stage.teamb.models;
 
+import com.stage.teamb.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,10 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
-@Builder
 @Entity
-@DiscriminatorValue("Responsible")
-public class Employee extends Users implements Serializable  {
+@DiscriminatorValue("Employee")
+public class Employee extends Users {
 
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
@@ -37,6 +36,7 @@ public class Employee extends Users implements Serializable  {
 
   @PrePersist
   protected void onCreate() {
+    this.setRole(UserRole.ROLE_EMPLOYEE);
     createdAt = LocalDateTime.now();
   }
 
