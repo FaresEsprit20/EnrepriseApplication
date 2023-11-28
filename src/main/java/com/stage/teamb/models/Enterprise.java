@@ -27,7 +27,7 @@ public class Enterprise implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "enterprise", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
     private List<Department> departments;
 
     @PrePersist

@@ -1,12 +1,15 @@
 package com.stage.teamb.models;
 
+import com.stage.teamb.config.security.token.Token;
 import com.stage.teamb.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -14,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @DynamicUpdate
 @Entity
-@DiscriminatorValue("Employee")
+@DiscriminatorValue("2")
 public class Employee extends Users {
 
   private LocalDateTime createdAt;
@@ -22,7 +25,7 @@ public class Employee extends Users {
 
 
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-  @JoinColumn(name = "department_id")
+  @JoinColumn(name = "department_id", updatable = true, nullable = true)
   private Department department;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
@@ -36,7 +39,7 @@ public class Employee extends Users {
 
   @PrePersist
   protected void onCreate() {
-    this.setRole(UserRole.ROLE_EMPLOYEE);
+    this.setRole(UserRole.EMPLOYEE);
     createdAt = LocalDateTime.now();
   }
 
@@ -45,6 +48,19 @@ public class Employee extends Users {
     updatedAt = LocalDateTime.now();
   }
 
+  @Builder // Explicitly specify @Builder
+  public Employee(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
+                  Integer tel, String occupation, String password, UserRole role, List<Token> tokens,
+                  LocalDateTime createdAt, LocalDateTime updatedAt, Department department,
+                  List<Rating> ratings, List<Publication> publications, List<Address> addresses) {
+    super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.EMPLOYEE, tokens);
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.department = department;
+    this.ratings = ratings;
+    this.publications = publications;
+    this.addresses = addresses;
+  }
 
 
   public void setDepartmentForEmployee(Department department) {
