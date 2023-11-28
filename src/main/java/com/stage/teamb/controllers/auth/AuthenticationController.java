@@ -2,18 +2,17 @@ package com.stage.teamb.controllers.auth;
 
 import com.stage.teamb.dtos.auth.AuthenticationRequest;
 import com.stage.teamb.dtos.auth.AuthenticationResponse;
+import com.stage.teamb.dtos.auth.ChangePasswordRequest;
 import com.stage.teamb.dtos.auth.RegisterRequest;
 import com.stage.teamb.services.auth.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -51,7 +50,14 @@ public class AuthenticationController {
         authService.refreshToken(request, response);
     }
 
-
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser
+    ) {
+        authService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

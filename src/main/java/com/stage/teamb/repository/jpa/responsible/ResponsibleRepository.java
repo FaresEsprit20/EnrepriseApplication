@@ -14,11 +14,5 @@ public interface ResponsibleRepository extends JpaRepository<Responsible, Long> 
     @Query("SELECT r FROM Responsible r WHERE r.name = :name OR r.lastName = :lastname")
     List<Responsible> findAllResponsibleByNameOrLastName(@Param("name") String name, @Param("lastname") String lastName);
 
-    @Query("SELECT r FROM Responsible r LEFT JOIN FETCH r.events WHERE r.id = :responsibleId")
-    Responsible findByIdWithEvents(Long responsibleId);
-
-    @Query("SELECT r FROM Responsible r LEFT JOIN FETCH r.events WHERE r.id = :responsibleId")
-    Responsible findByIdEagerly(Long responsibleId);
-
 
 }
