@@ -52,15 +52,18 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
                                 .requestMatchers(PUT,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
                                 .requestMatchers(DELETE,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
-                                //events
-                                .requestMatchers(GET,"/api/events/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
-                                .requestMatchers(POST,"/api/events/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
                                 //publications
                                 .requestMatchers(GET,"/api/publications/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                .requestMatchers(POST,"/api/publications/**").hasAnyRole(UserRole.EMPLOYEE.name())
+                                .requestMatchers(PUT,"/api/publications/**").hasAnyRole(UserRole.EMPLOYEE.name())
+                                .requestMatchers(DELETE,"/api/publications/**").hasAnyRole(UserRole.EMPLOYEE.name())
                                 //ratings
                                 .requestMatchers(GET,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                .requestMatchers(POST,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name())
+                                .requestMatchers(PUT,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name())
+                                .requestMatchers(DELETE,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name())
                                 //responsibles
-                                .requestMatchers(GET,"/api/responsibles/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                .requestMatchers("/api/responsibles/**").hasAnyRole(UserRole.RESPONSIBLE.name())
 //                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                                 .anyRequest()
                                 .authenticated()
