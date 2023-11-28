@@ -23,9 +23,6 @@ public class Responsible extends Users   {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "responsible", cascade = CascadeType.MERGE)
-    private List<Event> events;
-
     @PrePersist
     protected void onCreate() {
         this.setRole(UserRole.RESPONSIBLE);
@@ -45,17 +42,5 @@ public class Responsible extends Users   {
         this.updatedAt = updatedAt;
     }
 
-
-
-
-        public void addEvent(Event event) {
-        event.setResponsible(this);
-        this.events.add(event);
-    }
-
-    public void removeEvent(Event event) {
-        event.setResponsible(null);
-        this.events.remove(event);
-    }
 
 }

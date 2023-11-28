@@ -1,7 +1,6 @@
 package com.stage.teamb.services.publication;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.event.EventDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.models.Publication;
@@ -23,15 +22,6 @@ public interface PublicationService {
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
 
     void deletePublication(Long publicationId);
-
-    List<EventDTO> findEventsByPublicationId(Long publicationId);
-
-    EventDTO addEventToPublication(Long publicationId, EventDTO eventDTO);
-
-
-    void removeEventFromPublication(Long publicationId, Long eventId);
-
-    PublicationDTO findPublicationByEventId(Long eventId);
 
     EmployeeDTO findEmployeeByPublicationId(Long publicationId);
 

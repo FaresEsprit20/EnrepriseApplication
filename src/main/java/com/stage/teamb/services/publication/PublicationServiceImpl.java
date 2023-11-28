@@ -1,18 +1,14 @@
 package com.stage.teamb.services.publication;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.event.EventDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.mappers.EmployeeMapper;
-import com.stage.teamb.mappers.EventMapper;
 import com.stage.teamb.mappers.PublicationMapper;
 import com.stage.teamb.mappers.RatingMapper;
 import com.stage.teamb.models.Employee;
-import com.stage.teamb.models.Event;
 import com.stage.teamb.models.Publication;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
-import com.stage.teamb.repository.jpa.event.EventRepository;
 import com.stage.teamb.repository.jpa.publication.PublicationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +23,13 @@ public class PublicationServiceImpl implements PublicationService {
 
     private final PublicationRepository publicationRepository;
     private final EmployeeRepository employeeRepository;
-    private final EventRepository eventRepository;
+
 
 
     @Autowired
-    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository, EventRepository eventRepository) {
+    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
         this.publicationRepository = publicationRepository;
         this.employeeRepository = employeeRepository;
-        this.eventRepository = eventRepository;
     }
 
 
@@ -100,44 +95,6 @@ public class PublicationServiceImpl implements PublicationService {
         publicationRepository.delete(existingPublication);
     }
 
-
-    @Override
-    public List<EventDTO> findEventsByPublicationId(Long publicationId) {
-        List<Event> events = eventRepository.findAllByPublicationId(publicationId);
-        return EventMapper.toListDTO(events);
-    }
-
-
-
-    @Override
-    public EventDTO addEventToPublication(Long publicationId, EventDTO eventDTO) {
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        Event event = EventMapper.toEntity(eventDTO); // Use your EventMapper to convert EventDTO to Event
-        event.setPublicationForEvent(publication);
-        Event savedEvent = eventRepository.save(event);
-        return EventMapper.toDTO(savedEvent); // Use your EventMapper to convert Event to EventDTO
-    }
-
-
-    @Override
-    public void removeEventFromPublication(Long publicationId, Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
-        event.removePublicationForEvent();
-        eventRepository.save(event);
-    }
-
-    @Override
-    public PublicationDTO findPublicationByEventId(Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found with id " + eventId));
-        Publication publication = event.getPublication();
-        if (publication == null) {
-            throw new RuntimeException("No publication associated with event " + eventId);
-        }
-        return PublicationMapper.toDTO(publication);
-    }
 
     @Override
     public EmployeeDTO findEmployeeByPublicationId(Long publicationId) {

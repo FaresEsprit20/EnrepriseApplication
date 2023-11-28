@@ -27,8 +27,6 @@ public class Publication implements Serializable  {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "publication")
-    private List<Event> events;
 
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
@@ -47,15 +45,6 @@ public class Publication implements Serializable  {
         updatedAt = LocalDateTime.now();
     }
 
-    public void addEvent(Event event) {
-        event.setPublication(this);
-        this.events.add(event);
-    }
-
-    public void removeEvent(Event event) {
-        event.setPublication(null);
-        this.events.remove(event);
-    }
 
     public void setEmployeeForPublication(Employee employee) {
         this.employee = employee;

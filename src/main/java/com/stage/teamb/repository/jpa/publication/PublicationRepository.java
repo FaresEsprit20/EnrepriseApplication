@@ -17,9 +17,6 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
     @Query("SELECT p FROM Publication p LEFT JOIN FETCH p.employee WHERE p.id = :publicationId")
     Publication findByIdWithEmployee(Long publicationId);
 
-    @Query("SELECT p FROM Publication p LEFT JOIN FETCH p.events WHERE p.id = :publicationId")
-    Publication findByIdWithEvents(Long publicationId);
-
     @Query("SELECT p FROM Publication p LEFT JOIN FETCH p.rating WHERE p.id = :publicationId")
     Publication findByIdWithRating(Long publicationId);
 

@@ -1,7 +1,6 @@
 package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
-import com.stage.teamb.dtos.event.EventDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.services.publication.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +22,41 @@ public class PublicationController {
         this.publicationService = publicationService;
     }
 
-    @GetMapping("/{publicationId}/events")
-    public ResponseEntity<List<EventDTO>> findEventsByPublicationId(@PathVariable Long publicationId) {
-        List<EventDTO> events = publicationService.findEventsByPublicationId(publicationId);
-        return ResponseEntity.ok(events);
+
+    @GetMapping
+    public ResponseEntity<List<PublicationDTO>> getAllPublications() {
+        List<PublicationDTO> publications = publicationService.findAllPublications();
+        return ResponseEntity.ok(publications);
     }
 
-    @PostMapping("/{publicationId}/events")
-    public ResponseEntity<EventDTO> addEventToPublication(
-            @PathVariable Long publicationId,
-            @RequestBody EventDTO eventDTO) {
-        EventDTO addedEvent = publicationService.addEventToPublication(publicationId, eventDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedEvent);
+    @GetMapping("/{id}")
+    public ResponseEntity<PublicationDTO> getPublicationById(@PathVariable Long id) {
+        PublicationDTO publication = publicationService.findPublicationById(id);
+        return ResponseEntity.ok(publication);
     }
 
-    @DeleteMapping("/{publicationId}/events/{eventId}")
-    public void removeEventFromPublication(@PathVariable Long publicationId, @PathVariable Long eventId) {
-        publicationService.removeEventFromPublication(publicationId, eventId);
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<PublicationDTO>> getPublicationsByEmployeeId(@PathVariable Long employeeId) {
+        List<PublicationDTO> publications = publicationService.findAllByEmployeeId(employeeId);
+        return ResponseEntity.ok(publications);
     }
 
-    @GetMapping("/events/{eventId}/publication")
-    public PublicationDTO getPublicationByEventId(@PathVariable Long eventId) {
-        return publicationService.findPublicationByEventId(eventId);
+    @PostMapping
+    public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationDTO publicationDTO) {
+        PublicationDTO createdPublication = publicationService.createPublication(publicationDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPublication);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PublicationDTO> updatePublication(@PathVariable Long id, @RequestBody PublicationDTO publicationDTO) {
+        PublicationDTO updatedPublication = publicationService.updatePublication(id, publicationDTO);
+        return ResponseEntity.ok(updatedPublication);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePublication(@PathVariable Long id) {
+        publicationService.deletePublication(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/employee")

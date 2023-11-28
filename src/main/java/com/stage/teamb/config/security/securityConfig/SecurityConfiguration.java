@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -37,7 +38,29 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/enterprise/**").hasAnyRole(UserRole.EMPLOYEE.name())
+                                //addresses
+                                .requestMatchers("/api/addresses/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                //departments
+                                .requestMatchers("/api/departments/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                //employees
+                                .requestMatchers(GET,"/api/employees/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                .requestMatchers(POST,"/api/employees/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                .requestMatchers(PUT,"/api/employees/**").hasAnyRole(UserRole.RESPONSIBLE.name(), UserRole.EMPLOYEE.name())
+                                .requestMatchers(DELETE,"/api/employees/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                //enterprises
+                                .requestMatchers(GET,"/api/enterprises/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                .requestMatchers(POST,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                .requestMatchers(PUT,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                .requestMatchers(DELETE,"/api/enterprises/**").hasAnyRole(UserRole.RESPONSIBLE.name())
+                                //events
+                                .requestMatchers(GET,"/api/events/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                .requestMatchers(POST,"/api/events/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                //publications
+                                .requestMatchers(GET,"/api/publications/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                //ratings
+                                .requestMatchers(GET,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name(), UserRole.RESPONSIBLE.name())
+                                //responsibles
+                                .requestMatchers(GET,"/api/responsibles/**").hasAnyRole(UserRole.RESPONSIBLE.name())
 //                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                                 .anyRequest()
                                 .authenticated()
