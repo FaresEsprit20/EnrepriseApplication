@@ -1,9 +1,6 @@
 package com.stage.teamb.controllers.auth;
 
-import com.stage.teamb.dtos.auth.AuthenticationRequest;
-import com.stage.teamb.dtos.auth.AuthenticationResponse;
-import com.stage.teamb.dtos.auth.ChangePasswordRequest;
-import com.stage.teamb.dtos.auth.RegisterRequest;
+import com.stage.teamb.dtos.auth.*;
 import com.stage.teamb.services.auth.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,11 +40,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
+    public ResponseEntity<RefreshTokenResponse> getRefreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        authService.refreshToken(request, response);
+        return authService.refreshToken(request, response);
     }
 
     @PatchMapping
@@ -57,6 +54,16 @@ public class AuthenticationController {
     ) {
         authService.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/is-token-expired")
+    public ResponseEntity<Boolean> isTokenExpired(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        // Extract the token from the Authorization header
+        String token = authorizationHeader.replace("Bearer ", "");
+        boolean isExpired = authService.isTokenExpired(token);
+        return ResponseEntity.ok(isExpired);
     }
 
 

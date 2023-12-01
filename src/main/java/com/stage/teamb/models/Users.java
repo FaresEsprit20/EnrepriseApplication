@@ -1,6 +1,5 @@
 package com.stage.teamb.models;
 
-import com.stage.teamb.config.security.token.Token;
 import com.stage.teamb.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,12 +39,11 @@ public class Users implements UserDetails{
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

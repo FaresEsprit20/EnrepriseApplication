@@ -24,7 +24,7 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/find/all")
     public ResponseEntity<?> getAllAddresses() {
         try {
             List<AddressDTO> addressDTOList = addressService.findAllAddresses();
@@ -36,7 +36,7 @@ public class AddressController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<?> getAddressById(@PathVariable Long id) {
         try {
             AddressDTO addressDTO = addressService.findAddressById(id);
@@ -48,7 +48,7 @@ public class AddressController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<?> createAddress(@RequestBody AddressDTO addressDTO) {
         try {
             AddressDTO createdAddress = addressService.saveAddress(addressDTO);
@@ -60,7 +60,7 @@ public class AddressController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateAddress(@PathVariable Long id, @RequestBody AddressDTO addressDTO) {
         try {
             addressDTO.setId(id); // Ensure the ID matches the path variable
@@ -73,7 +73,7 @@ public class AddressController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteAddressById(@PathVariable Long id) {
         try {
             addressService.deleteAddressById(id);

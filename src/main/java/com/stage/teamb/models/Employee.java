@@ -1,6 +1,5 @@
 package com.stage.teamb.models;
 
-import com.stage.teamb.config.security.token.Token;
 import com.stage.teamb.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,10 +49,10 @@ public class Employee extends Users {
 
   @Builder // Explicitly specify @Builder
   public Employee(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
-                  Integer tel, String occupation, String password, UserRole role, List<Token> tokens,
+                  Integer tel, String occupation, String password, UserRole role,
                   LocalDateTime createdAt, LocalDateTime updatedAt, Department department,
                   List<Rating> ratings, List<Publication> publications, List<Address> addresses) {
-    super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.EMPLOYEE, tokens);
+    super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.EMPLOYEE);
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.department = department;

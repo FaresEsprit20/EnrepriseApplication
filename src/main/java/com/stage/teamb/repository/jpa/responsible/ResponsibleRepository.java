@@ -14,5 +14,4 @@ public interface ResponsibleRepository extends JpaRepository<Responsible, Long> 
     @Query("SELECT r FROM Responsible r WHERE r.name = :name OR r.lastName = :lastname")
     List<Responsible> findAllResponsibleByNameOrLastName(@Param("name") String name, @Param("lastname") String lastName);
 
-
 }

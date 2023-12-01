@@ -1,14 +1,7 @@
 package com.stage.teamb.services.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stage.teamb.config.security.jwt.JwtService;
-import com.stage.teamb.config.security.token.Token;
-import com.stage.teamb.config.security.token.TokenRepository;
-import com.stage.teamb.config.security.token.TokenType;
-import com.stage.teamb.dtos.auth.AuthenticationRequest;
-import com.stage.teamb.dtos.auth.AuthenticationResponse;
-import com.stage.teamb.dtos.auth.ChangePasswordRequest;
-import com.stage.teamb.dtos.auth.RegisterRequest;
+import com.stage.teamb.dtos.auth.*;
 import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Responsible;
@@ -22,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +37,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    private final ResponsibleRepository responsibleRepository;
    private final UsersRepository usersRepository;
 
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -53,7 +47,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
           var savedUser = employeeRepository.save(employee);
         var jwtToken = jwtService.generateToken(employee);
         var refreshToken = jwtService.generateRefreshToken(employee);
-        saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -65,7 +58,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var savedUser = responsibleRepository.save(responsible);
         var jwtToken = jwtService.generateToken(responsible);
         var refreshToken = jwtService.generateRefreshToken(responsible);
-        saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -117,8 +109,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         var jwtToken = jwtService.generateToken(user.get());
         var refreshToken = jwtService.generateRefreshToken(user.get());
-        revokeAllUserTokens(user.get());
-        saveUserToken(user.get(), jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -146,58 +136,54 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // save the new password
         usersRepository.save(user);
     }
+
     @Override
-    public void saveUserToken(Users user, String jwtToken) {
-        var token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
-    }
-    @Override
-    public void revokeAllUserTokens(Users user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
-    @Override
-    public void refreshToken(
+    public ResponseEntity<RefreshTokenResponse> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+
+        // Check if the authorization header is present and starts with "Bearer "
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Return a 401 Unauthorized response if the authorization header is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            var user = this.usersRepository.findByEmail(userEmail)
-                    .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
-                var authResponse = AuthenticationResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
+
+        // Check if user email is null
+        if (userEmail == null) {
+            // Return a 401 Unauthorized response if the user email cannot be extracted
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        // Retrieve the user from the repository
+        var user = this.usersRepository.findByEmail(userEmail)
+                .orElseThrow();
+
+        // Check if the refresh token is valid for the user
+        if (jwtService.isTokenValid(refreshToken, user)) {
+            // Generate a new access token and perform other necessary operations
+            var accessToken = jwtService.generateToken(user);
+            // Build and return the RefreshTokenResponse
+            var authResponse = RefreshTokenResponse.builder()
+                    .refreshToken(refreshToken)
+                    .build();
+            return ResponseEntity.ok(authResponse);
+        }
+        // Return a 401 Unauthorized response if the refresh token is not valid
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 
+    @Override
+    public boolean isTokenExpired(String token) {
+    return jwtService.isTokenExpired(token);
+    }
 
 
 }

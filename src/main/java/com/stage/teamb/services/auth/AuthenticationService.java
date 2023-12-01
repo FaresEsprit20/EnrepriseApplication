@@ -1,14 +1,11 @@
 package com.stage.teamb.services.auth;
 
-import com.stage.teamb.dtos.auth.AuthenticationRequest;
-import com.stage.teamb.dtos.auth.AuthenticationResponse;
-import com.stage.teamb.dtos.auth.ChangePasswordRequest;
-import com.stage.teamb.dtos.auth.RegisterRequest;
+import com.stage.teamb.dtos.auth.*;
 import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Responsible;
-import com.stage.teamb.models.Users;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.IOException;
@@ -30,13 +27,11 @@ public interface AuthenticationService {
     @PreAuthorize("hasAnyRole('RESPONSIBLE', 'EMPLOYEE')")
     void changePassword(ChangePasswordRequest request, Principal connectedUser);
 
-    void saveUserToken(Users user, String jwtToken);
 
-    void revokeAllUserTokens(Users user);
-
-    void refreshToken(
+    ResponseEntity<RefreshTokenResponse> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException;
 
+    boolean isTokenExpired(String token);
 }

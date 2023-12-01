@@ -22,70 +22,70 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping
+    @GetMapping("/find/all")
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
         List<DepartmentDTO> departments = departmentService.findAllDepartments();
         return ResponseEntity.ok(departments);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable Long id) {
         DepartmentDTO department = departmentService.findDepartmentById(id);
         return ResponseEntity.ok(department);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<DepartmentDTO> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
         DepartmentDTO createdDepartment = departmentService.saveDepartment(departmentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<DepartmentDTO> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO departmentDTO) {
         DepartmentDTO updatedDepartment = departmentService.updateDepartment(departmentDTO);
         return ResponseEntity.ok(updatedDepartment);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
         departmentService.deleteDepartmentById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{departmentId}/employees")
+    @GetMapping("/find/{departmentId}/employees")
     public ResponseEntity<List<EmployeeDTO>> getEmployeesByDepartmentId(@PathVariable Long departmentId) {
         List<EmployeeDTO> employees = departmentService.findEmployeesByDepartmentId(departmentId);
         return ResponseEntity.ok(employees);
     }
 
-    @PostMapping("/{departmentId}/employees")
+    @PutMapping("/update/{departmentId}/add-employee")
     public ResponseEntity<EmployeeDTO> addEmployeeToDepartment(
             @PathVariable Long departmentId, @RequestBody EmployeeDTO employeeDTO) {
         EmployeeDTO addedEmployee = departmentService.addEmployeeToDepartment(departmentId, employeeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedEmployee);
     }
 
-    @DeleteMapping("/{departmentId}/employees/{employeeId}")
+    @PutMapping("/update/{departmentId}/remove-employee/{employeeId}")
     public ResponseEntity<EmployeeDTO> removeEmployeeFromDepartment(
             @PathVariable Long departmentId, @PathVariable Long employeeId) {
         EmployeeDTO removedEmployee = departmentService.removeEmployeeFromDepartment(departmentId, employeeId);
         return ResponseEntity.ok(removedEmployee);
     }
 
-    @GetMapping("/{departmentId}/enterprise")
+    @GetMapping("/find/{departmentId}/enterprise")
     public ResponseEntity<EnterpriseDTO> getEnterpriseByDepartmentId(@PathVariable Long departmentId) {
         EnterpriseDTO enterprise = departmentService.getEnterpriseByDepartmentId(departmentId);
         return ResponseEntity.ok(enterprise);
     }
 
-    @PostMapping("/{departmentId}/enterprise/{enterpriseId}")
+    @PutMapping("/update/{departmentId}/associate-enterprise/{enterpriseId}")
     public ResponseEntity<DepartmentDTO> associateDepartmentWithEnterprise(
             @PathVariable Long departmentId, @PathVariable Long enterpriseId) {
         DepartmentDTO department = departmentService.associateDepartmentWithEnterprise(departmentId, enterpriseId);
         return ResponseEntity.ok(department);
     }
 
-    @DeleteMapping("/{departmentId}/enterprise")
+    @PutMapping("/update/{departmentId}/disassociate-enterprise")
     public ResponseEntity<DepartmentDTO> disassociateDepartmentFromEnterprise(@PathVariable Long departmentId) {
         DepartmentDTO department = departmentService.disassociateDepartmentFromEnterprise(departmentId);
         return ResponseEntity.ok(department);
@@ -96,7 +96,4 @@ public class DepartmentController {
         List<DepartmentDTO> departments = departmentService.findDepartmentsByEnterpriseId(enterpriseId);
         return ResponseEntity.ok(departments);
     }
-
-
-
 }

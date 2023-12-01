@@ -1,14 +1,15 @@
 package com.stage.teamb.models;
 
-import com.stage.teamb.config.security.token.Token;
 import com.stage.teamb.models.enums.UserRole;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -35,9 +36,9 @@ public class Responsible extends Users   {
     }
     @Builder // Explicitly specify @Builder
     public Responsible(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
-                       Integer tel, String occupation, String password, UserRole role, List<Token> tokens,
+                       Integer tel, String occupation, String password, UserRole role,
                        LocalDateTime createdAt, LocalDateTime updatedAt) {
-        super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.RESPONSIBLE, tokens);
+        super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.RESPONSIBLE);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
