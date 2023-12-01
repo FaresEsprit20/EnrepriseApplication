@@ -21,44 +21,44 @@ public class EnterpriseController {
         this.enterpriseService = enterpriseService;
     }
 
-    @GetMapping
+    @GetMapping("/find/all")
     public ResponseEntity<List<EnterpriseDTO>> getAllEnterprises() {
         List<EnterpriseDTO> enterprises = enterpriseService.findAllEnterprises();
         return ResponseEntity.ok(enterprises);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<EnterpriseDTO> getEnterpriseById(@PathVariable Long id) {
         EnterpriseDTO enterprise = enterpriseService.findEnterpriseById(id);
         return ResponseEntity.ok(enterprise);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<EnterpriseDTO> createEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
         EnterpriseDTO createdEnterprise = enterpriseService.saveEnterprise(enterpriseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEnterprise);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<EnterpriseDTO> updateEnterprise(@PathVariable Long id, @RequestBody EnterpriseDTO enterpriseDTO) {
         enterpriseDTO.setId(id);
         EnterpriseDTO updatedEnterprise = enterpriseService.updateEnterprise(enterpriseDTO);
         return ResponseEntity.ok(updatedEnterprise);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEnterprise(@PathVariable Long id) {
         enterpriseService.deleteEnterpriseById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{enterpriseId}/departments")
+    @GetMapping("/departments/{enterpriseId}")
     public ResponseEntity<List<DepartmentDTO>> getDepartmentsByEnterpriseId(@PathVariable Long enterpriseId) {
         List<DepartmentDTO> departments = enterpriseService.findDepartmentsByEnterpriseId(enterpriseId);
         return ResponseEntity.ok(departments);
     }
 
-    @PostMapping("/{enterpriseId}/departments")
+    @PostMapping("/departments/{enterpriseId}")
     public ResponseEntity<DepartmentDTO> associateDepartmentForEnterprise(
             @PathVariable Long enterpriseId, @RequestBody DepartmentDTO departmentDTO) {
         DepartmentDTO createdDepartment = enterpriseService.associateDepartmentWithEnterprise(enterpriseId, departmentDTO);
@@ -76,7 +76,4 @@ public class EnterpriseController {
         EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
         return ResponseEntity.ok(enterprise);
     }
-
-
-
 }

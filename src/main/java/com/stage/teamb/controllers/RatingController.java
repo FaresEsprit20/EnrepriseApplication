@@ -32,10 +32,9 @@ public class RatingController {
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
-
     @PostMapping("/create")
     public ResponseEntity<RatingDTO> createRating(@RequestBody RatingDTO ratingDTO) {
-        RatingDTO rating = ratingService.createRating(ratingDTO.getPublicationId(),ratingDTO.getEmployeeId(),ratingDTO.getValue());
+        RatingDTO rating = ratingService.createRating(ratingDTO.getPublicationId(), ratingDTO.getEmployeeId(), ratingDTO.getValue());
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
     }
 
@@ -46,12 +45,10 @@ public class RatingController {
     }
 
     @DeleteMapping("/delete/{ratingId}")
-    public ResponseEntity<Void> deleteRating(@PathVariable Long ratingId,
-                                             @RequestParam Long employeeId) {
+    public ResponseEntity<Void> deleteRating(@PathVariable Long ratingId, @RequestParam Long employeeId) {
         ratingService.deleteRating(ratingId, employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 
     @PostMapping("/upvote/{publicationId}/{employeeId}")
     public ResponseEntity<RatingDTO> upVote(@PathVariable Long publicationId, @PathVariable Long employeeId) {
@@ -74,7 +71,4 @@ public class RatingController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
 }

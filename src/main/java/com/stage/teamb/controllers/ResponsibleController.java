@@ -24,11 +24,11 @@ public class ResponsibleController {
         this.responsibleService = responsibleService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<?> getAllResponsibles() {
         try {
-            List<ResponsibleDTO> responsableDTOList = responsibleService.findAllResponsibles();
-            return ResponseEntity.ok(responsableDTOList);
+            List<ResponsibleDTO> responsibleDTOList = responsibleService.findAllResponsibles();
+            return ResponseEntity.ok(responsibleDTOList);
         } catch (RuntimeException exception) {
             log.error("Error retrieving responsibles: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,11 +36,11 @@ public class ResponsibleController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<?> getResponsibleById(@PathVariable Long id) {
         try {
-            ResponsibleDTO responsableDTO = responsibleService.findResponsibleById(id);
-            return ResponseEntity.ok(responsableDTO);
+            ResponsibleDTO responsibleDTO = responsibleService.findResponsibleById(id);
+            return ResponseEntity.ok(responsibleDTO);
         } catch (RuntimeException exception) {
             log.error("Responsible not found: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -48,10 +48,10 @@ public class ResponsibleController {
         }
     }
 
-    @PostMapping("/")
-    public ResponseEntity<?> createResponsible(@RequestBody ResponsibleDTO responsableDTO) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createResponsible(@RequestBody ResponsibleDTO responsibleDTO) {
         try {
-            ResponsibleDTO createdResponsible = responsibleService.saveResponsible(responsableDTO);
+            ResponsibleDTO createdResponsible = responsibleService.saveResponsible(responsibleDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdResponsible);
         } catch (RuntimeException exception) {
             log.error("Could not create responsible: " + exception.getMessage());
@@ -60,11 +60,11 @@ public class ResponsibleController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateResponsible(@PathVariable Long id, @RequestBody ResponsibleDTO responsableDTO) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateResponsible(@PathVariable Long id, @RequestBody ResponsibleDTO responsibleDTO) {
         try {
-            responsableDTO.setId(id); // Ensure the ID matches the path variable
-            ResponsibleDTO updatedResponsible = responsibleService.updateResponsible(responsableDTO);
+            responsibleDTO.setId(id); // Ensure the ID matches the path variable
+            ResponsibleDTO updatedResponsible = responsibleService.updateResponsible(responsibleDTO);
             return ResponseEntity.ok(updatedResponsible);
         } catch (RuntimeException exception) {
             log.error("Could not update responsible: " + exception.getMessage());
@@ -73,7 +73,7 @@ public class ResponsibleController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteResponsibleById(@PathVariable Long id) {
         try {
             responsibleService.deleteResponsibleById(id);
@@ -84,8 +84,4 @@ public class ResponsibleController {
                     .body("Could not delete responsible: " + exception.getMessage());
         }
     }
-
-
-
-
 }

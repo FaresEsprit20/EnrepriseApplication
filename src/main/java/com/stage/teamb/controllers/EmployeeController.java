@@ -28,31 +28,31 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
     }
 
-    @GetMapping
+    @GetMapping("/find/all")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
         List<EmployeeDTO> employees = employeeService.findAllEmployees();
         return ResponseEntity.ok(employees);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
         EmployeeDTO createdEmployee = employeeService.saveEmployee(employeeDTO);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDTO) {
         EmployeeDTO updatedEmployee = employeeService.updateEmployee(employeeDTO);
         return ResponseEntity.ok(updatedEmployee);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployeeById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/department/find/all")
+    @GetMapping("/department/find/all/{id}")
     public ResponseEntity<List<EmployeeDTO>> getEmployeesFromDepartment(@PathVariable Long id) {
         List<EmployeeDTO> employeeDTOList = employeeService.findEmployeesByDepartmentId(id);
         return ResponseEntity.ok(employeeDTOList);
@@ -89,6 +89,4 @@ public class EmployeeController {
         DepartmentDTO department = employeeService.unassignDepartmentFromEmployee(employeeId);
         return ResponseEntity.ok(department);
     }
-
-
 }

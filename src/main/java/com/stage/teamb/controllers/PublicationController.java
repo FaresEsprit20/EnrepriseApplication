@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/api/publications")
 public class PublicationController {
 
-
     private final PublicationService publicationService;
 
     @Autowired
@@ -22,14 +21,13 @@ public class PublicationController {
         this.publicationService = publicationService;
     }
 
-
-    @GetMapping
+    @GetMapping("/find/all")
     public ResponseEntity<List<PublicationDTO>> getAllPublications() {
         List<PublicationDTO> publications = publicationService.findAllPublications();
         return ResponseEntity.ok(publications);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<PublicationDTO> getPublicationById(@PathVariable Long id) {
         PublicationDTO publication = publicationService.findPublicationById(id);
         return ResponseEntity.ok(publication);
@@ -41,39 +39,39 @@ public class PublicationController {
         return ResponseEntity.ok(publications);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationDTO publicationDTO) {
         PublicationDTO createdPublication = publicationService.createPublication(publicationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPublication);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<PublicationDTO> updatePublication(@PathVariable Long id, @RequestBody PublicationDTO publicationDTO) {
         PublicationDTO updatedPublication = publicationService.updatePublication(id, publicationDTO);
         return ResponseEntity.ok(updatedPublication);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePublication(@PathVariable Long id) {
         publicationService.deletePublication(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/employee")
-    public EmployeeDTO getEmployeeByPublicationId(@PathVariable Long id) {
-        return publicationService.findEmployeeByPublicationId(id);
+    public ResponseEntity<EmployeeDTO> getEmployeeByPublicationId(@PathVariable Long id) {
+        EmployeeDTO employee = publicationService.findEmployeeByPublicationId(id);
+        return ResponseEntity.ok(employee);
     }
 
     @PostMapping("/{id}/employee/{employeeId}")
-    public PublicationDTO associateEmployeeWithPublication(@PathVariable Long id, @PathVariable Long employeeId) {
-        return publicationService.associateEmployeeWithPublication(id, employeeId);
+    public ResponseEntity<PublicationDTO> associateEmployeeWithPublication(@PathVariable Long id, @PathVariable Long employeeId) {
+        PublicationDTO publication = publicationService.associateEmployeeWithPublication(id, employeeId);
+        return ResponseEntity.ok(publication);
     }
 
     @DeleteMapping("/{id}/employee")
-    public PublicationDTO disassociateEmployeeFromPublication(@PathVariable Long id) {
-        return publicationService.disassociateEmployeeFromPublication(id);
+    public ResponseEntity<PublicationDTO> disassociateEmployeeFromPublication(@PathVariable Long id) {
+        PublicationDTO publication = publicationService.disassociateEmployeeFromPublication(id);
+        return ResponseEntity.ok(publication);
     }
-
-
-
 }

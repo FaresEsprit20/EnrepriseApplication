@@ -96,4 +96,6 @@ public class DepartmentController {
         List<DepartmentDTO> departments = departmentService.findDepartmentsByEnterpriseId(enterpriseId);
         return ResponseEntity.ok(departments);
     }
+
+
 }
