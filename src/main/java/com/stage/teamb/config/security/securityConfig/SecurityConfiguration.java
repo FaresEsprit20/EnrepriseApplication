@@ -84,7 +84,6 @@ public class SecurityConfiguration {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 );
-
         return http.build();
     }
 
@@ -95,12 +94,13 @@ public class SecurityConfiguration {
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS","TRACE"));
         configuration.applyPermitDefaultValues();
-//        configuration.addAllowedOrigin("*");
         configuration.addAllowedOrigin("http://localhost:4200");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
 
 
 }
