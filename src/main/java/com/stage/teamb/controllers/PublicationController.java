@@ -74,4 +74,7 @@ public class PublicationController {
         PublicationDTO publication = publicationService.disassociateEmployeeFromPublication(id);
         return ResponseEntity.ok(publication);
     }
+
+
+
 }

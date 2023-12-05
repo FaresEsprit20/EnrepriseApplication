@@ -10,8 +10,7 @@ import com.stage.teamb.models.enums.UserRole;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.responsible.ResponsibleRepository;
 import com.stage.teamb.repository.jpa.users.UsersRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +23,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
@@ -34,36 +35,35 @@ import java.util.Optional;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-   private final EmployeeRepository employeeRepository;
-   private final ResponsibleRepository responsibleRepository;
-   private final UsersRepository usersRepository;
-
+    private final EmployeeRepository employeeRepository;
+    private final ResponsibleRepository responsibleRepository;
+    private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public AuthenticationResponse registerEmployee(RegisterRequest request) {
-            var employee = buildEmployeeFromRequest(request);
-          var savedUser = employeeRepository.save(employee);
-        var jwtToken = jwtService.generateToken(employee);
-        var refreshToken = jwtService.generateRefreshToken(employee);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+    public AuthenticationResponse registerEmployee(RegisterRequest request, HttpServletResponse response) {
+        var employee = buildEmployeeFromRequest(request);
+        var savedUser = employeeRepository.save(employee);
+        var jwtToken = jwtService.generateToken(savedUser);
+        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        // Save the token in a cookie
+        saveTokenInCookie(response, jwtToken);
+        return buildAuthResponse(jwtToken, refreshToken);
     }
+
     @Override
-    public AuthenticationResponse registerResponsible(RegisterRequest request) {
+    public AuthenticationResponse registerResponsible(RegisterRequest request, HttpServletResponse response) {
         var responsible = buildResponsibleFromRequest(request);
         var savedUser = responsibleRepository.save(responsible);
-        var jwtToken = jwtService.generateToken(responsible);
-        var refreshToken = jwtService.generateRefreshToken(responsible);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+        var jwtToken = jwtService.generateToken(savedUser);
+        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        // Save the token in a cookie
+        saveTokenInCookie(response, jwtToken);
+        return buildAuthResponse(jwtToken, refreshToken);
     }
+
     @Override
     public Employee buildEmployeeFromRequest(RegisterRequest request) {
         return Employee.builder()
@@ -78,6 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .tel(request.getTel())
                 .build();
     }
+
     @Override
     public Responsible buildResponsibleFromRequest(RegisterRequest request) {
         return Responsible.builder()
@@ -86,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(UserRole.EMPLOYEE)
+                .role(UserRole.RESPONSIBLE)
                 .birthDate(request.getBirthDate())
                 .occupation(request.getOccupation())
                 .tel(request.getTel())
@@ -94,7 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -103,18 +104,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
         Optional<Users> user = Optional.ofNullable(usersRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found"))));
-        if(user.isPresent()){
-            log.warn("present");
-        }else {
-            log.warn("not present");
+        if (user.isPresent()) {
+            log.warn("User is present");
+        } else {
+            log.warn("User is not present");
             throw new BadCredentialsException("Wrong credentials");
         }
         var jwtToken = jwtService.generateToken(user.get());
         var refreshToken = jwtService.generateRefreshToken(user.get());
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+        // Save the token in a cookie
+        saveTokenInCookie(response, jwtToken);
+        return buildAuthResponse(jwtToken, refreshToken);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         // check if the two new passwords are the same
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Password are not the same");
+            throw new IllegalStateException("Passwords are not the same");
         }
 
         // update the password
@@ -140,10 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<RefreshTokenResponse> refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
@@ -171,6 +168,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (jwtService.isTokenValid(refreshToken, user)) {
             // Generate a new access token and perform other necessary operations
             var accessToken = jwtService.generateToken(user);
+            // Save the token in a cookie
+            saveTokenInCookie(response, refreshToken);
             // Build and return the RefreshTokenResponse
             var authResponse = RefreshTokenResponse.builder()
                     .refreshToken(refreshToken)
@@ -181,10 +180,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-
     @Override
     public boolean isTokenExpired(String token) {
-    return jwtService.isTokenExpired(token);
+        return jwtService.isTokenExpired(token);
+    }
+
+    @Override
+    public void saveTokenInCookie(HttpServletResponse response, String jwtToken) {
+        // Set the token as an HttpOnly cookie in the response
+        Cookie cookie = new Cookie("X-Auth-Token", jwtToken);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) jwtService.getJwtExpiration() / 1000);  // setMaxAge expects seconds, so we convert milliseconds to seconds
+        cookie.setPath("/");  // Set the cookie path as needed
+        response.addCookie(cookie);
+    }
+
+    private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
 

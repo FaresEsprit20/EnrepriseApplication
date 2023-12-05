@@ -13,20 +13,19 @@ import java.security.Principal;
 
 public interface AuthenticationService {
 
+    AuthenticationResponse registerEmployee(RegisterRequest request, HttpServletResponse response);
 
-    AuthenticationResponse registerEmployee(RegisterRequest request);
-
-    AuthenticationResponse registerResponsible(RegisterRequest request);
+    AuthenticationResponse registerResponsible(RegisterRequest request, HttpServletResponse response);
 
     Employee buildEmployeeFromRequest(RegisterRequest request);
 
     Responsible buildResponsibleFromRequest(RegisterRequest request);
 
-    AuthenticationResponse authenticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response);
+
 
     @PreAuthorize("hasAnyRole('RESPONSIBLE', 'EMPLOYEE')")
     void changePassword(ChangePasswordRequest request, Principal connectedUser);
-
 
     ResponseEntity<RefreshTokenResponse> refreshToken(
             HttpServletRequest request,
@@ -34,4 +33,6 @@ public interface AuthenticationService {
     ) throws IOException;
 
     boolean isTokenExpired(String token);
+
+    void saveTokenInCookie(HttpServletResponse response, String jwtToken);
 }

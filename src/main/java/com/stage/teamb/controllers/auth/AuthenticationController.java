@@ -20,23 +20,26 @@ public class AuthenticationController {
 
     @PostMapping("/register/employee")
     public ResponseEntity<AuthenticationResponse> registerEmployee(
-            @RequestBody RegisterRequest request
+            @RequestBody RegisterRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authService.registerEmployee(request));
+        return ResponseEntity.ok(authService.registerEmployee(request, response));
     }
 
     @PostMapping("/register/responsible")
     public ResponseEntity<AuthenticationResponse> registerResponsible(
-            @RequestBody RegisterRequest request
+            @RequestBody RegisterRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authService.registerResponsible(request));
+        return ResponseEntity.ok(authService.registerResponsible(request, response));
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authService.authenticate(request));
+        return ResponseEntity.ok(authService.authenticate(request, response));
     }
 
     @PostMapping("/refresh-token")
@@ -58,13 +61,9 @@ public class AuthenticationController {
 
     @GetMapping("/is-token-expired")
     public ResponseEntity<Boolean> isTokenExpired(
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestHeader("X-Auth") String token
     ) {
-        // Extract the token from the Authorization header
-        String token = authorizationHeader.replace("Bearer ", "");
         boolean isExpired = authService.isTokenExpired(token);
         return ResponseEntity.ok(isExpired);
     }
-
-
 }
