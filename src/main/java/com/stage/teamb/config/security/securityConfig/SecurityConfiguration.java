@@ -11,9 +11,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,7 +41,7 @@ public class SecurityConfiguration {
     private final LogoutHandler logoutHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors((cors) -> cors
@@ -72,34 +75,63 @@ public class SecurityConfiguration {
                                 .requestMatchers(DELETE,"/api/ratings/**").hasAnyRole(UserRole.EMPLOYEE.name())
                                 //responsibles
                                 .requestMatchers("/api/responsibles/**").hasAnyRole(UserRole.RESPONSIBLE.name())
-//                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                                 .anyRequest()
                                 .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .rememberMe((remember) -> remember
+                        .rememberMeServices(rememberMeServices)
+                )
                 .logout(logout ->
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                                .logoutSuccessHandler((request, response, authentication) -> {
+                                    logout.clearAuthentication(true);
+                                    logout.deleteCookies("keyForJwtToken");
+                                    SecurityContextHolder.clearContext();
+                                })
                 );
         return http.build();
     }
 
-
     @Bean
     public CorsConfigurationSource getCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS","TRACE"));
+        configuration.setAllowedHeaders(List.of(
+                "Authorization", "Cache-Control", "Content-Type",
+                "Origin, X-Requested-With,  Accept, Key"));
+        configuration.setExposedHeaders(List.of(
+                "Authorization", "Cache-Control", "Content-Type",
+                "Origin, X-Requested-With,  Accept, Key"));
+        configuration.setAllowedMethods(Arrays.asList(
+                "MKCALENDAR", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH",
+                "REPORT", "SEARCH", "UNCHECKOUT", "UNLOCK", "UPDATE", "VERSION-CONTROL",
+                "ACL", "CANCELUPLOAD", "CHECKIN", "CHECKOUT", "COPY",
+                "GET","POST","PUT","PATCH","DELETE","OPTIONS","TRACE","HEAD"));
         configuration.applyPermitDefaultValues();
-        configuration.addAllowedOrigin("http://localhost:4200");
+
+        // Use allowedOriginPatterns instead of allowedOrigins
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
+
+        // You can still keep setAllowCredentials(true)
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
+
+    @Bean
+    RememberMeServices rememberMeServices(UserDetailsService userDetailsService) {
+        TokenBasedRememberMeServices.RememberMeTokenAlgorithm encodingAlgorithm = TokenBasedRememberMeServices.RememberMeTokenAlgorithm.SHA256;
+        TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices("keyForRememberMeToken", userDetailsService, encodingAlgorithm);
+        rememberMe.setMatchingAlgorithm(TokenBasedRememberMeServices.RememberMeTokenAlgorithm.MD5);
+        return rememberMe;
+    }
 
 
 
