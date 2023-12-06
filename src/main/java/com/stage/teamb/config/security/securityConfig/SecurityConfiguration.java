@@ -89,8 +89,7 @@ public class SecurityConfiguration {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                     logout.clearAuthentication(true);
-                                    logout.deleteCookies("keyForJwtToken");
-                                    logout.deleteCookies("X-Auth-Token");
+                                    logout.deleteCookies("accessToken");
                                     SecurityContextHolder.clearContext();
                                 })
                 );

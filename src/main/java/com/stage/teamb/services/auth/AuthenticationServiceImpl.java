@@ -10,11 +10,13 @@ import com.stage.teamb.models.enums.UserRole;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.responsible.ResponsibleRepository;
 import com.stage.teamb.repository.jpa.users.UsersRepository;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,8 +25,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
@@ -142,8 +142,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
 
         // Check if the authorization header is present and starts with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -151,34 +149,51 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
+        String refreshToken = authHeader.substring(7);
 
-        // Check if user email is null
+        // Extract the user's email from the refresh token
+        String userEmail = jwtService.extractUsername(refreshToken);
+
+        // Check if user email is null or not found
         if (userEmail == null) {
             // Return a 401 Unauthorized response if the user email cannot be extracted
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+           throw new CustomException(403,Collections.singletonList("Invalid Email"));
         }
 
         // Retrieve the user from the repository
-        var user = this.usersRepository.findByEmail(userEmail)
-                .orElseThrow();
+        Optional<Users> userOptional = this.usersRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            // User not found
+            throw new CustomException(403,Collections.singletonList("User Not found"));
+        }
+
+        Users user = userOptional.get();
 
         // Check if the refresh token is valid for the user
         if (jwtService.isTokenValid(refreshToken, user)) {
             // Generate a new access token and perform other necessary operations
-            var accessToken = jwtService.generateToken(user);
-            // Save the token in a cookie
-            saveTokenInCookie(response, refreshToken);
+            var newAccessToken = jwtService.generateToken(user);
+
+            // Rotate refresh token (optional)
+            var newRefreshToken = jwtService.generateRefreshToken(user);
+
+            // Save the new tokens in cookies
+            saveTokenInCookie(response, newAccessToken);
+            saveTokenInCookie(response, newRefreshToken);
+
             // Build and return the RefreshTokenResponse
             var authResponse = RefreshTokenResponse.builder()
-                    .refreshToken(refreshToken)
+                    .refreshToken(newRefreshToken)
                     .build();
+
             return ResponseEntity.ok(authResponse);
         }
+
         // Return a 401 Unauthorized response if the refresh token is not valid
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        throw new CustomException(403,Collections.singletonList("Invalid refresh token"));
     }
+
 
     @Override
     public boolean isTokenExpired(String token) {
@@ -188,12 +203,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void saveTokenInCookie(HttpServletResponse response, String jwtToken) {
         // Set the token as an HttpOnly cookie in the response
-        Cookie cookie = new Cookie("X-Auth-Token", jwtToken);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) jwtService.getJwtExpiration() / 1000);  // setMaxAge expects seconds, so we convert milliseconds to seconds
-        cookie.setPath("/");  // Set the cookie path as needed
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("accessToken", jwtToken)
+                .httpOnly(true)
+                .secure(false)  // Change this to 'true' in a production environment if using HTTPS
+                .path("/")
+                .maxAge(3800)  // setMaxAge expects seconds, so we convert milliseconds to seconds
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        // Log cookie information
+        log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath());
     }
+
+
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
         return AuthenticationResponse.builder()

@@ -61,9 +61,12 @@ public class AuthenticationController {
 
     @GetMapping("/is-token-expired")
     public ResponseEntity<Boolean> isTokenExpired(
-            @RequestHeader("X-Auth") String token
+            @RequestHeader("Authorization") String token
     ) {
-        boolean isExpired = authService.isTokenExpired(token);
+        boolean isExpired = authService.isTokenExpired(token.replace("Bearer ", ""));
         return ResponseEntity.ok(isExpired);
     }
+
+
+
 }
