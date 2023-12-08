@@ -62,7 +62,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // If JWT is still null or empty, let the exception bubble up
         if (jwt == null) {
             log.warn("No valid token found in cookie or authorization header");
-            throw new CustomException(500, Collections.singletonList("No valid token found"));
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                ProblemDetail errorDetail;
+                errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), "No valid token found in cookie or authorization header");
+                errorDetail.setProperty("description", "Unknown internal server error");
+                JsonNode jsonNode = objectMapper.createObjectNode()
+                        .put("type", errorDetail.getType().toString())
+                        .put("title", errorDetail.getTitle())
+                        .put("status", errorDetail.getStatus())
+                        .put("detail",errorDetail.getDetail())
+//                    .put("instance", errorDetail.getInstance().toString())
+                        .put("description", errorDetail.getProperties().get("description").toString());
+                String jsonString = objectMapper.writeValueAsString(jsonNode);
+                response.setStatus(errorDetail.getStatus());
+                response.setContentType("application/json");
+                response.getWriter().write(jsonString);
+                response.getWriter().flush();
+                response.getWriter().close();
+            } catch (Exception exception) {
+                 exception.printStackTrace();
+
+                response.getWriter().write("Non Valid JWT "+exception.getMessage());
+                response.getWriter().flush();
+                response.getWriter().close();
+
+                throw new CustomException(500,Collections.singletonList(exception.getMessage()));
+            }
         }
         try {
             // Continue processing the token
@@ -149,10 +175,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), "Internal server error");
             errorDetail.setProperty("description", "Unknown internal server error");
         }
-
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-
             JsonNode jsonNode = objectMapper.createObjectNode()
                     .put("type", errorDetail.getType().toString())
                     .put("title", errorDetail.getTitle())
@@ -171,7 +195,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().write("Non Valid JWT "+exception.getMessage());
             response.getWriter().flush();
             response.getWriter().close();
-
             throw new CustomException(500,Collections.singletonList(e.getMessage()));
         }
 
