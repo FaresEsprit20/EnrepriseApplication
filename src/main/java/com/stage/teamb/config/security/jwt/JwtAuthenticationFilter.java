@@ -44,59 +44,98 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        log.info("do Filter Internal ...");
-        log.info("Request Path: {}", request.getServletPath());
-        log.info("Request Method: {}", request.getMethod());
-        // Exclude authentication path
-        if (request.getServletPath().contains("/api/v1/auth")) {
+        logRequestInfo(request);
+        if (isAuthenticationPath(request)) {
             log.info("Skipping filter for authentication path");
             filterChain.doFilter(request, response);
             return;
         }
-        // Extract token from cookies
+        String jwt = extractToken(request);
+        if (jwt == null) {
+            handleMissingToken(response);
+            return;
+        }
+        try {
+            processToken(jwt, request, response, filterChain);
+        } catch (Exception exception) {
+            convertExceptionToProblemDetail(exception, response);
+        }
+    }
+
+    private void logRequestInfo(HttpServletRequest request) {
+        log.info("Request Path: {}", request.getServletPath());
+        log.info("Request Method: {}", request.getMethod());
+    }
+
+    private boolean isAuthenticationPath(HttpServletRequest request) {
+        return request.getServletPath().contains("/api/v1/auth");
+    }
+
+    private String extractToken(HttpServletRequest request) {
         String jwt = extractTokenFromCookies(request.getCookies());
-        // If JWT is still null, try to extract from Authorization header
         if (jwt == null) {
             jwt = extractTokenFromAuthorizationHeader(request.getHeader("Authorization"));
         }
-        // If JWT is still null or empty, let the exception bubble up
-        if (jwt == null) {
-            log.warn("No valid token found in cookie or authorization header");
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                ProblemDetail errorDetail;
-                errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), "No valid token found in cookie or authorization header");
-                errorDetail.setProperty("description", "Unknown internal server error");
-                JsonNode jsonNode = objectMapper.createObjectNode()
-                        .put("type", errorDetail.getType().toString())
-                        .put("title", errorDetail.getTitle())
-                        .put("status", errorDetail.getStatus())
-                        .put("detail",errorDetail.getDetail())
-//                    .put("instance", errorDetail.getInstance().toString())
-                        .put("description", errorDetail.getProperties().get("description").toString());
-                String jsonString = objectMapper.writeValueAsString(jsonNode);
-                response.setStatus(errorDetail.getStatus());
-                response.setContentType("application/json");
-                response.getWriter().write(jsonString);
-                response.getWriter().flush();
-                response.getWriter().close();
-            } catch (Exception exception) {
-                 exception.printStackTrace();
+        return jwt;
+    }
 
-                response.getWriter().write("Non Valid JWT "+exception.getMessage());
-                response.getWriter().flush();
-                response.getWriter().close();
-
-                throw new CustomException(500,Collections.singletonList(exception.getMessage()));
-            }
-        }
+    private void handleMissingToken(HttpServletResponse response) throws IOException {
+        log.warn("No valid token found in cookie or authorization header");
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // Continue processing the token
-            processToken(jwt, request, response, filterChain);
+            ProblemDetail errorDetail;
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), "No valid token found in cookie or authorization header");
+            errorDetail.setProperty("description", "Unknown internal server error");
+            JsonNode jsonNode = objectMapper.createObjectNode()
+                    .put("type", errorDetail.getType().toString())
+                    .put("title", errorDetail.getTitle())
+                    .put("status", errorDetail.getStatus())
+                    .put("detail",errorDetail.getDetail())
+                    .put("description", errorDetail.getProperties().get("description").toString());
+            String jsonString = objectMapper.writeValueAsString(jsonNode);
+            response.setStatus(errorDetail.getStatus());
+            response.setContentType("application/json");
+            response.getWriter().write(jsonString);
+            response.getWriter().flush();
+            response.getWriter().close();
         } catch (Exception exception) {
-           // log.warn("Exception type: " + exception.getMessage());
-            convertExceptionToProblemDetail(exception, response);
+            response.getWriter().write("Non Valid JWT " + exception.getMessage());
+            response.getWriter().flush();
+            response.getWriter().close();
+            throw new CustomException(500, Collections.singletonList(exception.getMessage()));
         }
+    }
+
+    private void processToken(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        final String userEmail;
+        // Check if the token has expired
+        if (jwtService.isTokenExpired(jwt)) {
+            log.warn("JWT has expired");
+            throw new ExpiredJwtException(null, null, "JWT has expired");
+        }
+        // Extract user email from token
+        userEmail = jwtService.extractUsername(jwt);
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Load user details from user service
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                log.info("do Filter Internal Success");
+            } else {
+                throw new CustomException(403, Collections.singletonList("JWT is Not Valid"));
+            }
+        } else {
+            log.warn("User email is null or Authentication is not null");
+        }
+        filterChain.doFilter(request, response);
     }
 
     private String extractTokenFromCookies(Cookie[] cookies) {
@@ -120,40 +159,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-    private void processToken(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        final String userEmail;
-        // Check if the token has expired
-        if (jwtService.isTokenExpired(jwt)) {
-            log.warn("JWT has expired");
-            throw new ExpiredJwtException(null, null, "JWT has expired");
-        }
-        // Extract user email from token
-        userEmail = jwtService.extractUsername(jwt);
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Load user details from user service
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("do Filter Internal Success");
-            } else {
-                throw new CustomException(403, Collections.singletonList("JWT is Not Valid"));
-            }
-        } else {
-            log.warn("User email is null or Authentication is not null");
-        }
-        filterChain.doFilter(request, response);
-    }
-
     private void convertExceptionToProblemDetail(Exception exception, HttpServletResponse response) throws IOException {
         ProblemDetail errorDetail;
         if (exception instanceof ExpiredJwtException) {
@@ -182,7 +187,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .put("title", errorDetail.getTitle())
                     .put("status", errorDetail.getStatus())
                     .put("detail",errorDetail.getDetail())
-//                    .put("instance", errorDetail.getInstance().toString())
                     .put("description", errorDetail.getProperties().get("description").toString());
             String jsonString = objectMapper.writeValueAsString(jsonNode);
             response.setStatus(errorDetail.getStatus());
@@ -191,18 +195,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().flush();
             response.getWriter().close();
         } catch (Exception e) {
-           // e.printStackTrace();
-            response.getWriter().write("Non Valid JWT "+exception.getMessage());
+            response.getWriter().write("Non Valid JWT " + exception.getMessage());
             response.getWriter().flush();
             response.getWriter().close();
-            throw new CustomException(500,Collections.singletonList(e.getMessage()));
+            throw new CustomException(500, Collections.singletonList(e.getMessage()));
         }
-
-//log.error("Exception stack trace: ", exception);
-//        response.setStatus(errorDetail.getStatus());
-//        response.getWriter().write(errorDetail.toString());
-//        response.getWriter().flush();
-//        response.getWriter().close();
     }
 
+
 }
+
+
+
+
