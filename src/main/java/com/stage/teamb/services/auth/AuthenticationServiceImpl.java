@@ -206,7 +206,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .httpOnly(true)
                 .secure(false)  // Change this to 'true' in a production environment if using HTTPS
                 .path("/")
-                .maxAge(120)  // setMaxAge expects seconds, so we convert milliseconds to seconds
+                .maxAge(3600)  // setMaxAge expects seconds, so we convert milliseconds to seconds
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // Log cookie information
