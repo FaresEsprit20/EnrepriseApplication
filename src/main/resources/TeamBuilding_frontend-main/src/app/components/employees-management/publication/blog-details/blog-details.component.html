@@ -1,0 +1,24 @@
+<div class="my-4 mx-4">
+  <a [routerLink]="['/']"><i class="bi bi-arrow-left"></i> Go Back</a>
+</div>
+
+<div class="card w-50 my-5 mx-auto" *ngFor="let elem of blog">
+  <div class="card-body">
+    <h3 class="card-title my-3">{{ elem.idea }}</h3>
+    <h6 class="card-subtitle mb-2 text-muted">By {{ elem.employeeAuthor }},</h6>
+    <h6 class="card-subtitle mb-3 text-muted">In {{ elem.date }}</h6>
+    <p class="card-text">{{ elem.description }}</p>
+    <div class="d-flex">
+      <app-upvote
+        [id]="elem._id"
+        [upvotes]="elem.upvotes"
+        (vote)="onUpvote($event)"
+      ></app-upvote>
+      <app-downvote
+        [id]="elem._id"
+        [downvotes]="elem.downvotes"
+        (vote)="onDownvote($event)"
+      ></app-downvote>
+    </div>
+  </div>
+</div>

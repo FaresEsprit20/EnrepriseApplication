@@ -1,0 +1,60 @@
+<div *ngIf="blogs?.length === 0" class="d-flex justify-content-center my-3">
+  <p class="fs-3">No blog posts are available, feel free to add one</p>
+</div>
+
+<div class="container w-50 my-4 d-flex justify-content-between">
+  <app-search (search)="handleSearch($event)"></app-search>
+  <app-sort
+    [blogs]="searchResult || blogs"
+    (sortedBlogs)="handleSortedBlogs($event)"
+  ></app-sort>
+</div>
+
+<div
+  *ngIf="searchResult?.length === 0 && searchResult"
+  class="d-flex justify-content-center my-3"
+>
+  <p class="fs-3">No results found. Please try a different search</p>
+</div>
+
+<!-- <div
+  class="card my-5 w-50 mx-auto"
+  *ngFor="let blog of searchResult || blogs | sort : selectedSortOption"
+  [ngClass]="{
+    'border-danger': blog.downvotes > blog.upvotes,
+    'border-success': blog.downvotes < blog.upvotes
+  }"
+> -->
+<div
+  class="card my-5 w-50 mx-auto"
+  *ngFor="let blog of searchResult || blogs | sort : selectedSortOption"
+>
+  <div class="card-body">
+    <h4 class="card-title">{{ blog.idea }}</h4>
+    <h6 class="card-subtitle mb-2 text-muted">by {{ blog.employeeAuthor }},</h6>
+    <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-end">
+      {{ blog.date }}
+    </h6>
+    <p class="card-text">
+      {{ blog.preview }}
+    </p>
+    <div class="d-flex justify-content-end">
+      <a [routerLink]="['/readmore', blog.id]"
+        >Read more <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    <div class="d-flex">
+      <app-upvote
+        [id]="blog._id"
+        [upvotes]="blog.upvotes"
+        (vote)="onUpvote($event)"
+      ></app-upvote>
+
+      <app-downvote
+        [id]="blog._id"
+        [downvotes]="blog.downvotes"
+        (vote)="onDownvote($event)"
+      ></app-downvote>
+    </div>
+  </div>
+</div>
