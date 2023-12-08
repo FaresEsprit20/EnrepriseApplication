@@ -180,7 +180,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             // Save the new tokens in cookies
             saveTokenInCookie(response, newAccessToken);
-            saveTokenInCookie(response, newRefreshToken);
 
             // Build and return the RefreshTokenResponse
             var authResponse = RefreshTokenResponse.builder()
@@ -191,7 +190,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // Return a 401 Unauthorized response if the refresh token is not valid
-        throw new CustomException(403,Collections.singletonList("Invalid refresh token"));
+        throw new CustomException(403, Collections.singletonList("Invalid refresh token"));
     }
 
 
@@ -207,14 +206,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .httpOnly(true)
                 .secure(false)  // Change this to 'true' in a production environment if using HTTPS
                 .path("/")
-                .maxAge(3800)  // setMaxAge expects seconds, so we convert milliseconds to seconds
+                .maxAge(120)  // setMaxAge expects seconds, so we convert milliseconds to seconds
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // Log cookie information
         log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath());
     }
-
-
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
         return AuthenticationResponse.builder()

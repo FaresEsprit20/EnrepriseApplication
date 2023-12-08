@@ -34,37 +34,79 @@ public class RestExceptionHandler {
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
             errorDetail.setProperty("description", "The username or password is incorrect");
-
             return errorDetail;
         }
 
         if (exception instanceof AccountStatusException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
             errorDetail.setProperty("description", "The account is locked");
+            return errorDetail;
         }
 
         if (exception instanceof AccessDeniedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
             errorDetail.setProperty("description", "You are not authorized to access this resource");
+            return errorDetail;
         }
 
         if (exception instanceof SignatureException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
             errorDetail.setProperty("description", "The JWT signature is invalid");
+            return errorDetail;
         }
 
         if (exception instanceof ExpiredJwtException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
             errorDetail.setProperty("description", "The JWT token has expired");
+            return errorDetail;
         }
 
-        if (errorDetail == null) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-            errorDetail.setProperty("description", "Unknown internal server error.");
-        }
-
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
+        errorDetail.setProperty("description", "Unknown internal server error.");
         return errorDetail;
+
     }
+
+//    @ExceptionHandler(BadCredentialsException.class)
+//    public ResponseEntity<ProblemDetail> handleBadCredentialsException(ExpiredJwtException exception, WebRequest request) {
+//        ProblemDetail errorDetail = null;
+//        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
+//        errorDetail.setProperty("description", "The username or password is incorrect");
+//        return new ResponseEntity<>(errorDetail,HttpStatus.UNAUTHORIZED);
+//    }
+//
+//
+//    @ExceptionHandler(ExpiredJwtException.class)
+//    public ResponseEntity<ProblemDetail> handleExpiredJwtException(ExpiredJwtException exception, WebRequest request) {
+//        ProblemDetail errorDetail = null;
+//        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+//        errorDetail.setProperty("description", "The JWT token has expired");
+//        return new ResponseEntity<>(errorDetail,HttpStatus.FORBIDDEN);
+//    }
+//
+//    @ExceptionHandler(AccountStatusException.class)
+//    public ResponseEntity<ProblemDetail> handleAccountStatusException(ExpiredJwtException exception, WebRequest request) {
+//        ProblemDetail errorDetail = null;
+//        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+//        errorDetail.setProperty("description", "The account is locked");
+//        return new ResponseEntity<>(errorDetail,HttpStatus.FORBIDDEN);
+//    }
+//
+//    @ExceptionHandler(AccessDeniedException.class)
+//    public ResponseEntity<ProblemDetail> handleAccessDeniedException(ExpiredJwtException exception, WebRequest request) {
+//        ProblemDetail errorDetail = null;
+//        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+//        errorDetail.setProperty("description", "You are not authorized to access this resource");
+//        return new ResponseEntity<>(errorDetail,HttpStatus.FORBIDDEN);
+//    }
+//
+//    @ExceptionHandler(SignatureException.class)
+//    public ResponseEntity<ProblemDetail> handleSignatureExceptionException(ExpiredJwtException exception, WebRequest request) {
+//        ProblemDetail errorDetail = null;
+//        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+//        errorDetail.setProperty("description", "The JWT signature is invalid");
+//        return new ResponseEntity<>(errorDetail,HttpStatus.FORBIDDEN);
+//    }
 
 
 }

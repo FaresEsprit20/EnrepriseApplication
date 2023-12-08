@@ -36,10 +36,10 @@ public class LogoutService implements LogoutHandler {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
+                if ("accessToken".equals(cookie.getName()) || "JWT-Cookie-Token".equals(cookie.getName())) {
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
-                    break;
+//                    break;
                 }
             }
         }

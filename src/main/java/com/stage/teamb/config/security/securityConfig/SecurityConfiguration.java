@@ -111,16 +111,12 @@ public class SecurityConfiguration {
                 "ACL", "CANCELUPLOAD", "CHECKIN", "CHECKOUT", "COPY",
                 "GET","POST","PUT","PATCH","DELETE","OPTIONS","TRACE","HEAD"));
         configuration.applyPermitDefaultValues();
-
         // Use allowedOriginPatterns instead of allowedOrigins
         configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
-
         // You can still keep setAllowCredentials(true)
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 
