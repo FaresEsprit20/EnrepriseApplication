@@ -29,7 +29,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
-        ProblemDetail errorDetail = null;
+        ProblemDetail errorDetail;
 
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());

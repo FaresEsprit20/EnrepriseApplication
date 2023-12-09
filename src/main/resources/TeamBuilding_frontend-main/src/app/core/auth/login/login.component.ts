@@ -45,7 +45,6 @@ export class LoginComponent implements OnInit {
     if (this.requestForm.valid) {
       // Reset submitError
       this.submitError = null;
-      
       // Call the authenticate method from AuthService
       const formData = {
         email: this.requestForm.controls['email'].value,
