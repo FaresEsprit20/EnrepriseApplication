@@ -26,6 +26,7 @@ public class LogoutService implements LogoutHandler {
             HttpServletResponse response,
             Authentication authentication
     ) {
+        log.warn("Logout in Logout Handler Service ");
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
             log.warn(" not found jwt in logout");
@@ -36,10 +37,10 @@ public class LogoutService implements LogoutHandler {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName()) || "JWT-Cookie-Token".equals(cookie.getName())) {
+                if ("accessToken".equals(cookie.getName()) ) {
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
-//                    break;
+                    break;
                 }
             }
         }

@@ -53,13 +53,13 @@ export class LoginComponent implements OnInit {
       this.authService.authenticate(formData).subscribe(
         (response) => {
           // Handle successful authentication, e.g., navigate to a different page
-          console.log('Authentication successful');
+          console.log('Login COmponent /  Authentication successful');
           this.authService.setAccessToken(response.access_token)
           //this.authService.setRefreshToken(response.refresh_token)
         },
         (error) => {
           // Handle authentication error, e.g., display an error message
-          console.error('Authentication failed', error);
+          console.error('Login Component  Authentication failed', error);
           this.submitError = 'Authentication failed. Please check your credentials and try again.';
         }
       );

@@ -34,38 +34,43 @@ export class AuthService {
 
     if (response && response.access_token) {
       this.setAccessToken(response.access_token);
-      console.log('Access token set:', this.accessToken);
+      console.log('AuthService/handleAuthenticationResponse    Access token set:', this.accessToken);
     } else {
-      console.error('Invalid authentication response:', response);
+      console.error('AuthService/handleAuthenticationResponse  Invalid authentication response:', response);
     }
   }
 
   private handleAuthenticationError(error: any): Observable<any> {
-    console.error('Authentication error:', error);
-    return throwError('Authentication failed');
+    console.error('AuthService/handleAuthenticationError  Authentication error:', error);
+    return throwError('AuthService/handleAuthenticationError  Authentication failed');
   }
 
+  //attach method to request with cookies or bearer token
   public attachTokenToRequest(request: Observable<any>): Observable<any> {
-    if (!this.accessToken) {
-      console.log('Access token is null. Redirecting to login...');
-      return throwError('Access token is null');
-    }
-
     return request.pipe(
       switchMap(req => {
-        if (req.headers.has('Authorization')) {
-          return req;
+        console.warn("Attach Token   Access Token  :  "+this.accessToken.substring(0,8))
+        // Check if Authorization header is already present
+        if (req.headers.has('Authorization') && this.accessToken) {
+          console.warn("Attach Token   Authorization and access token are present")
+          // If Authorization header is present and accessToken is available, include it
+          req = req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${this.accessToken}`,
+            },
+          });
+        } else {
+          // If Authorization header is not present or accessToken is null, include credentials (cookies)
+          console.warn("Attach Token   Htp only cookies are present")
+          req = req.clone({
+            withCredentials: true,
+          });
         }
-
-        req = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${this.accessToken}`,
-          },
-        });
         return req;
       })
     );
   }
+
 
   setAccessToken(token: string) {
     this.accessToken = token;
@@ -81,7 +86,8 @@ export class AuthService {
     });
   }
 
-  private extractTokenFromCookies(): string | null {
+  //extract non http only cookie, not effecient with cookie that are http only
+ /*  private extractTokenFromCookies(): string | null {
     const accessTokenCookie = document.cookie
       .split('; ')
       .find(row => row.startsWith('accessToken='));
@@ -91,6 +97,6 @@ export class AuthService {
     }
     return null;
   }
-
+ */
 
 }
