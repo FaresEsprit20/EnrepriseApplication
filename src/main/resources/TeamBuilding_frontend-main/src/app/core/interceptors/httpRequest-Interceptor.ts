@@ -9,9 +9,9 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Call attachTokenToRequest with the current request
-    request = request.clone({
+    /* request = request.clone({
       withCredentials: true,
-    });
+    }); */
         // If attachTokenToRequest returns null, continue with the original request
         return next.handle(request);
    
