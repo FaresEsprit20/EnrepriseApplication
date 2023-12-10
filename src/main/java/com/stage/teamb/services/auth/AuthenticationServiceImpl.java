@@ -210,7 +210,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // Log cookie information
-        log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath());
+        log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), "*****", cookie.getMaxAge(), cookie.getPath());
     }
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
