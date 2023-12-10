@@ -28,7 +28,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.Collections;
-import java.util.Objects;
 
 @Slf4j
 @Component
@@ -141,7 +140,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractTokenFromCookies(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName()) && !Objects.requireNonNull(jwtService).isTokenExpired(cookie.getValue())) {
+                if ("accessToken".equals(cookie.getName()) && !jwtService.isTokenExpired(cookie.getValue())
+                        && !jwtService.isExpiredCookie()) {
                     log.info("JWT is from cookie");
                     return cookie.getValue();
                 } else {

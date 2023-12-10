@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class Users implements UserDetails{
     private Integer tel;
     private String occupation;
     private String password;
+    @Column
+    private LocalDateTime cookieExpiry;
     @Enumerated(EnumType.STRING)
     private UserRole role;
 

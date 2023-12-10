@@ -34,7 +34,7 @@ export class AuthService {
 
     if (response && response.access_token) {
       this.setAccessToken(response.access_token);
-      console.log('AuthService/handleAuthenticationResponse    Access token set:', this.accessToken);
+      console.log('AuthService/handleAuthenticationResponse    Access token set: Okay');
     } else {
       console.error('AuthService/handleAuthenticationResponse  Invalid authentication response:', response);
     }
@@ -49,7 +49,7 @@ export class AuthService {
   public attachTokenToRequest(request: Observable<any>): Observable<any> {
     return request.pipe(
       switchMap(req => {
-        console.warn("Attach Token   Access Token  :  "+this.accessToken.substring(0,8))
+        console.warn("Attach Token   Access Token  :  ")
         // Check if Authorization header is already present
         if (req.headers.has('Authorization') && this.accessToken) {
           console.warn("Attach Token   Authorization and access token are present")
@@ -81,9 +81,7 @@ export class AuthService {
   }
 
   private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'accessToken': `${this.accessToken}`
-    });
+    return new HttpHeaders();
   }
 
   //extract non http only cookie, not effecient with cookie that are http only

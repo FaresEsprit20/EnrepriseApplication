@@ -1,22 +1,31 @@
 package com.stage.teamb.config.security.jwt;
 
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.models.Users;
+import com.stage.teamb.repository.jpa.users.UsersRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -27,6 +36,12 @@ public class JwtService {
     private long jwtExpiration;
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
+    private final UsersRepository usersRepository;
+
+
+    public JwtService(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -55,6 +70,7 @@ public class JwtService {
     }
 
     public String generateToken(Users user) {
+        updateCookieExpiry(user);
         return buildToken(new HashMap<>(), user, jwtExpiration);
     }
 
@@ -92,5 +108,35 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    // New method to check if the cookie has expired
+    public boolean isExpiredCookie() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
+            log.warn("Authentication not found or not supported, JWTService Message");
+            throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
+        }
+
+        String email = authentication.getName();
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
+        LocalDateTime cookieExpiry = user.getCookieExpiry();
+        if (cookieExpiry != null) {
+            return cookieExpiry.isBefore(LocalDateTime.now());
+        }
+        log.warn("Cookie header is Expired, JWTService Message");
+        return true;
+    }
+
+    private LocalDateTime calculateCookieExpiry(long expiration) {
+        return LocalDateTime.now().plusSeconds(expiration);
+    }
+
+    public void updateCookieExpiry(Users user) {
+        user.setCookieExpiry(calculateCookieExpiry(jwtExpiration));
+        usersRepository.save(user); // Save the updated user
+    }
+
+
 
 }

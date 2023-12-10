@@ -22,6 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -201,16 +204,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void saveTokenInCookie(HttpServletResponse response, String jwtToken) {
+        // Set the Max-Age attribute to 3 hours (in seconds)
+        long maxAgeInSeconds = jwtService.getJwtExpiration() / 1000;
         // Set the token as an HttpOnly cookie in the response
         ResponseCookie cookie = ResponseCookie.from("accessToken", jwtToken)
                 .httpOnly(true)
                 .secure(false)  // Change this to 'true' in a production environment if using HTTPS
                 .path("/")
-                .maxAge(3600)  // setMaxAge expects seconds, so we convert milliseconds to seconds
+                .maxAge(maxAgeInSeconds)  // setMaxAge expects seconds, so we convert milliseconds to seconds
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // Log cookie information
         log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), "*****", cookie.getMaxAge(), cookie.getPath());
+    }
+
+    @Override
+    public boolean isUserOnline(String email) {
+        // Retrieve the authenticated user's email from the SecurityContext
+        if (isValidUserAction(email)) {
+            return true;
+        } else {
+            throw new CustomException(401, Collections.singletonList("User Not Found"));
+        }
+    }
+
+    @Override
+    public UserRole getAuthUserRole(String email) {
+        if(isValidUserAction(email)) {
+           Users user = usersRepository.findByEmail(email)
+                   .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
+            return user.getRole();
+        }
+        throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
     }
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
@@ -218,6 +243,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Override
+    public Authentication getAuthenticationSecurityContext() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    @Override
+    public boolean isValidUserAction(String email) {
+        return getUserDetails()
+                .map(userDetails -> userDetails.getUsername().equals(email))
+                .orElse(false);
+    }
+
+    @Override
+    public boolean isValidUserIdentifierAction(Long identifier) {
+        Authentication authentication = getAuthenticationSecurityContext();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+            Optional<Users> targetUser = usersRepository.findById(identifier);
+            return targetUser.map(users -> users.getEmail().equals(userDetails.getUsername())).orElse(false);
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<UserDetails> getUserDetails() {
+        Authentication authentication = getAuthenticationSecurityContext();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            return Optional.of((UserDetails) authentication.getPrincipal());
+        }
+        return Optional.empty();
     }
 
 
