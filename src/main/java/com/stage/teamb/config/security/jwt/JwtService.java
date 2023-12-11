@@ -100,7 +100,7 @@ public class JwtService {
         return expiration.before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
@@ -113,7 +113,7 @@ public class JwtService {
     public boolean isExpiredCookie() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
-            log.warn("Authentication not found or not supported, JWTService Message");
+            log.warn("Authentication not found or not supported, JWTService Message"+authentication);
             throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
         }
 
@@ -128,12 +128,17 @@ public class JwtService {
         return true;
     }
 
-    private LocalDateTime calculateCookieExpiry(long expiration) {
-        return LocalDateTime.now().plusSeconds(expiration);
+    private LocalDateTime calculateCookieExpiry() {
+//        long difference = jwtExpiration - refreshExpiration;
+//        return LocalDateTime.now().plusSeconds(jwtExpiration);
+        return LocalDateTime.now().plusHours(12);
     }
 
+
     public void updateCookieExpiry(Users user) {
-        user.setCookieExpiry(calculateCookieExpiry(jwtExpiration));
+        LocalDateTime newCookieExpiry = calculateCookieExpiry();
+        log.debug("Updating cookieExpiry for user {}: {} -> {}", user.getEmail(), user.getCookieExpiry(), newCookieExpiry);
+        user.setCookieExpiry(calculateCookieExpiry());
         usersRepository.save(user); // Save the updated user
     }
 

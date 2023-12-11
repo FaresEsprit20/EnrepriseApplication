@@ -127,7 +127,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("do Filter Internal Success");
+                log.info("do Filter Internal Success"+SecurityContextHolder.getContext().getAuthentication());
             } else {
                 throw new CustomException(403, Collections.singletonList("JWT is Not Valid"));
             }

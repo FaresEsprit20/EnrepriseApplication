@@ -31,7 +31,8 @@ public class LogoutService implements LogoutHandler {
             HttpServletResponse response,
             Authentication authentication
     ) {
-        log.warn("Logout in Logout Handler Service ");
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.warn("Logout in Logout Handler Service "+authentication);
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
             log.warn(" not found jwt in logout");

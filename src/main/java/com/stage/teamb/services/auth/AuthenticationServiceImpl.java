@@ -117,15 +117,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user.get());
         // Save the token in a cookie
         saveTokenInCookie(response, jwtToken);
+        log.debug("JWT Token generated. Expiry: {}", jwtService.extractExpiration(jwtToken));
         return buildAuthResponse(jwtToken, refreshToken);
     }
 
     @Override
     @PreAuthorize("hasAnyRole('RESPONSIBLE', 'EMPLOYEE')")
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
-
         var user = (Users) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-
         // check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
@@ -134,10 +133,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
             throw new IllegalStateException("Passwords are not the same");
         }
-
         // update the password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-
         // save the new password
         usersRepository.save(user);
     }
@@ -145,53 +142,40 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         // Check if the authorization header is present and starts with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             // Return a 401 Unauthorized response if the authorization header is missing or invalid
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
         String refreshToken = authHeader.substring(7);
-
         // Extract the user's email from the refresh token
         String userEmail = jwtService.extractUsername(refreshToken);
-
         // Check if user email is null or not found
         if (userEmail == null) {
             // Return a 401 Unauthorized response if the user email cannot be extracted
            throw new CustomException(403,Collections.singletonList("Invalid Email"));
         }
-
         // Retrieve the user from the repository
         Optional<Users> userOptional = this.usersRepository.findByEmail(userEmail);
-
         if (userOptional.isEmpty()) {
             // User not found
             throw new CustomException(403,Collections.singletonList("User Not found"));
         }
-
         Users user = userOptional.get();
-
         // Check if the refresh token is valid for the user
         if (jwtService.isTokenValid(refreshToken, user)) {
             // Generate a new access token and perform other necessary operations
             var newAccessToken = jwtService.generateToken(user);
-
             // Rotate refresh token (optional)
             var newRefreshToken = jwtService.generateRefreshToken(user);
-
             // Save the new tokens in cookies
             saveTokenInCookie(response, newAccessToken);
-
             // Build and return the RefreshTokenResponse
             var authResponse = RefreshTokenResponse.builder()
                     .refreshToken(newRefreshToken)
                     .build();
-
             return ResponseEntity.ok(authResponse);
         }
-
         // Return a 401 Unauthorized response if the refresh token is not valid
         throw new CustomException(403, Collections.singletonList("Invalid refresh token"));
     }

@@ -2,7 +2,6 @@ package com.stage.teamb.config.security.securityConfig;
 
 import com.stage.teamb.config.security.jwt.JwtAuthenticationFilter;
 import com.stage.teamb.models.enums.UserRole;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -92,20 +90,20 @@ public class SecurityConfiguration {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                     log.warn("Logout in Security Configuration");
-                                    // Extract token from cookies
-                                    Cookie[] cookies = request.getCookies();
-                                    if (cookies != null) {
-                                        for (Cookie cookie : cookies) {
-                                            if ("accessToken".equals(cookie.getName())) {
-                                                cookie.setMaxAge(0);
-                                                response.addCookie(cookie);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    logout.clearAuthentication(true);
-                                    logout.deleteCookies("accessToken");
-                                    SecurityContextHolder.clearContext();
+//                                    // Extract token from cookies
+//                                    Cookie[] cookies = request.getCookies();
+//                                    if (cookies != null) {
+//                                        for (Cookie cookie : cookies) {
+//                                            if ("accessToken".equals(cookie.getName())) {
+//                                                cookie.setMaxAge(0);
+//                                                response.addCookie(cookie);
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//                                    logout.clearAuthentication(true);
+//                                    logout.deleteCookies("accessToken");
+//                                    SecurityContextHolder.clearContext();
                                 })
                 );
         return http.build();
