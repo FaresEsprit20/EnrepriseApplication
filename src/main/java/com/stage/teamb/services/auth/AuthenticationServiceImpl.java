@@ -213,7 +213,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean isUserOnline() {
         Authentication authentication = getAuthContext();
-        log.warn(" auth "+authentication.isAuthenticated());
+        log.warn(" auth "+authentication.isAuthenticated()+ "  Authentication name  "+authentication.getName());
         return authentication.isAuthenticated();
     }
 

@@ -1,0 +1,18 @@
+package com.stage.teamb.dtos.publication;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class PublicationCreateDTO {
+
+    private String name;
+    private String description;
+    private Long employeeId;
+
+}

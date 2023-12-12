@@ -1,6 +1,7 @@
 package com.stage.teamb.services.publication;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.mappers.EmployeeMapper;
@@ -52,13 +53,17 @@ public class PublicationServiceImpl implements PublicationService {
 
 
     @Override
-    public PublicationDTO createPublication(PublicationDTO publicationDTO) {
+    public PublicationDTO createPublication(PublicationCreateDTO publicationDTO) {
         Long employeeId = publicationDTO.getEmployeeId(); // Get employeeId from the DTO
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
         // Create a new Publication entity and set its values
-        Publication newPublication = PublicationMapper.toEntity(publicationDTO);
+        Publication newPublication =  Publication.builder()
+                .name(publicationDTO.getName())
+                .description(publicationDTO.getDescription())
+                .employee(employee)
+                .build();
         newPublication.setEmployeeForPublication(employee);
         try {
             // Save the new publication to the database

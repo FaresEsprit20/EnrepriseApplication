@@ -1,6 +1,7 @@
 package com.stage.teamb.services.publication;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.models.Publication;
@@ -17,7 +18,7 @@ public interface PublicationService {
 
     List<PublicationDTO> findAllByEmployeeId(Long employeeId);
 
-    PublicationDTO createPublication(PublicationDTO publicationDTO);
+    PublicationDTO createPublication(PublicationCreateDTO publicationDTO);
 
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
 

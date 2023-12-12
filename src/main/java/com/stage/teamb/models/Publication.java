@@ -23,6 +23,7 @@ public class Publication implements Serializable  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

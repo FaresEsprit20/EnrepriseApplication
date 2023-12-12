@@ -1,6 +1,7 @@
 package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.services.publication.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class PublicationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationDTO publicationDTO) {
+    public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationCreateDTO publicationDTO) {
         PublicationDTO createdPublication = publicationService.createPublication(publicationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPublication);
     }
