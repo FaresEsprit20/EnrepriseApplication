@@ -24,8 +24,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -44,15 +45,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final HttpSessionSecurityContextRepository securityContextRepository =
+            new HttpSessionSecurityContextRepository();
 
+    private final SecurityContextHolderStrategy contextHolderStrategy =
+            SecurityContextHolder.getContextHolderStrategy();
     @Override
     public AuthenticationResponse registerEmployee(RegisterRequest request, HttpServletResponse response) {
         var employee = buildEmployeeFromRequest(request);
         var savedUser = employeeRepository.save(employee);
         var jwtToken = jwtService.generateToken(savedUser);
         var refreshToken = jwtService.generateRefreshToken(savedUser);
-        // Save the token in a cookie
-        saveTokenInCookie(response, jwtToken);
         return buildAuthResponse(jwtToken, refreshToken);
     }
 
@@ -62,8 +65,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var savedUser = responsibleRepository.save(responsible);
         var jwtToken = jwtService.generateToken(savedUser);
         var refreshToken = jwtService.generateRefreshToken(savedUser);
-        // Save the token in a cookie
-        saveTokenInCookie(response, jwtToken);
         return buildAuthResponse(jwtToken, refreshToken);
     }
 
@@ -98,14 +99,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
-        authenticationManager.authenticate(
+    public AuthenticationResponse authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
                 )
         );
-        Optional<Users> user = Optional.ofNullable(usersRepository.findByEmail(request.getEmail())
+        // Set the Authentication object in SecurityContextHolder
+        var securityContext = this.contextHolderStrategy.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+        // Save the SecurityContext using the SecurityContextRepository
+        securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+
+        Optional<Users> user = Optional.ofNullable(usersRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found"))));
         if (user.isPresent()) {
             log.warn("User is present");
@@ -115,6 +122,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         var jwtToken = jwtService.generateToken(user.get());
         var refreshToken = jwtService.generateRefreshToken(user.get());
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.warn("Authentication status  "+authentication.getPrincipal()+"  name  "+authentication.getName()
+                + "  details  "+ authentication.getDetails()+" autorities  "+authentication.getAuthorities()
+                +" email from jwt "+jwtService.extractUsername(jwtToken)+ "  ");
         // Save the token in a cookie
         saveTokenInCookie(response, jwtToken);
         log.debug("JWT Token generated. Expiry: {}", jwtService.extractExpiration(jwtToken));
@@ -205,21 +216,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean isUserOnline(String email) {
         // Retrieve the authenticated user's email from the SecurityContext
-        if (isValidUserAction(email)) {
+//        if (isValidUserAction(email)) {
             return true;
-        } else {
-            throw new CustomException(401, Collections.singletonList("User Not Found"));
-        }
+//        } else {
+//            throw new CustomException(401, Collections.singletonList("User Not Found"));
+//        }
     }
 
     @Override
     public UserRole getAuthUserRole(String email) {
-        if(isValidUserAction(email)) {
+//        if(isValidUserAction(email)) {
            Users user = usersRepository.findByEmail(email)
                    .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
             return user.getRole();
-        }
-        throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
+        //}
+        //throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
     }
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
@@ -229,36 +240,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    @Override
-    public Authentication getAuthenticationSecurityContext() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
+//    @Override
+//    public Authentication getAuthenticationSecurityContext() {
+//        return SecurityContextHolder.getContext().getAuthentication();
+//    }
 
-    @Override
-    public boolean isValidUserAction(String email) {
-        return getUserDetails()
-                .map(userDetails -> userDetails.getUsername().equals(email))
-                .orElse(false);
-    }
+//    @Override
+//    public boolean isValidUserAction(String email) {
+//        return getUserDetails()
+//                .map(userDetails -> userDetails.getUsername().equals(email))
+//                .orElse(false);
+//    }
+//
+//    @Override
+//    public boolean isValidUserIdentifierAction(Long identifier) {
+//        Authentication authentication = getAuthenticationSecurityContext();
+//        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+//            Optional<Users> targetUser = usersRepository.findById(identifier);
+//            return targetUser.map(users -> users.getEmail().equals(userDetails.getUsername())).orElse(false);
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public Optional<UserDetails> getUserDetails() {
+//        Authentication authentication = getAuthenticationSecurityContext();
+//        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+//            return Optional.of((UserDetails) authentication.getPrincipal());
+//        }
+//        return Optional.empty();
+//    }
 
-    @Override
-    public boolean isValidUserIdentifierAction(Long identifier) {
-        Authentication authentication = getAuthenticationSecurityContext();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            Optional<Users> targetUser = usersRepository.findById(identifier);
-            return targetUser.map(users -> users.getEmail().equals(userDetails.getUsername())).orElse(false);
-        }
-        return false;
-    }
 
-    @Override
-    public Optional<UserDetails> getUserDetails() {
-        Authentication authentication = getAuthenticationSecurityContext();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            return Optional.of((UserDetails) authentication.getPrincipal());
-        }
-        return Optional.empty();
-    }
 
 
 }

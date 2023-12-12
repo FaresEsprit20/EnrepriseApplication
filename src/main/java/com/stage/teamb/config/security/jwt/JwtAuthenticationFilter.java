@@ -37,13 +37,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        log.debug("Entering doFilterInternal");
+        log.info("Do filter Internal Starts ");
+
         logRequestInfo(request);
+
         if (isAuthenticationPath(request)) {
             log.info("Skipping filter for authentication path");
             filterChain.doFilter(request, response);
@@ -59,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             convertExceptionToProblemDetail(exception, response);
         }
+        log.debug("Exiting doFilterInternal");
     }
 
     private void logRequestInfo(HttpServletRequest request) {
@@ -72,6 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractToken(HttpServletRequest request) {
         String jwt = extractTokenFromCookies(request.getCookies());
+        log.debug("Token extracted from cookies: {}", jwt);
         if (jwt == null) {
             jwt = extractTokenFromAuthorizationHeader(request.getHeader("Authorization"));
         }
@@ -105,43 +112,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void processToken(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        final String userEmail;
-        // Check if the token has expired
-        if (jwtService.isTokenExpired(jwt)) {
-            log.warn("JWT has expired");
-            throw new ExpiredJwtException(null, null, "JWT has expired");
-        }
-        // Extract user email from token
-        userEmail = jwtService.extractUsername(jwt);
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Load user details from user service
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("do Filter Internal Success"+SecurityContextHolder.getContext().getAuthentication());
-            } else {
-                throw new CustomException(403, Collections.singletonList("JWT is Not Valid"));
-            }
-        } else {
-            log.warn("User email is null or Authentication is not null");
-        }
-        filterChain.doFilter(request, response);
+
+private void processToken(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    final String userEmail;
+    log.debug("Before checking if the token has expired");
+
+    // Check if the token has expired
+    if (jwtService.isTokenExpired(jwt)) {
+        log.warn("JWT has expired");
+        throw new ExpiredJwtException(null, null, "JWT has expired");
     }
 
+    // Extract user email from token
+    userEmail = jwtService.extractUsername(jwt);
+    log.info("User Email: {}", userEmail);
+
+    if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Load user details from user service
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+
+        // Check if the token is valid
+        if (jwtService.isTokenValid(jwt, userDetails)) {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+//            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            SecurityContext securityContext = SecurityContextHolder.getContext();
+//            securityContext.setAuthentication(authentication);
+//            SecurityContextHolder.setContext(securityContext);
+//            securityContextRepository.saveContext(securityContext, request, response);
+          //  log.info("Authentication has user name : " + ((UserDetails)authentication.getPrincipal()).getUsername());
+
+            // Add logs here to check if the control reaches this point
+            log.info("Processing token: {}", "*****");
+            log.info("Authentication Object: {}", SecurityContextHolder.getContext().getAuthentication().getName());
+            filterChain.doFilter(request, response);
+            log.info("doFilterInternal success");
+        } else {
+            throw new CustomException(403, Collections.singletonList("JWT is Not Valid"));
+        }
+    } else {
+        log.warn("User email is null or Authentication is not null");
+    }
+}
     private String extractTokenFromCookies(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName()) && !jwtService.isTokenExpired(cookie.getValue())
-                        && !jwtService.isExpiredCookie()) {
+                        && !jwtService.isExpiredCookie(cookie.getValue())) {
                     log.info("JWT is from cookie");
                     return cookie.getValue();
                 } else {
@@ -159,6 +181,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
     private void convertExceptionToProblemDetail(Exception exception, HttpServletResponse response) throws IOException {
         ProblemDetail errorDetail;
         if (exception instanceof ExpiredJwtException) {

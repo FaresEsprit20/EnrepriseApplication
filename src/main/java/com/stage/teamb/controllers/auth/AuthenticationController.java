@@ -36,10 +36,11 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request,
+            @RequestBody AuthenticationRequest loginRequest,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authService.authenticate(request, response));
+        return ResponseEntity.ok(authService.authenticate(loginRequest, request, response));
     }
 
     @PostMapping("/refresh-token")

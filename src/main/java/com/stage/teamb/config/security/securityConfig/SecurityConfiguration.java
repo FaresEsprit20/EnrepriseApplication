@@ -11,12 +11,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,7 +39,7 @@ public class SecurityConfiguration {
     private final LogoutHandler logoutHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors((cors) -> cors
@@ -82,46 +79,30 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .rememberMe((remember) -> remember
-                        .rememberMeServices(rememberMeServices)
+                .securityContext((securityContext) -> securityContext
+                        .requireExplicitSave(false)
                 )
                 .logout(logout ->
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                     log.warn("Logout in Security Configuration");
-//                                    // Extract token from cookies
-//                                    Cookie[] cookies = request.getCookies();
-//                                    if (cookies != null) {
-//                                        for (Cookie cookie : cookies) {
-//                                            if ("accessToken".equals(cookie.getName())) {
-//                                                cookie.setMaxAge(0);
-//                                                response.addCookie(cookie);
-//                                                break;
-//                                            }
-//                                        }
-//                                    }
-//                                    logout.clearAuthentication(true);
-//                                    logout.deleteCookies("accessToken");
-//                                    SecurityContextHolder.clearContext();
                                 })
                 );
         return http.build();
     }
 
+
     @Bean
     public CorsConfigurationSource getCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedHeaders(List.of(
-                "Authorization", "Cache-Control", "Content-Type",
+                "Authorization", "Cache-Control", "Content-Type", "Set_Cookie",
                 "Origin, X-Requested-With,  Accept, Key"));
         configuration.setExposedHeaders(List.of(
-                "Authorization", "Cache-Control", "Content-Type",
+                "Authorization", "Cache-Control", "Content-Type", "Set_Cookie",
                 "Origin, X-Requested-With,  Accept, Key"));
-        configuration.setAllowedMethods(Arrays.asList(
-                "MKCALENDAR", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH",
-                "REPORT", "SEARCH", "UNCHECKOUT", "UNLOCK", "UPDATE", "VERSION-CONTROL",
-                "ACL", "CANCELUPLOAD", "CHECKIN", "CHECKOUT", "COPY",
+        configuration.setAllowedMethods(Arrays.asList("Set_Cookie",
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", "HEAD"));
         configuration.applyPermitDefaultValues();
         // Use allowedOriginPatterns instead of allowedOrigins
@@ -131,14 +112,6 @@ public class SecurityConfiguration {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    RememberMeServices rememberMeServices(UserDetailsService userDetailsService) {
-        TokenBasedRememberMeServices.RememberMeTokenAlgorithm encodingAlgorithm = TokenBasedRememberMeServices.RememberMeTokenAlgorithm.SHA256;
-        TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices("keyForRememberMeToken", userDetailsService, encodingAlgorithm);
-        rememberMe.setMatchingAlgorithm(TokenBasedRememberMeServices.RememberMeTokenAlgorithm.MD5);
-        return rememberMe;
     }
 
 

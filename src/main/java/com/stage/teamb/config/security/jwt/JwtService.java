@@ -11,7 +11,6 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -110,14 +109,14 @@ public class JwtService {
     }
 
     // New method to check if the cookie has expired
-    public boolean isExpiredCookie() {
+    public boolean isExpiredCookie(String token) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
-            log.warn("Authentication not found or not supported, JWTService Message"+authentication);
-            throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
-        }
+//        if (authentication == null) {
+//            log.warn("Authentication not found or not supported, JWTService Message"+authentication);
+//            throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
+//        }
 
-        String email = authentication.getName();
+        String email = this.extractUsername(token);
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
         LocalDateTime cookieExpiry = user.getCookieExpiry();

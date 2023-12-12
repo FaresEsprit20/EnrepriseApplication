@@ -8,12 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
 
 public interface AuthenticationService {
 
@@ -25,7 +22,7 @@ public interface AuthenticationService {
 
     Responsible buildResponsibleFromRequest(RegisterRequest request);
 
-    AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response);
+    AuthenticationResponse authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
 
 
     @PreAuthorize("hasAnyRole('RESPONSIBLE', 'EMPLOYEE')")
@@ -44,11 +41,11 @@ public interface AuthenticationService {
     UserRole getAuthUserRole(String email);
 
 
-    Authentication getAuthenticationSecurityContext();
+//    Authentication getAuthenticationSecurityContext();
 
-    boolean isValidUserAction(String email);
-
-    boolean isValidUserIdentifierAction(Long identifier);
-
-    Optional<UserDetails> getUserDetails();
+//    boolean isValidUserAction(String email);
+//
+//    boolean isValidUserIdentifierAction(Long identifier);
+//
+//    Optional<UserDetails> getUserDetails();
 }
