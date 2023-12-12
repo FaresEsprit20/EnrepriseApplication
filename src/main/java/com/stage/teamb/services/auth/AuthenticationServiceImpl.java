@@ -211,13 +211,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //    }
 
     @Override
-    public boolean isUserOnline(String email) {
-        // Retrieve the authenticated user's email from the SecurityContext
-        if (email != null) {
-            return true;
-        } else {
-            throw new CustomException(401, Collections.singletonList("User Not Found"));
-        }
+    public boolean isUserOnline() {
+        Authentication authentication = getAuthContext();
+        log.warn(" auth "+authentication.isAuthenticated());
+        return authentication.isAuthenticated();
     }
 
     @Override
@@ -269,7 +266,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //        return Optional.empty();
 //    }
 
-
+    public Authentication getAuthContext() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
 
 }

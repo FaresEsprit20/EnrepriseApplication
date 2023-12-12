@@ -11,9 +11,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,7 +39,12 @@ public class SecurityConfiguration {
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final LogoutHandler logoutHandler;
+
+    private final HttpSessionSecurityContextRepository securityContextRepository =
+            new HttpSessionSecurityContextRepository();
+
+    private final SecurityContextHolderStrategy contextHolderStrategy =
+            SecurityContextHolder.getContextHolderStrategy();
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -84,9 +92,15 @@ public class SecurityConfiguration {
                 )
                 .logout(logout ->
                         logout.logoutUrl("/api/v1/auth/logout")
-                                .addLogoutHandler(logoutHandler)
+//                                .addLogoutHandler(logoutHandler)
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                     log.warn("Logout in Security Configuration");
+                                    SecurityContextHolder.getContext().setAuthentication(null);
+                                    logout.clearAuthentication(true);
+                                    SecurityContextLogoutHandler logoutDHandler = new SecurityContextLogoutHandler();
+                                    logoutDHandler.logout(request,response,authentication);
                                 })
                 );
         return http.build();
@@ -98,25 +112,27 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedHeaders(List.of(
                 "Authorization", "Cache-Control", "Content-Type",
-                "Origin", "X-Requested-With",  "Accept", "Key"
+                "Origin", "X-Requested-With", "Accept", "Key"
 //                "Set_Cookie",
         ));
         configuration.setExposedHeaders(List.of(
                 "Authorization", "Cache-Control", "Content-Type",
-                "Origin", "X-Requested-With",  "Accept", "Key"
+                "Origin", "X-Requested-With", "Accept", "Key"
 //                "Set_Cookie",
-                ));
+        ));
         configuration.setAllowedMethods(Arrays.asList("Set_Cookie",
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", "HEAD"));
         configuration.applyPermitDefaultValues();
         // Use allowedOriginPatterns instead of allowedOrigins
         configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
         // You can still keep setAllowCredentials(true)
-       // configuration.setAllowCredentials(true);
+        // configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+
     }
+
 
 
 }

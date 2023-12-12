@@ -68,6 +68,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(isExpired);
     }
 
+    @GetMapping("/is-authenticated")
+    public ResponseEntity<Boolean> isAuthenticatedUser(
+            @RequestHeader("Authorization") String token
+    ) {
+        boolean isExpired = authService.isTokenExpired(token.replace("Bearer ", ""));
+        if(!isExpired){
+            return ResponseEntity.ok(authService.isUserOnline());
+        }
+        return ResponseEntity.ok(isExpired);
+    }
+
 
 
 }

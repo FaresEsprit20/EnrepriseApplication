@@ -37,8 +37,7 @@ public interface AuthenticationService {
     boolean isTokenExpired(String token);
 
     //void saveTokenInCookie(HttpServletResponse response, String jwtToken);
-
-    boolean isUserOnline(String email);
+    boolean isUserOnline();
     UserRole getAuthUserRole(String email);
 //
 //
