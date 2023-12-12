@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, of  } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,7 @@ export class AuthService {
 
   private apiUrl = 'http://localhost:8082/api/v1/auth';
   private accessToken: string | null = null;
+  private refreshToken: string | null = null;
 
   constructor(private http: HttpClient) { }
 
@@ -29,14 +30,43 @@ export class AuthService {
       );
   }
 
-  private handleAuthenticationResponse(response: any): void {
-    console.log('Authentication response:', response);
+  refreshTokenMethod(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/refresh-token`)
+      .pipe(
+        tap(response => this.handleRefreshTokenResponse(response)),
+        catchError(error => this.handleAuthenticationError(error))
+      );
+  }
 
-    if (response && response.access_token) {
+  isTokenExpired(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/is-token-expired`, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.accessToken}`
+      })
+    });
+  }
+
+  private handleAuthenticationResponse(response: any): void {
+    console.log('Authentication response:');
+
+    if (response && response.access_token && response.refresh_token) {
       this.setAccessToken(response.access_token);
+      this.setRefreshToken(response.refresh_token);
       console.log('AuthService/handleAuthenticationResponse    Access token set: Okay');
     } else {
       console.error('AuthService/handleAuthenticationResponse  Invalid authentication response:', response);
+    }
+  }
+
+  private handleRefreshTokenResponse(response: any): void {
+    console.log('Refresh token response:', response);
+
+    if (response && response.access_token && response.refresh_token) {
+      this.setAccessToken(response.access_token);
+      this.setRefreshToken(response.refresh_token);
+      console.log('AuthService/handleRefreshTokenResponse    Access token refreshed: Okay');
+    } else {
+      console.error('AuthService/handleRefreshTokenResponse  Invalid refresh token response:', response);
     }
   }
 
@@ -45,56 +75,53 @@ export class AuthService {
     return throwError('AuthService/handleAuthenticationError  Authentication failed');
   }
 
-  //attach method to request with cookies or bearer token
+  // Attach method to request with session storage token
   public attachTokenToRequest(request: Observable<any>): Observable<any> {
-    return request.pipe(
-      switchMap(req => {
-        console.warn("Attach Token   Access Token  :  ")
-        // Check if Authorization header is already present
-        if (req.headers.has('Authorization') && this.accessToken) {
-          console.warn("Attach Token   Authorization and access token are present")
-          // If Authorization header is present and accessToken is available, include it
-          req = req.clone({
-            setHeaders: {
-              Authorization: `Bearer ${this.accessToken}`,
-            },
-          });
-        } else {
-          // If Authorization header is not present or accessToken is null, include credentials (cookies)
-          console.warn("Attach Token   Htp only cookies are present")
-          req = req.clone({
-            withCredentials: true,
-          });
-        }
-        return req;
-      })
-    );
+    return request
   }
-
+  
+  
 
   setAccessToken(token: string) {
+    // Store the token in session storage
+    sessionStorage.setItem('accessToken', token);
     this.accessToken = token;
   }
 
   getAccessToken() {
-    return this.accessToken;
+    this.accessToken = sessionStorage.getItem('accessToken');
+    return sessionStorage.getItem('accessToken');
+  }
+
+  setRefreshToken(token: string) {
+    // Store the refresh token in session storage
+    sessionStorage.setItem('refreshToken', token);
+    this.refreshToken = token;
+  }
+
+  getRefreshToken() {
+    // Retrieve the refresh token from session storage
+    return this.refreshToken || sessionStorage.getItem('refreshToken');
   }
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders();
   }
 
-  //extract non http only cookie, not effecient with cookie that are http only
- /*  private extractTokenFromCookies(): string | null {
-    const accessTokenCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('accessToken='));
-    if (accessTokenCookie) {
-      const token = accessTokenCookie.split('=')[1];
-      return token;
-    }
-    return null;
+  clearAccessToken(): void {
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
   }
- */
+
+  logout(): Observable<any> {
+    // Make a request to the logout endpoint on the server
+    return this.http.post('http://localhost:8082/api/v1/auth/logout', {}).pipe(
+      // Handle successful logout on the client side
+      map(() => {
+        // Clear the access token and any other user-related data
+        this.clearAccessToken();
+      })
+    );
+  }
 
 }
