@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
@@ -122,12 +120,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         var jwtToken = jwtService.generateToken(user.get());
         var refreshToken = jwtService.generateRefreshToken(user.get());
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.warn("Authentication status  "+authentication.getPrincipal()+"  name  "+authentication.getName()
                 + "  details  "+ authentication.getDetails()+" autorities  "+authentication.getAuthorities()
                 +" email from jwt "+jwtService.extractUsername(jwtToken)+ "  ");
         // Save the token in a cookie
-        saveTokenInCookie(response, jwtToken);
+        //saveTokenInCookie(response, jwtToken);
         log.debug("JWT Token generated. Expiry: {}", jwtService.extractExpiration(jwtToken));
         return buildAuthResponse(jwtToken, refreshToken);
     }
@@ -151,7 +148,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         // Check if the authorization header is present and starts with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -180,7 +177,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // Rotate refresh token (optional)
             var newRefreshToken = jwtService.generateRefreshToken(user);
             // Save the new tokens in cookies
-            saveTokenInCookie(response, newAccessToken);
+           // saveTokenInCookie(response, newAccessToken);
             // Build and return the RefreshTokenResponse
             var authResponse = RefreshTokenResponse.builder()
                     .refreshToken(newRefreshToken)
@@ -197,40 +194,40 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return jwtService.isTokenExpired(token);
     }
 
-    @Override
-    public void saveTokenInCookie(HttpServletResponse response, String jwtToken) {
-        // Set the Max-Age attribute to 3 hours (in seconds)
-        long maxAgeInSeconds = jwtService.getJwtExpiration() / 1000;
-        // Set the token as an HttpOnly cookie in the response
-        ResponseCookie cookie = ResponseCookie.from("accessToken", jwtToken)
-                .httpOnly(true)
-                .secure(false)  // Change this to 'true' in a production environment if using HTTPS
-                .path("/")
-                .maxAge(maxAgeInSeconds)  // setMaxAge expects seconds, so we convert milliseconds to seconds
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        // Log cookie information
-        log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), "*****", cookie.getMaxAge(), cookie.getPath());
-    }
+//    @Override
+//    public void saveTokenInCookie(HttpServletResponse response, String jwtToken) {
+//        // Set the Max-Age attribute to 3 hours (in seconds)
+//        long maxAgeInSeconds = jwtService.getJwtExpiration() / 1000;
+//        // Set the token as an HttpOnly cookie in the response
+//        ResponseCookie cookie = ResponseCookie.from("accessToken", jwtToken)
+//                .httpOnly(true)
+//                .secure(false)  // Change this to 'true' in a production environment if using HTTPS
+//                .path("/")
+//                .maxAge(maxAgeInSeconds)  // setMaxAge expects seconds, so we convert milliseconds to seconds
+//                .build();
+//        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//        // Log cookie information
+//        log.info("JWT cookie set: Name={}, Value={}, MaxAge={}, Path={}", cookie.getName(), "*****", cookie.getMaxAge(), cookie.getPath());
+//    }
 
     @Override
     public boolean isUserOnline(String email) {
         // Retrieve the authenticated user's email from the SecurityContext
-//        if (isValidUserAction(email)) {
+        if (email != null) {
             return true;
-//        } else {
-//            throw new CustomException(401, Collections.singletonList("User Not Found"));
-//        }
+        } else {
+            throw new CustomException(401, Collections.singletonList("User Not Found"));
+        }
     }
 
     @Override
     public UserRole getAuthUserRole(String email) {
-//        if(isValidUserAction(email)) {
+        if(email != null) {
            Users user = usersRepository.findByEmail(email)
                    .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
             return user.getRole();
-        //}
-        //throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
+        }
+        throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
     }
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
@@ -240,10 +237,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-//    @Override
-//    public Authentication getAuthenticationSecurityContext() {
-//        return SecurityContextHolder.getContext().getAuthentication();
-//    }
+    @Override
+    public Authentication getAuthenticationSecurityContext() {
+        log.warn("getAuthenticationSecurityContext() "+SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
 //    @Override
 //    public boolean isValidUserAction(String email) {
@@ -251,7 +249,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //                .map(userDetails -> userDetails.getUsername().equals(email))
 //                .orElse(false);
 //    }
-//
+
 //    @Override
 //    public boolean isValidUserIdentifierAction(Long identifier) {
 //        Authentication authentication = getAuthenticationSecurityContext();
@@ -261,7 +259,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //        }
 //        return false;
 //    }
-//
+
 //    @Override
 //    public Optional<UserDetails> getUserDetails() {
 //        Authentication authentication = getAuthenticationSecurityContext();

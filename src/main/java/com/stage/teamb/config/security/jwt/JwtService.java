@@ -1,6 +1,5 @@
 package com.stage.teamb.config.security.jwt;
 
-import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.models.Users;
 import com.stage.teamb.repository.jpa.users.UsersRepository;
 import io.jsonwebtoken.Claims;
@@ -11,14 +10,10 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +64,7 @@ public class JwtService {
     }
 
     public String generateToken(Users user) {
-        updateCookieExpiry(user);
+       // updateCookieExpiry(user);
         return buildToken(new HashMap<>(), user, jwtExpiration);
     }
 
@@ -109,38 +104,34 @@ public class JwtService {
     }
 
     // New method to check if the cookie has expired
-    public boolean isExpiredCookie(String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null) {
+//    public boolean isExpiredCookie(String token) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
 //            log.warn("Authentication not found or not supported, JWTService Message"+authentication);
 //            throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
 //        }
+//        log.warn(("Authentication name in Cookie Expiry  "+authentication.getName()));
+//        String email = this.extractUsername(token);
+//        Users user = usersRepository.findByEmail(email)
+//                .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
+//        LocalDateTime cookieExpiry = user.getCookieExpiry();
+//        if (cookieExpiry != null) {
+//            return cookieExpiry.isBefore(LocalDateTime.now());
+//        }
+//        log.warn("Cookie header is Expired, JWTService Message");
+//        return true;
+//    }
 
-        String email = this.extractUsername(token);
-        Users user = usersRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(401, Collections.singletonList("User Not Found")));
-        LocalDateTime cookieExpiry = user.getCookieExpiry();
-        if (cookieExpiry != null) {
-            return cookieExpiry.isBefore(LocalDateTime.now());
-        }
-        log.warn("Cookie header is Expired, JWTService Message");
-        return true;
-    }
-
-    private LocalDateTime calculateCookieExpiry() {
-//        long difference = jwtExpiration - refreshExpiration;
-//        return LocalDateTime.now().plusSeconds(jwtExpiration);
-        return LocalDateTime.now().plusHours(12);
-    }
+//    private LocalDateTime calculateCookieExpiry() {
+//        return LocalDateTime.now().plusHours(12);
+//    }
 
 
-    public void updateCookieExpiry(Users user) {
-        LocalDateTime newCookieExpiry = calculateCookieExpiry();
-        log.debug("Updating cookieExpiry for user {}: {} -> {}", user.getEmail(), user.getCookieExpiry(), newCookieExpiry);
-        user.setCookieExpiry(calculateCookieExpiry());
-        usersRepository.save(user); // Save the updated user
-    }
-
-
+//    public void updateCookieExpiry(Users user) {
+//        LocalDateTime newCookieExpiry = calculateCookieExpiry();
+//        log.debug("Updating cookieExpiry for user {}: {} -> {}", user.getEmail(), user.getCookieExpiry(), newCookieExpiry);
+//        user.setCookieExpiry(calculateCookieExpiry());
+//        usersRepository.save(user); // Save the updated user
+//    }
 
 }

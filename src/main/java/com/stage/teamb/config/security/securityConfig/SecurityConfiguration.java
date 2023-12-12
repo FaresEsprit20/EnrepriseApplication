@@ -97,18 +97,22 @@ public class SecurityConfiguration {
     public CorsConfigurationSource getCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedHeaders(List.of(
-                "Authorization", "Cache-Control", "Content-Type", "Set_Cookie",
-                "Origin, X-Requested-With,  Accept, Key"));
+                "Authorization", "Cache-Control", "Content-Type",
+                "Origin", "X-Requested-With",  "Accept", "Key"
+//                "Set_Cookie",
+        ));
         configuration.setExposedHeaders(List.of(
-                "Authorization", "Cache-Control", "Content-Type", "Set_Cookie",
-                "Origin, X-Requested-With,  Accept, Key"));
+                "Authorization", "Cache-Control", "Content-Type",
+                "Origin", "X-Requested-With",  "Accept", "Key"
+//                "Set_Cookie",
+                ));
         configuration.setAllowedMethods(Arrays.asList("Set_Cookie",
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", "HEAD"));
         configuration.applyPermitDefaultValues();
         // Use allowedOriginPatterns instead of allowedOrigins
         configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
         // You can still keep setAllowCredentials(true)
-        configuration.setAllowCredentials(true);
+       // configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

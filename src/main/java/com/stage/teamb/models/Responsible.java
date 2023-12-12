@@ -36,9 +36,9 @@ public class Responsible extends Users   {
     }
     @Builder // Explicitly specify @Builder
     public Responsible(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
-                       Integer tel, String occupation, String password, UserRole role, LocalDateTime expiredCookie,
+                       Integer tel, String occupation, String password, UserRole role,
                        LocalDateTime createdAt, LocalDateTime updatedAt) {
-        super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, expiredCookie, UserRole.RESPONSIBLE);
+        super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.RESPONSIBLE);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -35,17 +36,18 @@ public interface AuthenticationService {
 
     boolean isTokenExpired(String token);
 
-    void saveTokenInCookie(HttpServletResponse response, String jwtToken);
+    //void saveTokenInCookie(HttpServletResponse response, String jwtToken);
 
     boolean isUserOnline(String email);
     UserRole getAuthUserRole(String email);
-
-
-//    Authentication getAuthenticationSecurityContext();
-
+//
+//
+    Authentication getAuthenticationSecurityContext();
+//
 //    boolean isValidUserAction(String email);
 //
 //    boolean isValidUserIdentifierAction(Long identifier);
-//
-//    Optional<UserDetails> getUserDetails();
+
+
+
 }
