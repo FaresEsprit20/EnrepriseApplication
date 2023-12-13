@@ -4,6 +4,7 @@ import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.publication.PublicationGetDTO;
+import com.stage.teamb.dtos.rating.RatingCountDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.EmployeeMapper;
@@ -47,11 +48,19 @@ public class PublicationServiceImpl implements PublicationService {
             publications.forEach(res -> {
                 Boolean vote = null;
                 boolean isVoting = false;
+                Long upVotes = ratingService.countUpVotes(res.getId());
+                Long downVotes = ratingService.countUpVotes(res.getId());
+                RatingCountDTO count = RatingCountDTO.builder()
+                        .upVotes(upVotes)
+                        .downVotes(downVotes)
+                        .build();
                 Optional<Rating> rating = ratingService.getUserVote(res.getId(), authUserId);
                 if (rating.isPresent()) {
                     isVoting = true;
                     vote = rating.get().getValue();
                     res.setVote(vote);
+                    res.setUpVotes(count.getUpVotes());
+                    res.setDownVotes(count.getDownVotes());
                 }
                 res.setUserVoted(isVoting);
                 log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
@@ -78,10 +87,18 @@ public class PublicationServiceImpl implements PublicationService {
         } else {
             isVoting = false;
         }
+        Long upVotes = ratingService.countUpVotes(id);
+        Long downVotes = ratingService.countUpVotes(id);
+        RatingCountDTO count = RatingCountDTO.builder()
+                .upVotes(upVotes)
+                .downVotes(downVotes)
+                .build();
         log.warn("Vote: " + vote); // Add this log to check the value of vote
         PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
         publicationDTO.setVote(vote);
         publicationDTO.setUserVoted(isVoting);
+        publicationDTO.setUpVotes(count.getUpVotes());
+        publicationDTO.setDownVotes(count.getDownVotes());
         return publicationDTO;
     }
 

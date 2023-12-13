@@ -161,5 +161,15 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.existsById(id);
     }
 
+    @Override
+    public Long countUpVotes(Long publicationId) {
+        return ratingRepository.countUpVotesByPublicationId(publicationId);
+    }
+    @Override
+    public Long countdownVotes(Long publicationId) {
+        return ratingRepository.countDownVotesByPublicationId(publicationId);
+    }
+
+
 
 }

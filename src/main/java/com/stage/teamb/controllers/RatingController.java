@@ -1,6 +1,7 @@
 package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.dtos.rating.RatingCountDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.services.employee.EmployeeService;
@@ -40,6 +41,18 @@ public class RatingController {
         List<RatingDTO> ratings = ratingService.findRatingsByPublicationId(publicationId);
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
+
+    @GetMapping("/publication/{publicationId}/votes/count")
+    public ResponseEntity<RatingCountDTO> findVotesByPublicationId(@PathVariable Long publicationId) {
+           Long upVotes = ratingService.countUpVotes(publicationId);
+           Long downVotes = ratingService.countUpVotes(publicationId);
+          RatingCountDTO count = RatingCountDTO.builder()
+                   .upVotes(upVotes)
+                   .downVotes(downVotes)
+                   .build();
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<RatingDTO> createRating(@RequestBody RatingDTO ratingDTO) {
@@ -88,4 +101,6 @@ public class RatingController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

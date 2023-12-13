@@ -38,4 +38,8 @@ public interface RatingService {
     void deleteOne(Long id);
 
     Boolean existsById(Long id);
+
+    Long countUpVotes(Long publicationId);
+
+    Long countdownVotes(Long publicationId);
 }
