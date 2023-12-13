@@ -3,6 +3,7 @@ package com.stage.teamb.services.publication;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
+import com.stage.teamb.dtos.publication.PublicationGetDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.mappers.EmployeeMapper;
 import com.stage.teamb.mappers.PublicationMapper;
@@ -35,25 +36,25 @@ public class PublicationServiceImpl implements PublicationService {
 
 
     @Override
-    public List<PublicationDTO> findAllPublications() {
-        return PublicationMapper.toListDTO(publicationRepository.findAll());
+    public List<PublicationGetDTO> findAllPublications() {
+        return PublicationMapper.toListGetDTO(publicationRepository.findAll());
     }
 
     @Override
-    public PublicationDTO findPublicationById(Long id) {
-        return PublicationMapper.toDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+    public PublicationGetDTO findPublicationById(Long id) {
+        return PublicationMapper.toGetDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 
     @Override
-    public List<PublicationDTO> findAllByEmployeeId(Long employeeId) {
+    public List<PublicationGetDTO> findAllByEmployeeId(Long employeeId) {
         List<Publication> publications = Optional.ofNullable(publicationRepository.findByEmployeeId(employeeId))
                 .orElseThrow(() -> new RuntimeException("Publications not found for employee with id " + employeeId));
-        return PublicationMapper.toListDTO(publications);
+        return PublicationMapper.toListGetDTO(publications);
     }
 
 
     @Override
-    public PublicationDTO createPublication(PublicationCreateDTO publicationDTO) {
+    public PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO) {
         Long employeeId = publicationDTO.getEmployeeId(); // Get employeeId from the DTO
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
@@ -69,7 +70,7 @@ public class PublicationServiceImpl implements PublicationService {
             // Save the new publication to the database
             Publication savedPublication = publicationRepository.save(newPublication);
             // Map the saved publication back to a DTO and return it
-            return PublicationMapper.toDTO(savedPublication);
+            return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Error while creating publication: " + exception.getMessage());
             throw new RuntimeException("Error while creating publication: " + exception.getMessage());
@@ -108,7 +109,7 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public PublicationDTO associateEmployeeWithPublication(Long publicationId, Long employeeId) {
+    public PublicationGetDTO associateEmployeeWithPublication(Long publicationId, Long employeeId) {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         Employee employee = employeeRepository.findById(employeeId)
@@ -118,7 +119,7 @@ public class PublicationServiceImpl implements PublicationService {
         try {
             // Save the updated publication to the database using publicationRepository
             Publication savedPublication = publicationRepository.save(publication);
-            return PublicationMapper.toDTO(savedPublication);
+            return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Could not associate employee with publication: " + exception.getMessage());
             throw new RuntimeException("Could not associate employee with publication: " + exception.getMessage());
@@ -127,7 +128,7 @@ public class PublicationServiceImpl implements PublicationService {
 
 
     @Override
-    public PublicationDTO disassociateEmployeeFromPublication(Long publicationId) {
+    public PublicationGetDTO disassociateEmployeeFromPublication(Long publicationId) {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         // Dissociate the publication from the employee
@@ -135,7 +136,7 @@ public class PublicationServiceImpl implements PublicationService {
         try {
             // Save the updated publication to the database using publicationRepository
             Publication savedPublication = publicationRepository.save(publication);
-            return PublicationMapper.toDTO(savedPublication);
+            return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Could not disassociate employee from publication: " + exception.getMessage());
             throw new RuntimeException("Could not disassociate employee from publication: " + exception.getMessage());

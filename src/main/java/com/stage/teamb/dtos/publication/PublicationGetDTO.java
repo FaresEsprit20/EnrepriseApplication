@@ -17,6 +17,8 @@ public class PublicationGetDTO {
     private String name;
     private String description;
     private Long employeeId;
+    private String employeeFirstName;
+    private String employeeLastName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

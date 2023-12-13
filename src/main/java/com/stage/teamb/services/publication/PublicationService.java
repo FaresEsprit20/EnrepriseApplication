@@ -3,6 +3,7 @@ package com.stage.teamb.services.publication;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
+import com.stage.teamb.dtos.publication.PublicationGetDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.models.Publication;
 
@@ -12,13 +13,13 @@ import java.util.Optional;
 public interface PublicationService {
 
 
-    List<PublicationDTO> findAllPublications();
+    List<PublicationGetDTO> findAllPublications();
 
-    PublicationDTO findPublicationById(Long id);
+    PublicationGetDTO findPublicationById(Long id);
 
-    List<PublicationDTO> findAllByEmployeeId(Long employeeId);
+    List<PublicationGetDTO> findAllByEmployeeId(Long employeeId);
 
-    PublicationDTO createPublication(PublicationCreateDTO publicationDTO);
+    PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO);
 
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
 
@@ -26,9 +27,9 @@ public interface PublicationService {
 
     EmployeeDTO findEmployeeByPublicationId(Long publicationId);
 
-    PublicationDTO associateEmployeeWithPublication(Long publicationId, Long employeeId);
+    PublicationGetDTO associateEmployeeWithPublication(Long publicationId, Long employeeId);
 
-    PublicationDTO disassociateEmployeeFromPublication(Long publicationId);
+    PublicationGetDTO disassociateEmployeeFromPublication(Long publicationId);
 
 
     List<RatingDTO> getRatingForPublication(Long publicationId);
