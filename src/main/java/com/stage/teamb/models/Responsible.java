@@ -43,5 +43,20 @@ public class Responsible extends Users   {
         this.updatedAt = updatedAt;
     }
 
+    @Override
+    public String toString() {
+        return "Responsible{" +
+                "id=" + getId() +
+                ", registrationNumber=" + getRegistrationNumber() +
+                ", email='" + getEmail() + '\'' +
+                ", birthDate=" + getBirthDate() +
+                ", lastName='" + getLastName() + '\'' +
+                ", name='" + getName() + '\'' +
+                ", tel=" + getTel() +
+                ", occupation='" + getOccupation() + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 
 }

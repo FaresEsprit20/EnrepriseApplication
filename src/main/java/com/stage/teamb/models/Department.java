@@ -61,6 +61,17 @@ public class Department implements Serializable {
     }
 
 
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", departmentName='" + departmentName + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", enterprise=" + (enterprise != null ? enterprise.getId() : null) +
+                ", employees=" + employees +
+                '}';
+    }
 
 
 }

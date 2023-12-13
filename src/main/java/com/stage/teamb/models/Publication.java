@@ -55,5 +55,20 @@ public class Publication implements Serializable  {
         this.employee = null;
     }
 
+
+    @Override
+    public String toString() {
+        return "Publication{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", employee=" + (employee != null ? employee.getId() : null) + // Print only employee ID
+                ", rating=" + rating +
+                '}';
+    }
+
+
 }
 

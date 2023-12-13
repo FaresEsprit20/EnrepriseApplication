@@ -101,5 +101,26 @@ public class Employee extends Users {
   }
 
 
+  @Override
+  public String toString() {
+    return "Employee{" +
+            "id=" + getId() +
+            ", registrationNumber=" + getRegistrationNumber() +
+            ", email='" + getEmail() + '\'' +
+            ", birthDate=" + getBirthDate() +
+            ", lastName='" + getLastName() + '\'' +
+            ", name='" + getName() + '\'' +
+            ", tel=" + getTel() +
+            ", occupation='" + getOccupation() + '\'' +
+            ", createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt +
+            ", department=" + (department != null ? department.getId() : null) + // Print only department ID
+            ", ratings=" + ratings +
+            ", publications=" + publications +
+            ", addresses=" + addresses +
+            '}';
+  }
+
+
 
 }

@@ -44,5 +44,17 @@ public class Address implements Serializable {
         this.employee = null;
     }
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", street='" + street + '\'' +
+                ", streetCode='" + streetCode + '\'' +
+                ", town='" + town + '\'' +
+                ", employee=" + (employee != null ? employee.getId() : null) +
+                '}';
+    }
+
+
 
 }

@@ -72,4 +72,20 @@ public class Users implements UserDetails{
     }
 
 
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", registrationNumber=" + registrationNumber +
+                ", email='" + email + '\'' +
+                ", birthDate=" + birthDate +
+                ", lastName='" + lastName + '\'' +
+                ", name='" + name + '\'' +
+                ", tel=" + tel +
+                ", occupation='" + occupation + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
 }

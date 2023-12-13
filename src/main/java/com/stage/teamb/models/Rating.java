@@ -71,6 +71,17 @@ public class Rating implements Serializable  {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "id=" + id +
+                ", value=" + value +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
 }
 
 

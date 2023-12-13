@@ -50,4 +50,16 @@ public class Enterprise implements Serializable {
         department.removeEnterpriseFromDepartment();
     }
 
+
+    @Override
+    public String toString() {
+        return "Enterprise{" +
+                "id=" + id +
+                ", enterpriseName='" + enterpriseName + '\'' +
+                ", enterpriseLocal='" + enterpriseLocal + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
 }
