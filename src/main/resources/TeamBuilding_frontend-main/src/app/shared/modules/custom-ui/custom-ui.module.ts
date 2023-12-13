@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { UpvoteComponent } from '../../ui/upvote/upvote.component';
 import { DownvoteComponent } from '../../ui/downvote/downvote.component';
 import { SearchComponent } from '../../ui/search/search.component';
-import { SortComponent } from '../../ui/sort/sort.component';
 import { FormsModule } from '@angular/forms';
+import { AlertComponent } from './alerts/alert.component';
+
 
 
 
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
     UpvoteComponent,
     DownvoteComponent,
     SearchComponent,
-    SortComponent
+    AlertComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +25,7 @@ import { FormsModule } from '@angular/forms';
     UpvoteComponent,
     DownvoteComponent,
     SearchComponent,
-    SortComponent
+    AlertComponent
   ]
 })
 export class CustomUIModule { }
