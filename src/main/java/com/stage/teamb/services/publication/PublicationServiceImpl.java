@@ -5,6 +5,7 @@ import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.publication.PublicationGetDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.EmployeeMapper;
 import com.stage.teamb.mappers.PublicationMapper;
 import com.stage.teamb.mappers.RatingMapper;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,39 +40,51 @@ public class PublicationServiceImpl implements PublicationService {
         this.employeeRepository = employeeRepository;
     }
 
+        @Override
+        public List<PublicationGetDTO> findAllPublications(Long authUserId) {
+            List<Publication> allPublications = publicationRepository.findAll();
+            List<PublicationGetDTO> publications = PublicationMapper.toListGetDTO(allPublications);
+            publications.forEach(res -> {
+                Boolean vote = null;
+                boolean isVoting = false;
+                Optional<Rating> rating = ratingService.getUserVote(res.getId(), authUserId);
+                if (rating.isPresent()) {
+                    isVoting = true;
+                    vote = rating.get().getValue();
+                    res.setVote(vote);
+                }
+                res.setUserVoted(isVoting);
+                log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
+            });
 
-    @Override
-    public List<PublicationGetDTO> findAllPublications(Long authUserId) {
-        List<PublicationGetDTO> publications = PublicationMapper.toListGetDTO(publicationRepository.findAll());
-        publications.forEach( res -> {
-            Boolean vote = null;
-            boolean isVoting = false;
-            Optional<Rating> rating = ratingService.getUserVote(res.getId(),authUserId);
-            if(rating.isPresent()) {
-                isVoting = true;
-                vote = rating.get().getValue();
-                res.setVote(vote);
-            }
-            res.setUserVoted(isVoting);
-        });
-        return PublicationMapper.toListGetDTO(publicationRepository.findAll());
-    }
+            return publications;
+        }
+
+
 
     @Override
     public PublicationGetDTO findPublicationById(Long id, Long authUserId) {
         Boolean vote = null;
-        boolean isVoting = false;
-        Optional<Rating> rating = ratingService.getUserVote(id,authUserId);
-        PublicationGetDTO publication = PublicationMapper.toGetDTO(publicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not Found ")));
-        if(rating.isPresent()) {
+        boolean isVoting;
+        Optional<Rating> rating = ratingService.getUserVote(id, authUserId);
+        log.warn(" auth" + authUserId);
+        log.warn(" pub" + id);
+        log.warn("exists  " + rating.isPresent());
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Not Found ")));
+        if (rating.isPresent()) {
             isVoting = true;
             vote = rating.get().getValue();
-            publication.setVote(vote);
+        } else {
+            isVoting = false;
         }
-        publication.setUserVoted(isVoting);
-        return PublicationMapper.toGetDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+        log.warn("Vote: " + vote); // Add this log to check the value of vote
+        PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
+        publicationDTO.setVote(vote);
+        publicationDTO.setUserVoted(isVoting);
+        return publicationDTO;
     }
+
 
     @Override
     public List<PublicationGetDTO> findAllByEmployeeId(Long employeeId) {

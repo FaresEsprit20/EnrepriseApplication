@@ -111,13 +111,13 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public boolean alreadyVoted(Long publicationId, Long employeeId) {
-        Optional<Rating> existingRating = ratingRepository.findByPublicationIdAndEmployeeId(publicationId, employeeId);
+        Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
         return existingRating.isPresent();
     }
 
     @Override
     public Optional<Rating> getUserVote(Long publicationId, Long employeeId) {
-        return ratingRepository.findByPublicationIdAndEmployeeId(publicationId, employeeId);
+        return ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
     }
 
 
@@ -127,7 +127,7 @@ public class RatingServiceImpl implements RatingService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
 
-        Optional<Rating> existingRating = ratingRepository.findByPublicationIdAndEmployeeId(publicationId, employeeId);
+        Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
 
         if (existingRating.isPresent()) {
             return  this.updateRating(existingRating.get().getId(), value, employeeId);
