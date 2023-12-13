@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface PublicationService {
 
 
-    List<PublicationGetDTO> findAllPublications();
+    List<PublicationGetDTO> findAllPublications(Long authId);
 
-    PublicationGetDTO findPublicationById(Long id);
+    PublicationGetDTO findPublicationById(Long id, Long authUserId);
 
     List<PublicationGetDTO> findAllByEmployeeId(Long employeeId);
 

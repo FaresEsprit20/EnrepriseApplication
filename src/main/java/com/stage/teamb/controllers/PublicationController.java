@@ -4,34 +4,50 @@ import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.publication.PublicationCreateDTO;
 import com.stage.teamb.dtos.publication.PublicationDTO;
 import com.stage.teamb.dtos.publication.PublicationGetDTO;
+import com.stage.teamb.exception.CustomException;
+import com.stage.teamb.services.employee.EmployeeService;
 import com.stage.teamb.services.publication.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/publications")
 public class PublicationController {
 
     private final PublicationService publicationService;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public PublicationController(PublicationService publicationService) {
+    public PublicationController(PublicationService publicationService, EmployeeService employeeService) {
         this.publicationService = publicationService;
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/find/all")
-    public ResponseEntity<List<PublicationGetDTO>> getAllPublications() {
-        List<PublicationGetDTO> publications = publicationService.findAllPublications();
+    public ResponseEntity<List<PublicationGetDTO>> getAllPublications(@AuthenticationPrincipal UserDetails userDetails) {
+        Optional<EmployeeDTO> authUser = Optional.ofNullable(employeeService.findEmployeeByEmail(userDetails.getUsername()));
+        if(authUser.isEmpty()){
+            throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+        }
+        List<PublicationGetDTO> publications = publicationService.findAllPublications(authUser.get().getId());
         return ResponseEntity.ok(publications);
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<PublicationGetDTO> getPublicationById(@PathVariable Long id) {
-        PublicationGetDTO publication = publicationService.findPublicationById(id);
+    public ResponseEntity<PublicationGetDTO> getPublicationById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<EmployeeDTO> authUser = Optional.ofNullable(employeeService.findEmployeeByEmail(userDetails.getUsername()));
+        if(authUser.isEmpty()){
+            throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+        }
+        PublicationGetDTO publication = publicationService.findPublicationById(id, authUser.get().getId());
         return ResponseEntity.ok(publication);
     }
 

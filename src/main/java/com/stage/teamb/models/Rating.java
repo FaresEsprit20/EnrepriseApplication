@@ -82,6 +82,8 @@ public class Rating implements Serializable  {
                 '}';
     }
 
+
+
 }
 
 

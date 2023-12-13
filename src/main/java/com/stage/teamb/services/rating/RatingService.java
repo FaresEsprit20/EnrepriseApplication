@@ -25,6 +25,8 @@ public interface RatingService {
 
     RatingDTO downVote(Long publicationId, Long employeeId);
 
+    boolean alreadyVoted(Long publicationId, Long employeeId);
+
     List<Rating> findAll();
 
     Optional<Rating> findOne(Long id);

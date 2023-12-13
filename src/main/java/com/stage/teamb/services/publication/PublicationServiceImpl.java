@@ -12,6 +12,7 @@ import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Publication;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.publication.PublicationRepository;
+import com.stage.teamb.services.rating.RatingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,24 +25,34 @@ import java.util.Optional;
 public class PublicationServiceImpl implements PublicationService {
 
     private final PublicationRepository publicationRepository;
+    private final RatingService ratingService;
     private final EmployeeRepository employeeRepository;
 
 
 
     @Autowired
-    public PublicationServiceImpl(PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
+    public PublicationServiceImpl(PublicationRepository publicationRepository, RatingService ratingService, EmployeeRepository employeeRepository) {
         this.publicationRepository = publicationRepository;
+        this.ratingService = ratingService;
         this.employeeRepository = employeeRepository;
     }
 
 
     @Override
-    public List<PublicationGetDTO> findAllPublications() {
+    public List<PublicationGetDTO> findAllPublications(Long authUserId) {
+        List<PublicationGetDTO> publications = PublicationMapper.toListGetDTO(publicationRepository.findAll());
+        publications.forEach( res -> {
+            boolean isVoting = ratingService.alreadyVoted(res.getId(),authUserId);
+            res.setUserVoted(isVoting);
+        });
         return PublicationMapper.toListGetDTO(publicationRepository.findAll());
     }
 
     @Override
-    public PublicationGetDTO findPublicationById(Long id) {
+    public PublicationGetDTO findPublicationById(Long id, Long authUserId) {
+        PublicationGetDTO publication = PublicationMapper.toGetDTO(publicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not Found ")));
+        boolean isVoting = ratingService.alreadyVoted(publication.getId(),authUserId);
         return PublicationMapper.toGetDTO(publicationRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
     }
 

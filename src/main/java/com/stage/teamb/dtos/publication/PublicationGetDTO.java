@@ -19,8 +19,10 @@ public class PublicationGetDTO {
     private Long employeeId;
     private String employeeFirstName;
     private String employeeLastName;
+    private boolean userVoted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 
 }
 

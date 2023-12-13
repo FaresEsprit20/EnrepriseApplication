@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 @Builder
 public class PublicationMapper {
 
+
+
     public static PublicationDTO toDTO(Publication published) {
         return PublicationDTO.builder()
                 .id(published.getId())
@@ -23,6 +25,19 @@ public class PublicationMapper {
     }
 
     public static PublicationGetDTO toGetDTO(Publication published) {
+        return PublicationGetDTO.builder()
+                .id(published.getId())
+                .name(published.getName())
+                .description(published.getDescription())
+                .employeeId(published.getEmployee() != null ? published.getEmployee().getId() : null)
+                .employeeFirstName(published.getEmployee() != null ? published.getEmployee().getName(): null)
+                .employeeLastName(published.getEmployee() != null ? published.getEmployee().getLastName() : null)
+                .createdAt(published.getCreatedAt())
+                .updatedAt(published.getUpdatedAt())
+                .build();
+    }
+
+    public static PublicationGetDTO toGetWithRatingDTO(Publication published, Boolean vote) {
         return PublicationGetDTO.builder()
                 .id(published.getId())
                 .name(published.getName())
