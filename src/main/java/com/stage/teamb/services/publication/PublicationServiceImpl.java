@@ -41,68 +41,6 @@ public class PublicationServiceImpl implements PublicationService {
         this.employeeRepository = employeeRepository;
     }
 
-        @Override
-        public List<PublicationGetDTO> findAllPublications(Long authUserId) {
-            List<Publication> allPublications = publicationRepository.findAll();
-            List<PublicationGetDTO> publications = PublicationMapper.toListGetDTO(allPublications);
-            publications.forEach(res -> {
-                Boolean vote = null;
-                boolean isVoting = false;
-                Long upVotes = ratingService.countUpVotes(res.getId());
-                Long downVotes = ratingService.countdownVotes(res.getId());
-                RatingCountDTO count = RatingCountDTO.builder()
-                        .upVotes(upVotes)
-                        .downVotes(downVotes)
-                        .build();
-                Optional<Rating> rating = ratingService.getUserVote(res.getId(), authUserId);
-                if (rating.isPresent()) {
-                    isVoting = true;
-                    vote = rating.get().getValue();
-                    res.setVote(vote);
-                    res.setUpVotes(count.getUpVotes() == null ? 0 : count.getUpVotes());
-                    res.setDownVotes(count.getDownVotes() ==null ? 0 : count.getDownVotes());
-                }
-                res.setUserVoted(isVoting);
-                log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
-            });
-
-            return publications;
-        }
-
-
-
-    @Override
-    public PublicationGetDTO findPublicationById(Long id, Long authUserId) {
-        Boolean vote = null;
-        boolean isVoting;
-        Optional<Rating> rating = ratingService.getUserVote(id, authUserId);
-        log.warn(" auth" + authUserId);
-        log.warn(" pub" + id);
-        log.warn("exists  " + rating.isPresent());
-        Publication publication = publicationRepository.findById(id)
-                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Not Found ")));
-        if (rating.isPresent()) {
-            isVoting = true;
-            vote = rating.get().getValue();
-        } else {
-            isVoting = false;
-        }
-        Long upVotes = ratingService.countUpVotes(id);
-        Long downVotes = ratingService.countUpVotes(id);
-        RatingCountDTO count = RatingCountDTO.builder()
-                .upVotes(upVotes)
-                .downVotes(downVotes)
-                .build();
-        log.warn("Vote: " + vote); // Add this log to check the value of vote
-        PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
-        publicationDTO.setVote(vote);
-        publicationDTO.setUserVoted(isVoting);
-        publicationDTO.setUpVotes(count.getUpVotes() == null ? 0 : count.getUpVotes());
-        publicationDTO.setDownVotes(count.getDownVotes() == null ? 0 : count.getDownVotes());
-        return publicationDTO;
-    }
-
-
     @Override
     public List<PublicationGetDTO> findAllByEmployeeId(Long employeeId) {
         List<Publication> publications = Optional.ofNullable(publicationRepository.findByEmployeeId(employeeId))
@@ -110,6 +48,79 @@ public class PublicationServiceImpl implements PublicationService {
         return PublicationMapper.toListGetDTO(publications);
     }
 
+    @Override
+    public List<PublicationGetDTO> findAllPublications(Long authUserId) {
+        List<Publication> allPublications = publicationRepository.findAll();
+        List<PublicationGetDTO> publications = PublicationMapper.toListGetDTO(allPublications);
+        publications.forEach(res -> {
+            Boolean vote = null;
+            boolean isVoting = false;
+
+            // Count upvotes and downvotes separately
+            Long upVotesCount = ratingService.countUpVotes(res.getId());
+            Long downVotesCount = ratingService.countdownVotes(res.getId());
+
+            RatingCountDTO count = RatingCountDTO.builder()
+                    .upVotes(upVotesCount == null ? 0 : upVotesCount)
+                    .downVotes(downVotesCount == null ? 0 : downVotesCount)
+                    .build();
+
+            Optional<Rating> rating = ratingService.getUserVote(res.getId(), authUserId);
+            if (rating.isPresent()) {
+                isVoting = true;
+                vote = rating.get().getValue();
+                res.setVote(vote);
+            }
+
+            res.setUpVotes(count.getUpVotes());
+            res.setDownVotes(count.getDownVotes());
+            res.setUserVoted(isVoting);
+
+            log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
+        });
+
+        return publications;
+    }
+
+    @Override
+    public PublicationGetDTO findPublicationById(Long id, Long authUserId) {
+        Boolean vote = null;
+        boolean isVoting;
+
+        Optional<Rating> rating = ratingService.getUserVote(id, authUserId);
+        log.warn(" auth" + authUserId);
+        log.warn(" pub" + id);
+        log.warn("exists  " + rating.isPresent());
+
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Not Found ")));
+
+        if (rating.isPresent()) {
+            isVoting = true;
+            vote = rating.get().getValue();
+        } else {
+            isVoting = false;
+        }
+
+        // Count upvotes and downvotes separately
+        Long upVotesCount = ratingService.countUpVotes(id);
+        Long downVotesCount = ratingService.countdownVotes(id);
+
+        RatingCountDTO count = RatingCountDTO.builder()
+                .upVotes(upVotesCount == null ? 0 : upVotesCount)
+                .downVotes(downVotesCount == null ? 0 : downVotesCount)
+                .build();
+
+        log.warn("Vote: " + vote); // Add this log to check the value of vote
+
+        PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
+        publicationDTO.setVote(vote);
+        publicationDTO.setUpVotes(count.getUpVotes());
+        publicationDTO.setDownVotes(count.getDownVotes());
+        publicationDTO.setUserVoted(isVoting);
+
+        return publicationDTO;
+    }
 
     @Override
     public PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO) {
