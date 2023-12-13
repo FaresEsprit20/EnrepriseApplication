@@ -49,7 +49,7 @@ public class PublicationServiceImpl implements PublicationService {
                 Boolean vote = null;
                 boolean isVoting = false;
                 Long upVotes = ratingService.countUpVotes(res.getId());
-                Long downVotes = ratingService.countUpVotes(res.getId());
+                Long downVotes = ratingService.countdownVotes(res.getId());
                 RatingCountDTO count = RatingCountDTO.builder()
                         .upVotes(upVotes)
                         .downVotes(downVotes)
@@ -59,8 +59,8 @@ public class PublicationServiceImpl implements PublicationService {
                     isVoting = true;
                     vote = rating.get().getValue();
                     res.setVote(vote);
-                    res.setUpVotes(count.getUpVotes());
-                    res.setDownVotes(count.getDownVotes());
+                    res.setUpVotes(count.getUpVotes() != null ? count.getUpVotes() : 0);
+                    res.setDownVotes(count.getDownVotes()!=null ? count.getDownVotes() : 0);
                 }
                 res.setUserVoted(isVoting);
                 log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
