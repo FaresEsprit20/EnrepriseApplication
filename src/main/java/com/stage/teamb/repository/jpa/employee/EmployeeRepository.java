@@ -39,5 +39,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
             "WHERE e.id = :id")
     Employee findByIdEagerly(Long id);
 
+    Optional<Employee> findByEmail(String email);
 
 }

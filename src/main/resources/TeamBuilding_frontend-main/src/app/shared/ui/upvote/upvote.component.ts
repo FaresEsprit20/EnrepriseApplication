@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-upvote',
   templateUrl: './upvote.component.html',
-  styleUrls: ['./upvote.component.css']
+  styleUrls: ['./upvote.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpvoteComponent {
   @Input() id: number
@@ -14,5 +15,7 @@ export class UpvoteComponent {
   upvote() {
     this.vote.emit(this.id)
   }
+
+
 
 }

@@ -1,23 +1,32 @@
 package com.stage.teamb.controllers;
 
+import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.rating.RatingDTO;
+import com.stage.teamb.exception.CustomException;
+import com.stage.teamb.services.employee.EmployeeService;
 import com.stage.teamb.services.rating.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/ratings")
 public class RatingController {
 
     private final RatingService ratingService;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public RatingController(RatingService ratingService) {
+    public RatingController(RatingService ratingService, EmployeeService employeeService) {
         this.ratingService = ratingService;
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/employee/{employeeId}")
@@ -50,10 +59,14 @@ public class RatingController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/upvote/{publicationId}/{employeeId}")
-    public ResponseEntity<RatingDTO> upVote(@PathVariable Long publicationId, @PathVariable Long employeeId) {
+    @PostMapping("/upvote/{publicationId}")
+    public ResponseEntity<RatingDTO> upVote(@PathVariable Long publicationId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            RatingDTO ratingDTO = ratingService.upVote(publicationId, employeeId);
+            Optional<EmployeeDTO> authUser = Optional.ofNullable(employeeService.findEmployeeByEmail(userDetails.getUsername()));
+            if(authUser.isEmpty()){
+                throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+            }
+            RatingDTO ratingDTO = ratingService.upVote(publicationId, authUser.get().getId());
             return new ResponseEntity<>(ratingDTO, HttpStatus.OK);
         } catch (Exception e) {
             // Handle exception and return appropriate response
@@ -61,10 +74,14 @@ public class RatingController {
         }
     }
 
-    @PostMapping("/downvote/{publicationId}/{employeeId}")
-    public ResponseEntity<RatingDTO> downVote(@PathVariable Long publicationId, @PathVariable Long employeeId) {
+    @PostMapping("/downvote/{publicationId}")
+    public ResponseEntity<RatingDTO> downVote(@PathVariable Long publicationId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            RatingDTO ratingDTO = ratingService.downVote(publicationId, employeeId);
+            Optional<EmployeeDTO> authUser = Optional.ofNullable(employeeService.findEmployeeByEmail(userDetails.getUsername()));
+            if(authUser.isEmpty()){
+                throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+            }
+            RatingDTO ratingDTO = ratingService.downVote(publicationId, authUser.get().getId());
             return new ResponseEntity<>(ratingDTO, HttpStatus.OK);
         } catch (Exception e) {
             // Handle exception and return appropriate response

@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { SortPipe } from 'src/app/pipes/sort.pipe';
 import { PublicationService } from 'src/app/shared/services/publication.service';
 import { RatingService } from 'src/app/shared/services/rating.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 
 
@@ -29,7 +28,14 @@ console.log("clicked")
     private router: Router,
     private blogService: PublicationService,
     private ratingService: RatingService
-  ) {}
+  ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        console.log('BlogDetailsComponent NavigationEnd:', event.url);
+      }
+    });
+  }
+
 
   ngOnInit() {
     this.blogService.findAllPublications().subscribe((res) => {

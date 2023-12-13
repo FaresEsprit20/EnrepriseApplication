@@ -31,6 +31,8 @@ public interface EmployeeService {
     DepartmentDTO unassignDepartmentFromEmployee(Long employeeId);
 
 
+    EmployeeDTO findEmployeeByEmail(String email);
+
     List<Employee> findAll();
 
     Optional<Employee> findOne(Long id);

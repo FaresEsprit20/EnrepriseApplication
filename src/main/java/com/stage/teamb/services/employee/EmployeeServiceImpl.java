@@ -3,6 +3,7 @@ package com.stage.teamb.services.employee;
 import com.stage.teamb.dtos.address.AddressDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.AddressMapper;
 import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EmployeeMapper;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -155,6 +157,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             log.error("Could not unassign department: " + exception.getMessage());
             throw new RuntimeException("Could not unassign department: " + exception.getMessage());
         }
+    }
+
+    @Override
+    public EmployeeDTO findEmployeeByEmail(String email) {
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Employee not found with Email " + email)));
+            return EmployeeMapper.toDTO(employee);
     }
 
 

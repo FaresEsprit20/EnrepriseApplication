@@ -48,7 +48,11 @@
         {{ blog.description }}
       </p>
       <div class="d-flex justify-content-end">
-        <a [routerLink]="['/readmore', blog.id]">Read more <i class="bi bi-arrow-right"></i></a>
+        <a [routerLink]="['/employees/blogs/details', blog.id]">Read more <i class="bi bi-arrow-right"></i></a>
+
+
+
+
       </div>
       <div class="d-flex">
         <app-upvote [id]="blog._id" [upvotes]="blog.upvotes" (vote)="onUpvote($event)"></app-upvote>
