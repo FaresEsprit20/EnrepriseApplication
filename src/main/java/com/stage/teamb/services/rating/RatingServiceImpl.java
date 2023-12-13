@@ -115,6 +115,12 @@ public class RatingServiceImpl implements RatingService {
         return existingRating.isPresent();
     }
 
+    @Override
+    public Optional<Rating> getUserVote(Long publicationId, Long employeeId) {
+        return ratingRepository.findByPublicationIdAndEmployeeId(publicationId, employeeId);
+    }
+
+
     private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));

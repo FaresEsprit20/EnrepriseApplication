@@ -27,6 +27,8 @@ public interface RatingService {
 
     boolean alreadyVoted(Long publicationId, Long employeeId);
 
+    Optional<Rating> getUserVote(Long publicationId, Long employeeId);
+
     List<Rating> findAll();
 
     Optional<Rating> findOne(Long id);

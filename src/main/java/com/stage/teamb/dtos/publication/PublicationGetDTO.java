@@ -20,6 +20,7 @@ public class PublicationGetDTO {
     private String employeeFirstName;
     private String employeeLastName;
     private boolean userVoted;
+    private boolean vote;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
