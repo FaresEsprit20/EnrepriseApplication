@@ -1,6 +1,4 @@
-<div *ngIf="blogs?.length === 0" class="d-flex justify-content-center my-3">
-  <p class="fs-3">No blog posts are available, feel free to add one</p>
-</div>
+
 
 <div class="container w-50 my-4 d-flex justify-content-between">
   <app-search (search)="handleSearch($event)"></app-search>
@@ -8,53 +6,47 @@
     [blogs]="searchResult || blogs"
     (sortedBlogs)="handleSortedBlogs($event)"
   ></app-sort>
+  <a (click)="navigateToAddBlog()" class="btn btn-primary">Create</a>
 </div>
 
-<div
-  *ngIf="searchResult?.length === 0 && searchResult"
-  class="d-flex justify-content-center my-3"
->
-  <p class="fs-3">No results found. Please try a different search</p>
+<div class="container w-50 my-4 d-flex justify-content-between">
+  <!-- existing code... -->
+
+  <!-- Flat button for creating a component -->
+ 
 </div>
 
-<!-- <div
-  class="card my-5 w-50 mx-auto"
-  *ngFor="let blog of searchResult || blogs | sort : selectedSortOption"
-  [ngClass]="{
-    'border-danger': blog.downvotes > blog.upvotes,
-    'border-success': blog.downvotes < blog.upvotes
-  }"
-> -->
-<div
-  class="card my-5 w-50 mx-auto"
-  *ngFor="let blog of searchResult || blogs | sort : selectedSortOption"
->
+<div class="container-fluid">
+
+
+<div class="alert alert-warning" role="alert" *ngIf="searchResult?.length === 0 && searchResult">
+  <p class="fs-3 mb-0">No results found. Please try a different search</p>
+</div>
+
+<div class="alert alert-warning" role="alert" >
+  <p class="fs-3 mb-0">No results found. Please try a different search</p>
+</div>
+
+
+<div class="card my-5 w-50 mx-auto" *ngFor="let blog of searchResult || blogs | sort : selectedSortOption">
   <div class="card-body">
-    <h4 class="card-title">{{ blog.idea }}</h4>
-    <h6 class="card-subtitle mb-2 text-muted">by {{ blog.employeeAuthor }},</h6>
-    <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-end">
-      {{ blog.date }}
-    </h6>
+    <div class="d-flex justify-content-between">
+      <h6 class="card-subtitle mb-2 text-muted">{{ blog.updatedAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ blog.createdAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+    </div>
+    <h4 class="card-title">{{ blog.name }}</h4>
+    <h6 class="card-subtitle mb-2 text-muted">By {{ blog.employeeFirstName | titlecase }} &nbsp; {{ blog.employeeLastName | titlecase }}</h6>
     <p class="card-text">
-      {{ blog.preview }}
+      {{ blog.description }}
     </p>
     <div class="d-flex justify-content-end">
-      <a [routerLink]="['/readmore', blog.id]"
-        >Read more <i class="bi bi-arrow-right"></i>
-      </a>
+      <a [routerLink]="['/readmore', blog.id]">Read more <i class="bi bi-arrow-right"></i></a>
     </div>
     <div class="d-flex">
-      <app-upvote
-        [id]="blog._id"
-        [upvotes]="blog.upvotes"
-        (vote)="onUpvote($event)"
-      ></app-upvote>
-
-      <app-downvote
-        [id]="blog._id"
-        [downvotes]="blog.downvotes"
-        (vote)="onDownvote($event)"
-      ></app-downvote>
+      <app-upvote [id]="blog._id" [upvotes]="blog.upvotes" (vote)="onUpvote($event)"></app-upvote>
+      <app-downvote [id]="blog._id" [downvotes]="blog.downvotes" (vote)="onDownvote($event)"></app-downvote>
     </div>
   </div>
+</div>
+
 </div>

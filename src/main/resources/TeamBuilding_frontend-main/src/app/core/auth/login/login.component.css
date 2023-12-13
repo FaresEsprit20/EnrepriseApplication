@@ -1,7 +1,7 @@
 
 @import '../../../../assets/templates/template/css/style.css';
 
-
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
 .form-group {
     margin-bottom: 20px !important;

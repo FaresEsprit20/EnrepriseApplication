@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { SortPipe } from 'src/app/pipes/sort.pipe';
 import { PublicationService } from 'src/app/shared/services/publication.service';
 import { RatingService } from 'src/app/shared/services/rating.service';
+import { Router } from '@angular/router';
 
 
 
@@ -19,6 +20,7 @@ export class BlogListComponent {
   selectedSortOption = 'new';
 
   constructor(
+    private router: Router,
     private datePipe: DatePipe,
     private sortPipe: SortPipe,
     private blogService: PublicationService,
@@ -28,6 +30,7 @@ export class BlogListComponent {
   ngOnInit() {
     this.blogService.findAllPublications().subscribe((res) => {
       this.blogs = res;
+ 
 /*       this.blogs.forEach((blog) => {
         if (blog.description.length > 100) {
           blog.preview = blog.description.substring(0, 145) + '....';
@@ -43,6 +46,10 @@ export class BlogListComponent {
       (error) => {
         console.error('Error loading publications:', error);
       });
+  }
+
+  navigateToAddBlog() {
+    this.router.navigate(['/employees/blogs/create']);
   }
 
   onUpvote(id) {
