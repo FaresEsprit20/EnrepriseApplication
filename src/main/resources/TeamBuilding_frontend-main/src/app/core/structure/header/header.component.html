@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary px-5">
+  <div class="container-fluid">
+    <a [routerLink]="['/']" class="navbar-brand">Team Building</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarColor01"
+      aria-controls="navbarColor01"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a [routerLink]="['/add']" class="nav-link">Add Idea </a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/employees']" class="nav-link">Employees </a>
+        </li>
+      </ul>
+    </div>
+
+    
+  </div>
+</nav>
