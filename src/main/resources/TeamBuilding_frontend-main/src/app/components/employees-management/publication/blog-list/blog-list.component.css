@@ -1,0 +1,16 @@
+/* Add this to your styles.css or styles.scss file */
+
+.flat-button {
+  display: inline-block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.flat-button:hover {
+  background-color: #0056b3;
+}

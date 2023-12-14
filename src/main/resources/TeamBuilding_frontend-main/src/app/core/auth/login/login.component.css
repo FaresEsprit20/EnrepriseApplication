@@ -1,0 +1,130 @@
+
+@import '../../../../assets/templates/template/css/style.css';
+
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.form-group {
+    margin-bottom: 20px !important;
+}
+
+
+
+.form-control:focus + .form-control-placeholder,
+.form-control:valid + .form-control-placeholder {
+  -webkit-transform: translate3d(0, -120%, 0) !important;
+  transform: translate3d(0, -120%, 0) !important;
+  padding: 7px 0 0 0 !important;
+  opacity: 1;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  letter-spacing: 1px !important;
+  color: #01d28e !important;
+  font-weight: 700 !important;  }
+  
+  .field-icon {
+    position: absolute !important;
+    top: 50% !important;
+    right: 15px !important;
+    -webkit-transform: translateY(-50%) !important;
+    -ms-transform: translateY(-50%) !important;
+    transform: translateY(-50%) !important;
+    color: rgba(0, 0, 0, 0.3) !important; }
+
+.social-media {
+    position: relative;
+    width: 100%;
+}
+
+.checkbox-wrap {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.checkbox-wrap input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.checkmark:after {
+    content: "\f0c8";
+    font-family: "FontAwesome";
+    position: absolute;
+    color: rgba(0, 0, 0, .1);
+    font-size: 20px;
+    margin-top: -4px;
+    transition: .3s;
+}
+
+.checkbox-wrap input:checked ~ .checkmark:after {
+    display: block;
+    content: "\f14a";
+    font-family: "FontAwesome";
+    color: rgba(0, 0, 0, .2);
+}
+
+
+
+.checkbox-primary {
+    color: #01d28e;
+    input:checked ~ .checkmark:after {
+        color: #01d28e;
+    }
+}
+
+.btn {
+    cursor: pointer;
+    box-shadow: none !important;
+    font-size: 15px;
+    padding: 10px 20px;
+}
+
+.btn.btn-primary {
+    background: #01d28e !important;
+    border: 1px solid #01d28e !important;
+    color: #fff !important;
+    transition: background 0.5s ease-out !important;
+}
+
+
+.btn.btn-primary:hover {
+    opacity: 0.5 !important; /* Change to the desired lighter color on hover */
+    border: 1px solid #4CAF50;
+    color: #fff;
+}
+
+
+  
+  /* Style for error messages */
+  .error-message {
+    color: #f44336 !important; /* Red color for error messages */
+  }
+
+  .form-group.invalid-field {
+    position: relative !important;
+}
+
+.form-group.invalid-field .form-control {
+    border-color:#f44336 !important;
+}
+
+.form-group.invalid-field .form-control-placeholder {
+    color: #f44336 !important;
+}

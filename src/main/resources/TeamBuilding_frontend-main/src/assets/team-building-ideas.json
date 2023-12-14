@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "employeeAuthor": "John Doe",
+    "date": "2023-10-05",
+    "idea": "Organize a team picnic at the local park.",
+    "description": "A team picnic is a delightful way to bring our colleagues together for a day of relaxation, bonding, and outdoor fun. We can choose a beautiful spot at the local park, set up picnic tables and blankets, and enjoy a potluck-style meal where everyone contributes a dish. We can engage in friendly games like frisbee, soccer, or a scavenger hunt. It's an opportunity to unplug from work, enjoy nature, and strengthen our team connections.",
+    "upvotes": 10,
+    "downvotes": 2
+  },
+  {
+    "id": 2,
+    "employeeAuthor": "Jane Smith",
+    "date": "2023-10-04",
+    "idea": "Host a monthly team breakfast to foster collaboration.",
+    "description": "I propose hosting a monthly team breakfast as a chance for our colleagues to come together in a relaxed and informal setting. These breakfasts can feature a variety of themes, from traditional breakfast items to international cuisines. Besides enjoying a delicious meal, we can encourage open discussions, team-building activities, or even guest speakers to share insights and inspire our team. These regular gatherings will foster a sense of community, promote collaboration, and facilitate the exchange of ideas among team members.",
+    "upvotes": 8,
+    "downvotes": 1
+  },
+  {
+    "id": 3,
+    "employeeAuthor": "Sam Johnson",
+    "date": "2023-10-03",
+    "idea": "Plan a team-building workshop on effective communication.",
+    "description": "I propose organizing a team-building workshop focused on enhancing our communication skills. Effective communication is vital for our team's success. In this workshop, we can engage in interactive activities, role-playing scenarios, and group discussions to improve our ability to convey ideas, actively listen, and resolve conflicts. By understanding each other better and mastering effective communication, we can strengthen our teamwork, boost productivity, and create a more positive work environment.",
+    "upvotes": 12,
+    "downvotes": 3
+  },
+  {
+    "id": 4,
+    "employeeAuthor": "Alice Brown",
+    "date": "2023-10-02",
+    "idea": "Organize a charity event and involve the entire team.",
+    "description": "Let's make a difference in our community by organizing a charity event that involves the whole team. This event can take various forms, such as a charity run, a volunteer day, or a fundraising initiative. Not only will it allow us to give back to the community, but it will also strengthen our team bonds as we work together on a meaningful project. We can select a cause that resonates with our team values and engage in activities that make a positive impact on the lives of others while creating lasting memories for ourselves.",
+    "upvotes": 15,
+    "downvotes": 0
+  }
+]
