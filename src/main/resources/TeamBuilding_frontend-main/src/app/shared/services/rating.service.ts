@@ -39,15 +39,25 @@ export class RatingService {
     return this.authService.attachTokenToRequest(request);
   }
 
-  upvotePublication(publicationId: number, employeeId: number): Observable<any> {
-    const request = this.http.post<any>(`${this.baseUrl}/upvote/${publicationId}/${employeeId}`, null);
+  upvotePublication(publicationId: number): Observable<any> {
+    const request = this.http.post<any>(`${this.baseUrl}/upvote/${publicationId}`, null);
     return this.authService.attachTokenToRequest(request);
   }
 
-  downvotePublication(publicationId: number, employeeId: number): Observable<any> {
-    const request = this.http.post<any>(`${this.baseUrl}/downvote/${publicationId}/${employeeId}`, null);
+  downvotePublication(publicationId: number): Observable<any> {
+    const request = this.http.post<any>(`${this.baseUrl}/downvote/${publicationId}`, null);
     return this.authService.attachTokenToRequest(request);
   }
 
-  
+  getVoteCounts(publicationId: number): Observable<RatingCountDTO> {
+    const url = `${this.baseUrl}/publication/${publicationId}/votes/count`;
+    return this.http.get<RatingCountDTO>(url);
+  }
+
+
+}
+
+export interface RatingCountDTO {
+  upVotes: number;
+  downVotes: number;
 }

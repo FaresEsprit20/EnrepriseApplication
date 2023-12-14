@@ -7,15 +7,18 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpvoteComponent {
-  @Input() id: number
-  @Input() upvotes: number
-  @Input() upvoteCount: number
-  @Output() vote = new EventEmitter<number>()
 
-  upvote() {
-    this.vote.emit(this.id)
+  @Input() id: number;
+  @Input() upvotes: number;
+  @Input() userVoted: boolean;
+   @Input() count: number = 0;  
+  @Output() vote = new EventEmitter<number>();
+
+  upvote(): void {
+    console.log("emitted")
+    if (!this.userVoted) {
+      this.vote.emit(this.id);
+    }
   }
-
-
 
 }

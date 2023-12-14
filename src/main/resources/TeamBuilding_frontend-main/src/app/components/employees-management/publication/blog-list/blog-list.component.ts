@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { SortPipe } from 'src/app/pipes/sort.pipe';
 import { PublicationService } from 'src/app/shared/services/publication.service';
 import { RatingService } from 'src/app/shared/services/rating.service';
@@ -13,7 +13,7 @@ import { NavigationEnd, Router } from '@angular/router';
   providers: [SortPipe],
 })
 export class BlogListComponent {
-
+toastMessage:string
 
 onCloseAlert() {
 console.log("clicked")
@@ -27,38 +27,92 @@ console.log("clicked")
   constructor(
     private router: Router,
     private blogService: PublicationService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private cdRef: ChangeDetectorRef
   ) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        console.log('BlogDetailsComponent NavigationEnd:', event.url);
-      }
-    });
+   
   }
 
 
   ngOnInit() {
-    this.blogService.findAllPublications().subscribe((res) => {
-      this.blogs = res;
- 
-       this.blogs.forEach((blog) => {
-        if (blog.description.length > 100) {
-          blog.description= blog.description.substring(0, 145) + '....';
-        } else {
-          blog.description = blog.description;
-        }
-        
-      }); 
-    },
-      (error) => {
-        console.error('Error loading publications:', error);
-      });
+    this.loadBlogs()
   }
 
   navigateToAddBlog() {
     this.router.navigate(['/employees/blogs/create']);
   }
 
+  
+  loadBlogs(): void {
+    this.blogService.findAllPublications().subscribe((data: any[]) => {
+      this.blogs = data.map(blog => {
+        // Truncate description if it's longer than 100 characters
+        blog.description = blog.description.length > 100
+          ? blog.description.substring(0, 145) + '....'
+          : blog.description;
+  
+        return { ...blog, userVoted: false, vote: null };
+      });
+    },
+    (error) => {
+      console.error('Error loading publications:', error);
+    });
+  }
+  
+
+
+onUpvote(id: number): void {
+  this.ratingService.upvotePublication(id).subscribe(
+    () => {
+      const updatedBlogs = this.blogs.map(blog =>
+        blog.id === id
+          ? { ...blog, userVoted: true, vote: true,upVotes: blog.upVotes + 1, downVotes: blog.downVotes - 1 }
+          : blog
+      );
+      this.blogs = updatedBlogs;
+      this.cdRef.detectChanges();
+      this.showToast('Upvoted successfully!');
+    },
+    (error) => {
+      console.error('Error upvoting publication:', error);
+      this.showToast('Error upvoting. Please try again.');
+    }
+  );
+}
+
+onDownvote(id: number): void {
+  this.ratingService.downvotePublication(id).subscribe(
+    () => {
+      const updatedBlogs = this.blogs.map(blog =>
+        blog.id === id
+          ? { ...blog, userVoted: true, vote: false, upVotes: blog.upVotes - 1, downVotes: blog.downVotes + 1 }
+          : blog
+      );
+      this.blogs = updatedBlogs;
+      this.cdRef.detectChanges();
+      this.showToast('Downvoted successfully!');
+    },
+    (error) => {
+      console.error('Error downvoting publication:', error);
+      this.showToast('Error downvoting. Please try again.');
+    }
+  );
+}
+
+
+  
+
+  showToast(message: string): void {
+    this.toastMessage = message;
+    setTimeout(() => {
+      this.clearToast();
+    }, 5000);
+  }
+
+  clearToast(): void {
+    this.toastMessage = null;
+  }
+  
   onSortOptionChange() {
     this.sortBlogs();
   }
@@ -89,23 +143,6 @@ console.log("clicked")
     this.handleSortedBlogs();
   }
 
-
-  
-
-
-
-  onUpvote(id) {
-    /* this.ratingService.upvotePublication(id).subscribe(() => {
-      const index = this.blogs.findIndex((blog) => blog._id === id);
-      this.blogs[index].upvotes += 1;
-    }); */
-  }
-  onDownvote(id) {
-    /* this.ratingService.downvotePublication(id).subscribe(() => {
-      const index = this.blogs.findIndex((blog) => blog._id === id);
-      this.blogs[index].downvotes += 1;
-    }); */
-  }
 
 
 }
