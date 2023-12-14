@@ -36,16 +36,16 @@ public class RatingController {
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
-    @GetMapping("/publication/{publicationId}/votes/count")
-    public ResponseEntity<RatingCountDTO> findCountRatingsByPublicationId(@PathVariable Long publicationId) {
-          Long countUp = ratingService.countUpVotes(publicationId);
-          Long countDown = ratingService.countdownVotes(publicationId);
-         var count = RatingCountDTO.builder()
-                .upVotes(countUp == null ? 0 : countUp)
-                .downVotes(countDown == null ? 0 : countDown)
-                .build();
-        return new ResponseEntity<>(count, HttpStatus.OK);
-    }
+//    @GetMapping("/publication/{publicationId}/votes/count")
+//    public ResponseEntity<RatingCountDTO> findCountRatingsByPublicationId(@PathVariable Long publicationId) {
+//          Long countUp = ratingService.countUpVotes(publicationId);
+//          Long countDown = ratingService.countdownVotes(publicationId);
+//         var count = RatingCountDTO.builder()
+//                .upVotes(countUp == null ? 0 : countUp)
+//                .downVotes(countDown == null ? 0 : countDown)
+//                .build();
+//        return new ResponseEntity<>(count, HttpStatus.OK);
+//    }
 
     @GetMapping("/publication/{publicationId}")
     public ResponseEntity<List<RatingDTO>> findRatingsByPublicationId(@PathVariable Long publicationId) {
