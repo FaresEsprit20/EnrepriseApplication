@@ -129,7 +129,7 @@ public class PublicationServiceImpl implements PublicationService {
             throw new RuntimeException("Error while creating publication: " + exception.getMessage());
         }
     }
-    
+
     @Override
     public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
         Publication existingPublication = publicationRepository.findById(publicationId)
