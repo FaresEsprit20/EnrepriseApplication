@@ -19,7 +19,7 @@ public interface PublicationService {
 
     List<PublicationGetDTO> findAllByEmployeeId(Long employeeId);
 
-    PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO);
+    PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO, Long id);
 
     PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO);
 

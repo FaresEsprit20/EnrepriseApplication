@@ -13,6 +13,5 @@ public class PublicationCreateDTO {
 
     private String name;
     private String description;
-    private Long employeeId;
 
 }

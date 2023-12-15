@@ -54,30 +54,24 @@ public class PublicationServiceImpl implements PublicationService {
         publications.forEach(res -> {
             Boolean vote = null;
             boolean isVoting = false;
-
             // Count upvotes and downvotes separately
             Long upVotesCount = ratingService.countUpVotes(res.getId());
             Long downVotesCount = ratingService.countdownVotes(res.getId());
-
             RatingCountDTO count = RatingCountDTO.builder()
                     .upVotes(upVotesCount == null ? 0 : upVotesCount)
                     .downVotes(downVotesCount == null ? 0 : downVotesCount)
                     .build();
-
             Optional<Rating> rating = ratingService.getUserVote(res.getId(), authUserId);
             if (rating.isPresent()) {
                 isVoting = true;
                 vote = rating.get().getValue();
                 res.setVote(vote);
             }
-
             res.setUpVotes(count.getUpVotes());
             res.setDownVotes(count.getDownVotes());
             res.setUserVoted(isVoting);
-
             log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
         });
-
         return publications;
     }
 
@@ -85,45 +79,36 @@ public class PublicationServiceImpl implements PublicationService {
     public PublicationGetDTO findPublicationById(Long id, Long authUserId) {
         Boolean vote = null;
         boolean isVoting;
-
         Optional<Rating> rating = ratingService.getUserVote(id, authUserId);
         log.warn(" auth" + authUserId);
         log.warn(" pub" + id);
         log.warn("exists  " + rating.isPresent());
-
         Publication publication = publicationRepository.findById(id)
                 .orElseThrow(() -> new CustomException(404, Collections.singletonList("Not Found ")));
-
         if (rating.isPresent()) {
             isVoting = true;
             vote = rating.get().getValue();
         } else {
             isVoting = false;
         }
-
         // Count upvotes and downvotes separately
         Long upVotesCount = ratingService.countUpVotes(id);
         Long downVotesCount = ratingService.countdownVotes(id);
-
         RatingCountDTO count = RatingCountDTO.builder()
                 .upVotes(upVotesCount == null ? 0 : upVotesCount)
                 .downVotes(downVotesCount == null ? 0 : downVotesCount)
                 .build();
-
         log.warn("Vote: " + vote); // Add this log to check the value of vote
-
         PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
         publicationDTO.setVote(vote);
         publicationDTO.setUpVotes(count.getUpVotes());
         publicationDTO.setDownVotes(count.getDownVotes());
         publicationDTO.setUserVoted(isVoting);
-
         return publicationDTO;
     }
 
     @Override
-    public PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO) {
-        Long employeeId = publicationDTO.getEmployeeId(); // Get employeeId from the DTO
+    public PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO, Long employeeId) {
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
@@ -144,8 +129,7 @@ public class PublicationServiceImpl implements PublicationService {
             throw new RuntimeException("Error while creating publication: " + exception.getMessage());
         }
     }
-
-
+    
     @Override
     public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
         Publication existingPublication = publicationRepository.findById(publicationId)
@@ -193,7 +177,6 @@ public class PublicationServiceImpl implements PublicationService {
             throw new RuntimeException("Could not associate employee with publication: " + exception.getMessage());
         }
     }
-
 
     @Override
     public PublicationGetDTO disassociateEmployeeFromPublication(Long publicationId) {

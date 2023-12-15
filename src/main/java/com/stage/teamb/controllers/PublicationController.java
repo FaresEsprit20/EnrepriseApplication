@@ -58,8 +58,14 @@ public class PublicationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PublicationGetDTO> createPublication(@RequestBody PublicationCreateDTO publicationDTO) {
-        PublicationGetDTO createdPublication = publicationService.createPublication(publicationDTO);
+    public ResponseEntity<PublicationGetDTO> createPublication(@RequestBody PublicationCreateDTO publicationDTO,
+                                                               @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<EmployeeDTO> authUser = Optional.ofNullable(employeeService.findEmployeeByEmail(userDetails.getUsername()));
+        if(authUser.isEmpty()){
+            throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+        }
+
+        PublicationGetDTO createdPublication = publicationService.createPublication(publicationDTO, authUser.get().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPublication);
     }
 
