@@ -1,0 +1,21 @@
+<div class="container" *ngIf="isLoaded">
+  <!-- Content of the component -->
+  <div class="my-4 mx-4">
+    <a routerLink="['/blogs/list']"><i class="bi bi-arrow-left"></i> Go Back</a>
+  </div>
+
+  <div class="card w-50 my-5 mx-auto">
+    <div class="card-body">
+      <h3 class="card-title my-3">{{ blog.name }}</h3>
+      <h6 class="card-subtitle mb-2 text-muted">By {{ blog.employeeFirstName | titlecase }} &nbsp; {{ blog.employeeLastName | titlecase }},</h6>
+      <h6 class="card-subtitle mb-3 text-muted">In {{ blog.createdAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+      <p class="card-text">{{ blog.description }}</p>
+
+      <!-- Voting -->
+      <div class="d-flex">
+        <app-upvote [id]="blog.id" [upvotes]="blog.upVotes" [userVoted]="blog.userVoted" (vote)="onUpvote($event)" [count]="blog.upVotes"></app-upvote>
+        <app-downvote [id]="blog.id" [downvotes]="blog.downVotes" [userVoted]="blog.userVoted" (vote)="onDownvote($event)" [count]="blog.downVotes"></app-downvote>
+      </div>
+    </div>
+  </div>
+</div>

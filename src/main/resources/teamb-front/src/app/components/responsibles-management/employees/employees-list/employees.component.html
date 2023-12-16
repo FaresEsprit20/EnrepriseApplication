@@ -1,0 +1,33 @@
+<div class="container">
+  <h3 class="my-5">Employee Details</h3>
+  <table class="table table-light">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Position</th>
+        <th>Department</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees">
+        <td>{{ employee.id }}</td>
+        <td>{{ employee.firstName }}</td>
+        <td>{{ employee.lastName }}</td>
+        <td>{{ employee.email }}</td>
+        <td>{{ employee.poste }}</td>
+        <td>{{ employee.department }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="updateEmployee(employee)">
+            <i class="bi bi-pencil" ></i> Edit</button>
+
+          <button class="btn btn-sm btn-danger mx-1" (click)="deleteEmployee(employee.id)">
+            <i class="bi bi-trash"></i> Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
