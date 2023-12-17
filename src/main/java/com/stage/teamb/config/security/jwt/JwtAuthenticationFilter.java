@@ -111,6 +111,7 @@ private void processToken(String jwt, HttpServletRequest request, HttpServletRes
 }
 
     private String extractTokenFromAuthorizationHeader(String authorizationHeader) {
+//        log.warn("Auth header  "+authorizationHeader);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             log.info("Taking bearer token from authorization");
             return authorizationHeader.substring(7).trim(); // Extract the token without "Bearer "

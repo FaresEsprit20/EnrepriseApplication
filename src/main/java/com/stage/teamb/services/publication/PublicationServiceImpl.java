@@ -70,7 +70,7 @@ public class PublicationServiceImpl implements PublicationService {
             res.setUpVotes(count.getUpVotes());
             res.setDownVotes(count.getDownVotes());
             res.setUserVoted(isVoting);
-            log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
+//            log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
         });
         return publications;
     }
