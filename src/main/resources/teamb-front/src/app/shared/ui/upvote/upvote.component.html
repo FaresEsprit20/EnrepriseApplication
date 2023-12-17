@@ -1,0 +1,14 @@
+<!-- app-upvote.component.html -->
+<div class="d-flex align-items-center">
+  <span
+    class="fs-5 me-2 d-flex align-items-center"
+    role="button"
+    (click)="upvote()"
+    [ngClass]="{ 'text-success': userVoted && vote, 'text-secondary': !userVoted || (userVoted && !vote) }"
+  >
+    <i class="fa fa-thumbs-up"></i>
+  </span>
+  <p class="fs-5 mb-0 text-secondary">
+    {{ upvotes }}
+  </p>
+</div>
