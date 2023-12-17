@@ -1,0 +1,81 @@
+<div class="container" *ngIf="!isLoading">
+
+
+
+<div class="row">
+  <div class="col-6 mx-auto">
+    <div class="my-4 d-flex justify-content-between">
+      <app-search (search)="handleSearch($event)"></app-search>
+    
+      <div class="sort-options">
+        <select class="form-select" [(ngModel)]="selectedSortOption" (change)="onSortOptionChange()">
+          <option value="new">Newest First</option>
+          <option value="old">Oldest First</option>
+        </select>
+      </div>
+
+      <a (click)="navigateToAddBlog()" class="btn btn-primary">Create</a>
+    </div>
+  </div>
+  
+</div>
+
+<div class="row">
+
+
+<div class="col-12">
+
+  <!-- Alert Component with Close Button -->
+  <app-alert
+  [isVisible]="searchResult?.length === 0 && searchResult"
+  alertClass="alert-warning"
+  heading="Alert"
+  message="Search Result"
+  additionalText="No results found. Please try a different search."
+  (close)="onCloseAlert()"
+></app-alert>
+
+
+  
+  <div class="card my-5 w-50 mx-auto" *ngFor="let blog of searchResult || blogs | sort : selectedSortOption">
+    <div class="card-body">
+      <div class="d-flex justify-content-between">
+        <h6 class="card-subtitle mb-2 text-muted">{{ blog.updatedAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{ blog.createdAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+      </div>
+      <h4 class="card-title">{{ blog.name }}</h4>
+      <h6 class="card-subtitle mb-2 text-muted">By {{ blog.employeeFirstName | titlecase }} &nbsp; {{ blog.employeeLastName | titlecase }}</h6>
+      <p class="card-text">
+        {{ blog.description }}
+      </p>
+      <div class="d-flex justify-content-end">
+        <a routerLink="['/employees/blogs/details', blog.id]">Read more <i class="bi bi-arrow-right"></i></a>
+      </div>
+    
+
+<!-- voting -->
+<!-- Parent component's template -->
+<div class="d-flex">
+  <app-upvote class="me-2" [id]="blog.id" [upvotes]="blog.upVotes" [userVoted]="blog.userVoted" [vote]="blog.vote" (voteChange)="onUpvote($event)"></app-upvote>
+<app-downvote [id]="blog.id" [downvotes]="blog.downVotes" [userVoted]="blog.userVoted" [vote]="blog.vote" (voteChange)="onDownvote($event)"></app-downvote>
+
+</div>
+
+
+    </div>
+  </div>
+  
+
+</div>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
