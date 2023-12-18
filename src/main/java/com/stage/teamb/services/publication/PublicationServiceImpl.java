@@ -66,10 +66,13 @@ public class PublicationServiceImpl implements PublicationService {
                 isVoting = true;
                 vote = rating.get().getValue();
                 res.setVote(vote);
+            }else {
+                vote = false;
             }
             res.setUpVotes(count.getUpVotes());
             res.setDownVotes(count.getDownVotes());
             res.setUserVoted(isVoting);
+            res.setVote(vote);
 //            log.warn("Publication ID: {}, Vote: {}, User Voted: {}", res.getId(), vote, isVoting);
         });
         return publications;
@@ -90,6 +93,7 @@ public class PublicationServiceImpl implements PublicationService {
             vote = rating.get().getValue();
         } else {
             isVoting = false;
+            vote = false;
         }
         // Count upvotes and downvotes separately
         Long upVotesCount = ratingService.countUpVotes(id);
@@ -100,7 +104,7 @@ public class PublicationServiceImpl implements PublicationService {
                 .build();
         log.warn("Vote: " + vote); // Add this log to check the value of vote
         PublicationGetDTO publicationDTO = PublicationMapper.toGetDTO(publication);
-        publicationDTO.setVote(vote);
+        publicationDTO.setVote(vote != null ? vote : false);
         publicationDTO.setUpVotes(count.getUpVotes());
         publicationDTO.setDownVotes(count.getDownVotes());
         publicationDTO.setUserVoted(isVoting);
