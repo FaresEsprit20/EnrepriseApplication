@@ -74,7 +74,7 @@ export class BlogListComponent implements OnInit, OnDestroy{
   onUpvote(id: number): void {
     this.ratingService.upvotePublication(id).subscribe(
       () => {
-        this.updateVotesCount(id);
+        this.updateVotesCount(id,true,true);
         this.toastService.showToast('Upvoted successfully!');
         this.zone.run(() => {}); // NgZone.run
         this.cdRef.detectChanges();
@@ -89,7 +89,7 @@ export class BlogListComponent implements OnInit, OnDestroy{
   onDownvote(id: number): void {
     this.ratingService.downvotePublication(id).subscribe(
       () => {
-        this.updateVotesCount(id);
+        this.updateVotesCount(id,true,false);
         this.toastService.showToast('Downvoted successfully!');
         this.zone.run(() => {}); // NgZone.run
         this.cdRef.detectChanges();
@@ -101,12 +101,12 @@ export class BlogListComponent implements OnInit, OnDestroy{
     );
   }
 
-  private updateVotesCount(publicationId: number): void {
+  private updateVotesCount(publicationId: number, userVoted:boolean, vote:boolean): void {
     this.ratingService.getVoteCounts(publicationId).subscribe(
       (votesCount) => {
         const updatedBlogs = this.blogs.map((blog) =>
           blog.id === publicationId
-            ? { ...blog, upVotes: votesCount.upVotes, downVotes: votesCount.downVotes }
+            ? { ...blog, upVotes: votesCount.upVotes, downVotes: votesCount.downVotes, userVoted: userVoted, vote:  vote}
             : blog
         );
         this.blogs = updatedBlogs;
@@ -118,9 +118,6 @@ export class BlogListComponent implements OnInit, OnDestroy{
       }
     );
   }
-
-
-  
 
   onSortOptionChange() {
     this.sortBlogs();

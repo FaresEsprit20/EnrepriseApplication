@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-downvote',
@@ -15,11 +15,13 @@ export class DownvoteComponent implements OnInit, OnDestroy{
   @Input() vote: boolean;
   @Output() voteChange = new EventEmitter<number>();
 
+  constructor(){}
 
   downvote(): void {
     console.log("emitted")
     this.userVoted = false;
     this.vote = false;
+    console.log('userVoted:', this.userVoted, 'vote:', this.vote);
       this.voteChange.emit(this.id);
   }
 
