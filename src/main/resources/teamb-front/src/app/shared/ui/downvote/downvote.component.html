@@ -1,0 +1,16 @@
+<div class="d-flex align-items-center">
+  <span
+    class="fs-5 me-2 d-flex align-items-center"
+    role="button"
+    (click)="downvote()"
+    [ngStyle]="{
+      'color': userVoted && !vote ? '#fc5566' : '#6c757d',
+      'cursor': 'pointer'
+    }"
+  >
+    <i class="fa fa-thumbs-down"></i>
+  </span>
+  <p class="fs-5 mb-0 text-secondary">
+    {{ downvotes }}
+  </p>
+</div>
