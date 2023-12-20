@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class PublicationMapper {
 
 
-
     public static PublicationDTO toDTO(Publication published) {
         return PublicationDTO.builder()
                 .id(published.getId())
@@ -50,7 +49,6 @@ public class PublicationMapper {
                 .build();
     }
 
-
     public static List<PublicationDTO> toListDTO(List<Publication> publishedList) {
         return publishedList.stream()
                 .map(PublicationMapper::toDTO)
@@ -78,4 +76,7 @@ public class PublicationMapper {
                 .map(PublicationMapper::toEntity)
                 .collect(Collectors.toList());
     }
+
+
+
 }
