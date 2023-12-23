@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface RatingService {
 
+
     List<RatingDTO> findRatingsByEmployeeId(Long employeeId);
 
     List<RatingDTO> findRatingsByPublicationId(Long publicationId);

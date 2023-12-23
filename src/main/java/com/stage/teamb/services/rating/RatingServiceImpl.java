@@ -1,6 +1,4 @@
 package com.stage.teamb.services.rating;
-
-
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.mappers.RatingMapper;
 import com.stage.teamb.models.Employee;
@@ -25,12 +23,15 @@ public class RatingServiceImpl implements RatingService {
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public RatingServiceImpl(RatingRepository ratingRepository, PublicationRepository publicationRepository, EmployeeRepository employeeRepository) {
+    public RatingServiceImpl(
+            RatingRepository ratingRepository,
+            PublicationRepository publicationRepository,
+            EmployeeRepository employeeRepository
+    ) {
         this.ratingRepository = ratingRepository;
         this.publicationRepository = publicationRepository;
         this.employeeRepository = employeeRepository;
     }
-
 
     @Override
     public List<RatingDTO> findRatingsByEmployeeId(Long employeeId) {
@@ -48,7 +49,7 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-        if (employee.getRatings().stream().anyMatch(rating -> rating.getPublication().getId().equals(publicationId))) {
+        if (employee.getRatings().stream().anyMatch(r -> r.getPublication().getId().equals(publicationId))) {
             throw new RuntimeException("Employee has already rated this publication.");
         }
         Rating rating = new Rating();
@@ -79,17 +80,12 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.deleteById(ratingId);
     }
 
-
-
-
     @Override
     public RatingDTO disassociateEmployeeFromRating(Long ratingId) {
         try {
             Rating rating = ratingRepository.findById(ratingId)
                     .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
-            // Use the helper method to disassociate the employee from the rating
             rating.removeEmployeeFromRating();
-            // Save the updated rating
             Rating updatedRating = ratingRepository.save(rating);
             return RatingMapper.toDTO(updatedRating);
         } catch (Exception exception) {
@@ -97,7 +93,6 @@ public class RatingServiceImpl implements RatingService {
             throw new RuntimeException("Could not disassociate employee from rating: " + exception.getMessage());
         }
     }
-
 
     @Override
     public RatingDTO upVote(Long publicationId, Long employeeId) {
@@ -120,7 +115,6 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
     }
 
-
     private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
@@ -130,9 +124,9 @@ public class RatingServiceImpl implements RatingService {
         Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
 
         if (existingRating.isPresent()) {
-            return  this.updateRating(existingRating.get().getId(), value, employeeId);
+            return updateRating(existingRating.get().getId(), value, employeeId);
         } else {
-            return this.createRating(publicationId, employeeId, value);
+            return createRating(publicationId, employeeId, value);
         }
     }
 
@@ -165,11 +159,9 @@ public class RatingServiceImpl implements RatingService {
     public Long countUpVotes(Long publicationId) {
         return ratingRepository.countUpVotesByPublicationId(publicationId);
     }
+
     @Override
     public Long countdownVotes(Long publicationId) {
         return ratingRepository.countDownVotesByPublicationId(publicationId);
     }
-
-
-
 }
