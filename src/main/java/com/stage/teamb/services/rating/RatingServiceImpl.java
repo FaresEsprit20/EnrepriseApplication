@@ -1,5 +1,6 @@
 package com.stage.teamb.services.rating;
 import com.stage.teamb.dtos.rating.RatingDTO;
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.RatingMapper;
 import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Publication;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,11 +48,11 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public RatingDTO createRating(Long publicationId, Long employeeId, Boolean value) {
         Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId)));
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Employee not found with id " + employeeId)));
         if (employee.getRatings().stream().anyMatch(r -> r.getPublication().getId().equals(publicationId))) {
-            throw new RuntimeException("Employee has already rated this publication.");
+            throw new CustomException(403, Collections.singletonList("Employee has already rated this publication."));
         }
         Rating rating = new Rating();
         rating.setPublicationForRating(publication);
@@ -62,9 +64,9 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public RatingDTO updateRating(Long ratingId, Boolean value, Long employeeId) {
         Rating rating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Rating not found with id " + ratingId)));
         if (!rating.getEmployee().getId().equals(employeeId)) {
-            throw new RuntimeException("You can only update your own ratings.");
+            throw new CustomException(404, Collections.singletonList("You can only update your own ratings."));
         }
         rating.setValue(value);
         return RatingMapper.toDTO(ratingRepository.save(rating));
@@ -73,9 +75,9 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public void deleteRating(Long ratingId, Long employeeId) {
         Rating rating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Rating not found with id " + ratingId)));
         if (!rating.getEmployee().getId().equals(employeeId)) {
-            throw new RuntimeException("You can only delete your own ratings.");
+            throw new CustomException(403, Collections.singletonList("You can only delete your own ratings."));
         }
         ratingRepository.deleteById(ratingId);
     }
@@ -84,13 +86,13 @@ public class RatingServiceImpl implements RatingService {
     public RatingDTO disassociateEmployeeFromRating(Long ratingId) {
         try {
             Rating rating = ratingRepository.findById(ratingId)
-                    .orElseThrow(() -> new RuntimeException("Rating not found with id " + ratingId));
+                    .orElseThrow(() -> new CustomException(403, Collections.singletonList("Rating not found with id " + ratingId)));
             rating.removeEmployeeFromRating();
             Rating updatedRating = ratingRepository.save(rating);
             return RatingMapper.toDTO(updatedRating);
         } catch (Exception exception) {
             log.error("Could not disassociate employee from rating: " + exception.getMessage());
-            throw new RuntimeException("Could not disassociate employee from rating: " + exception.getMessage());
+            throw new CustomException(403, Collections.singletonList("Could not disassociate employee from rating: " + exception.getMessage()));
         }
     }
 
@@ -116,10 +118,10 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
-        Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+       publicationRepository.findById(publicationId)
+                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId)));
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Employee not found with id " + employeeId)));
 
         Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
 
