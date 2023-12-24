@@ -118,11 +118,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
-       publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId)));
-        employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new CustomException(403, Collections.singletonList("Employee not found with id " + employeeId)));
-
+      boolean pubExists =  publicationRepository.existsById(publicationId);
+      if(!pubExists)
+          throw new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId));
+       boolean empExists=  employeeRepository.existsById(employeeId);
+       if(!empExists)
+              throw new CustomException(403, Collections.singletonList("Employee not found with id " + employeeId));
         Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
 
         if (existingRating.isPresent()) {
@@ -166,4 +167,8 @@ public class RatingServiceImpl implements RatingService {
     public Long countdownVotes(Long publicationId) {
         return ratingRepository.countDownVotesByPublicationId(publicationId);
     }
+
+
+
+
 }
