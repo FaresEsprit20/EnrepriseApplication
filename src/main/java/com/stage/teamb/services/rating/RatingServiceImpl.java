@@ -1,4 +1,5 @@
 package com.stage.teamb.services.rating;
+
 import com.stage.teamb.dtos.rating.RatingDTO;
 import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.RatingMapper;
@@ -11,6 +12,7 @@ import com.stage.teamb.repository.jpa.rating.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@Transactional
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
@@ -46,14 +49,13 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public RatingDTO createRating(Long publicationId, Long employeeId, Boolean value) {
         Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId)));
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new CustomException(403, Collections.singletonList("Employee not found with id " + employeeId)));
-        if (employee.getRatings().stream().anyMatch(r -> r.getPublication().getId().equals(publicationId))) {
-            throw new CustomException(403, Collections.singletonList("Employee has already rated this publication."));
-        }
+
         Rating rating = new Rating();
         rating.setPublicationForRating(publication);
         rating.setEmployeeForRating(employee);
@@ -62,6 +64,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public RatingDTO updateRating(Long ratingId, Boolean value, Long employeeId) {
         Rating rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new CustomException(404, Collections.singletonList("Rating not found with id " + ratingId)));
@@ -118,6 +121,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private RatingDTO vote(Long publicationId, Long employeeId, Boolean value) {
+        log.info("Voting for publicationId: {}, employeeId: {}", publicationId, employeeId);
       boolean pubExists =  publicationRepository.existsById(publicationId);
       if(!pubExists)
           throw new CustomException(403, Collections.singletonList("Publication not found with id " + publicationId));
@@ -127,8 +131,10 @@ public class RatingServiceImpl implements RatingService {
         Optional<Rating> existingRating = ratingRepository.findByPublicationAndEmployee(publicationId, employeeId);
 
         if (existingRating.isPresent()) {
+            log.info("Voting completed with update  for publicationId: {}, employeeId: {}", publicationId, employeeId);
             return updateRating(existingRating.get().getId(), value, employeeId);
         } else {
+            log.info("Voting completed with create for publicationId: {}, employeeId: {}", publicationId, employeeId);
             return createRating(publicationId, employeeId, value);
         }
     }
