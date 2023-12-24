@@ -1,0 +1,7 @@
+.fs-5 {
+  transition: transform 0.8s ease;
+}
+
+.fs-5:hover {
+  transform: scale(1.3);
+}
