@@ -39,18 +39,6 @@ public class Enterprise implements Serializable {
         updatedAt = LocalDateTime.now();
     }
 
-
-    public void addDepartmentToEnterprise(Department department) {
-        this.departments.add(department);
-        department.setEnterpriseForDepartment(this);
-    }
-
-    public void removeDepartmentFromEnterprise(Department department) {
-        this.departments.remove(department);
-        department.removeEnterpriseFromDepartment();
-    }
-
-
     @Override
     public String toString() {
         return "Enterprise{" +
@@ -61,5 +49,6 @@ public class Enterprise implements Serializable {
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
 
 }

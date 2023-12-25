@@ -26,7 +26,7 @@ public class Address implements Serializable {
     private String town;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", unique = true)
     private Employee employee;
 
     public Address(Long id, String street, String streetCode, String town) {

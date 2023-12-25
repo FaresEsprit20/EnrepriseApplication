@@ -71,7 +71,6 @@ public class Users implements UserDetails{
         return true;
     }
 
-
     @Override
     public String toString() {
         return "Users{" +
@@ -87,5 +86,6 @@ public class Users implements UserDetails{
                 ", role=" + role +
                 '}';
     }
+
 
 }

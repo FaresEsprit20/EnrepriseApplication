@@ -24,7 +24,7 @@ public class Employee extends Users {
 
 
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-  @JoinColumn(name = "department_id", updatable = true, nullable = true)
+  @JoinColumn(name = "department_id", unique = true)
   private Department department;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)

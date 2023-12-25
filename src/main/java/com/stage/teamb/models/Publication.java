@@ -30,7 +30,7 @@ public class Publication implements Serializable  {
 
 
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id" , unique = true)
     private Employee employee;
 
     @OneToMany(mappedBy = "publication", cascade = {CascadeType.MERGE})

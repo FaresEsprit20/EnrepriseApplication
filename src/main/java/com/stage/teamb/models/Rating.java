@@ -26,11 +26,11 @@ public class Rating implements Serializable  {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "publication_id")
+    @JoinColumn(name = "publication_id", unique = true)
     private Publication publication;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", unique = true)
     private Employee employee;
 
     @PrePersist

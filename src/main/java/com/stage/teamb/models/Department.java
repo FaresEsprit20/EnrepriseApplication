@@ -27,7 +27,7 @@ public class Department implements Serializable {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "enterprise_id")
+    @JoinColumn(name = "enterprise_id", unique = true)
     private Enterprise enterprise;
 
     @OneToMany(mappedBy = "department")
