@@ -1,0 +1,79 @@
+<div class="container" *ngIf="!isLoading">
+
+
+
+  <div class="row">
+    <div class="col-8 mx-auto">
+
+     
+    <div class="my-4 d-flex justify-content-between">
+        <app-search (search)="handleSearch($event)"></app-search>
+        <div class="sort-options">
+          <select class="form-select" aria-label="Default select example" [(ngModel)]="selectedSortOption" (change)="onSortOptionChange()">
+            <option value="new">New</option>
+            <option value="old">Old</option>
+          </select>
+        </div>
+        <a (click)="navigateToAddBlog()" class="btn btn-primary">Create</a>
+      </div> 
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <!-- Alert Component with Close Button -->
+      <app-alert
+        [isVisible]="searchResult?.length === 0 && searchResult"
+        alertClass="alert-warning"
+        heading="Alert"
+        message="Search Result"
+        additionalText="No results found. Please try a different search."
+        (close)="onCloseAlert()"
+      ></app-alert>
+
+      <div class="card card4 my-5 w-50 mx-auto" *ngFor="let blog of searchResult || blogs | sort : selectedSortOption" >
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="card-subtitle mb-2 text-muted date-custom">{{ blog.updatedAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted date-custom">{{ blog.createdAt | date:'yyyy-MM-dd HH:mm' }}</h6>
+          </div>
+          <h4 class="card-title">{{ blog.name }}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">By {{ blog.employeeFirstName | titlecase }} &nbsp; {{ blog.employeeLastName | titlecase }}</h6>
+          <p class="card-text">{{ blog.description }}</p>
+      
+          <hr class="w-100 my-3">
+      
+          <!-- Voting and Read More buttons in the same line -->
+          <div class="d-flex justify-content-between">
+            <!-- Voting buttons -->
+            <div class="d-flex">
+              <app-upvote class="me-2" [id]="blog.id" [upvotes]="blog.upVotes" [userVoted]="blog.userVoted" [vote]="blog.vote" (voteChange)="onUpvote($event)"></app-upvote>
+              <app-downvote [id]="blog.id" [downvotes]="blog.downVotes" [userVoted]="blog.userVoted" [vote]="blog.vote" (voteChange)="onDownvote($event)"></app-downvote>
+            </div>
+      
+            <!-- Read More button -->
+            <div>
+              <a [routerLink]="['/employees/blogs/details', blog.id]" class="btn rounded-pill btn-read-more">
+                <i class="fa fa-arrow-right mr-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+      
+
+   
+          <!-- Hover effect -->
+    <!--       <div class="dimmer" *ngIf="isHovered"></div>
+          <div class="go-corner" *ngIf="isHovered">
+            <div class="go-arrow">
+              →
+            </div>
+          </div> -->
+        </div>
+      </div>
+      
+
+
+      
+    </div>
+  </div>
+</div>
