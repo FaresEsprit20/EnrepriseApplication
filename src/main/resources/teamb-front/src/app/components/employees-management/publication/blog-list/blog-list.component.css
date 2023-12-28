@@ -1,0 +1,206 @@
+@import './../../../../../custom-colors.css';
+
+
+
+/* Add this to your styles.css or styles.scss file */
+/* .card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+} */
+
+.card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid #f3cddb;
+  transition: all .6s ease-out;
+}
+
+.card a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.card a:hover {
+  color: #0056b3;
+}
+
+.card-subtitle {
+  color: #888;
+}
+
+.btn-primary {
+  font-weight: 500;
+  background-color: rgba(1, 210, 142, 1);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #218838;
+}
+
+.sort-options select,
+.app-search input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.flat-button {
+  display: inline-block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.flat-button:hover {
+  background-color: #0056b3;
+}
+
+
+.btn-read-more {
+  background-color: rgba(1, 210, 142, 1); /* #01d28e */
+  color: white;
+  border: none;
+}
+
+.btn-read-more:hover {
+  background-color: rgba(1, 210, 142, 0.8); /* Slightly reduce alpha for hover */
+  transition: background-color 0.6s ease;
+}
+
+.card-title {
+  font-family: 'Lato', sans-serif; /* Add your preferred font or keep sans-serif as a fallback */
+  font-size: 1.5rem; /* Adjust the title font size */
+  margin-bottom: 12px; /* Add space below title */
+  color: hsl(0, 0%, 35%);
+}
+
+.card-subtitle {
+  color: #888;
+  font-family: 'Lato', sans-serif; /* Add your preferred font or keep sans-serif as a fallback */
+  margin-bottom: 12px;
+}
+
+.card-text {
+  line-height: 1.5; /* Improve paragraph line height */
+  margin-bottom: 16px;
+  font-size: 1rem;
+  padding: 16px 16px 16px 5px;  /* Add space below paragraphs */
+}
+.date-custom {
+  color: #888;
+  font-size: 12px; /* Adjust the font size as needed */
+  margin-bottom: 8px; /* Add space below the date */
+  position: relative;
+}
+
+.date-custom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #ddd; /* Line color */
+}
+
+
+/* custom-colors.css */
+
+.go-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  background-color: #00838d;
+  border-radius: 0 4px 0 32px;
+  transition: all 0.6s ease-out; /* Adjusted transition speed */
+  opacity: 0; /* Corrected typo */
+}
+
+.go-arrow {
+  margin-top: -4px;
+  margin-right: -4px;
+  color: white;
+  font-family: courier, sans;
+  transition: all 0.6s ease-out; /* Adjusted transition speed */
+}
+
+/* Your.component.css */
+
+.card4 {
+  display: block;
+  top: 0px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.6s ease-out  !important; /* Adjusted transition speed */
+
+  &:hover {
+    transform: translateY(-10px); /* Adjust the translateY value for the upward movement */
+    
+    .dimmer {
+      opacity: 1;
+    }
+
+    .go-corner {
+      margin-right: -12px;
+      opacity: 1;
+    }
+
+    .go-arrow {
+      opacity: 1;
+      border: 1px solid #CD3D73; /* Add this line for the border animation on hover */
+    }
+  }
+
+
+  .go-corner {
+    background-color: #00838d;
+    height: 100%;
+    width: 16px;
+    padding-right: 9px;
+    border-radius: 0;
+    transform: skew(6deg);
+    margin-right: -36px;
+    align-items: start;
+    background-image: linear-gradient(-45deg, #8F479A 1%, #DC2A74 100%);
+  }
+
+  .go-arrow {
+    transform: skew(-6deg);
+    margin-left: -2px;
+    margin-top: 9px;
+    opacity: 0;
+  }
+
+  &:hover {
+    .go-corner {
+      margin-right: -12px;
+      opacity: 1;
+    }
+    .go-arrow {
+      opacity: 1;
+    }
+  }
+
+  h3 {
+    margin-top: 8px;
+  }
+}
