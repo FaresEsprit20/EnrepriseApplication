@@ -37,9 +37,6 @@
             placeholder="Title"
             pInputText
             class="w-full mb-3"
-            [ngClass]="{
-              'ng-invalid': reactiveForm.get('title').invalid && reactiveForm.get('title').touched
-            }"
           />
 
           <div class="mb-2" *ngIf="reactiveForm.get('title').invalid && reactiveForm.get('title').touched">
@@ -52,11 +49,8 @@
           <p-editor
             formControlName="content"
             id="content1"
-            [style]="{ height: '320px' }"
+            [style]="{ height: '280px' }"
             class="w-full mb-3"
-            [ngClass]="{
-              'ng-invalid': reactiveForm.get('content').invalid && reactiveForm.get('content').touched
-            }"
           ></p-editor>
 
           <div *ngIf="reactiveForm.get('content').invalid && reactiveForm.get('content').touched">

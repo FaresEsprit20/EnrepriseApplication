@@ -38,9 +38,25 @@
         <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
           <label for="title1" class="block text-900 font-medium mb-2 bg-success">Title</label>
           <input formControlName="title" id="title1" type="text" placeholder="Title" pInputText class="w-full mb-3">
+          <div class="mb-2" *ngIf="reactiveForm.get('title').invalid && reactiveForm.get('title').touched">
+            <small class="text-danger" *ngIf="reactiveForm.get('title').hasError('required')">Title is required</small>
+            <small class="text-danger" *ngIf="reactiveForm.get('title').hasError('minlength')">Ensure this value has at least 3 characters</small>
+          </div>
+
   
-          <label for="content1" class="block text-900 font-medium mb-2">Content</label>
-          <textarea formControlName="content" id="content1" rows="5" cols="30" pInputTextarea [autoResize]="true" class="w-full mb-3"></textarea>
+           <!-- Content Input -->
+           <label for="content1" class="block text-900 font-medium mb-2">Content</label>
+           <p-editor
+             formControlName="content"
+             id="content1"
+             [style]="{ height: '280px' }"
+             class="w-full mb-3"
+           ></p-editor>
+          <div *ngIf="reactiveForm.get('content').invalid && reactiveForm.get('content').touched">
+            <small class="text-danger" *ngIf="reactiveForm.get('content').hasError('required')">Content is required</small>
+            <small class="text-danger" *ngIf="reactiveForm.get('content').hasError('minlength')">Ensure this value has at least 10 characters</small>
+          </div>
+
           <div class="mb-1">
             <p-messages *ngIf="isSubmitClicked && !reactiveForm.valid" [(value)]="alertService.messages"  ></p-messages>
             <p-messages *ngIf="isSubmitClicked && submitError" [(value)]="alertService.messages"  ></p-messages>
