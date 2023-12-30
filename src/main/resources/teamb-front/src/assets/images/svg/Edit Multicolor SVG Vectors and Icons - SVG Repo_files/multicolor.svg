@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip-multicolor">
+      <rect width="64" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="multicolor" clip-path="url(#clip-multicolor)">
+    <g id="color-filter-sharp-svgrepo-com" transform="translate(-32 -45.796)">
+      <path id="Path_457" data-name="Path 457" d="M140.424,67.625a24.045,24.045,0,0,1,19.324-2.619A19.483,19.483,0,0,0,121.1,65,24.045,24.045,0,0,1,140.424,67.625Z" transform="translate(-76.336)" fill="#e5879b"/>
+      <path id="Path_458" data-name="Path 458" d="M291.132,232.51a24,24,0,0,1-7.5,16.915,19.474,19.474,0,0,0,19.67-33.5A24.142,24.142,0,0,1,291.132,232.51Z" transform="translate(-215.584 -143.865)" fill="#71bddc"/>
+      <path id="Path_459" data-name="Path 459" d="M283.571,194.033a24.047,24.047,0,0,1,7.071,12.877,19.5,19.5,0,0,0,8.317-13.709,19.463,19.463,0,0,0-15.389.832Z" transform="translate(-215.533 -123.372)" fill="#ad8aa1"/>
+      <path id="Path_460" data-name="Path 460" d="M52.635,232.51a24.142,24.142,0,0,1-12.176-16.59,19.476,19.476,0,0,0,19.678,33.5,24,24,0,0,1-7.5-16.915Z" transform="translate(0 -143.865)" fill="#f1e571"/>
+      <path id="Path_461" data-name="Path 461" d="M129.317,206.912a24.047,24.047,0,0,1,7.071-12.877A19.463,19.463,0,0,0,121,193.2a19.5,19.5,0,0,0,8.317,13.709Z" transform="translate(-76.251 -123.374)" fill="#e9ac7f"/>
+      <path id="Path_462" data-name="Path 462" d="M222.537,345.33a24.1,24.1,0,0,1-13.437,0,19.468,19.468,0,0,0,6.718,12.358A19.468,19.468,0,0,0,222.537,345.33Z" transform="translate(-151.73 -254.737)" fill="#92b790"/>
+      <path id="Path_463" data-name="Path 463" d="M209,236.894a19.482,19.482,0,0,0,13.466,0,19.472,19.472,0,0,0-6.733-12.494A19.472,19.472,0,0,0,209,236.894Z" transform="translate(-151.645 -151.131)" fill="#ba998a"/>
+    </g>
+  </g>
+</svg>
