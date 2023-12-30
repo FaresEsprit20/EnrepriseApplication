@@ -1,0 +1,61 @@
+
+
+
+
+
+<div class="card  flex flex-column align-items-center overflow-hidden">
+  <div class="flex flex-column align-items-center gap-2">
+    <span style="visibility: hidden;" class="slidedown-icon h-2rem w-2rem bg-primary border-circle inline-flex align-items-center justify-content-center">
+    </span>
+  </div>
+  </div>
+  <!-- Grid Start -->
+  <div class="grid" *ngIf="isLoaded">
+
+
+  <!-- Toolbar col starts -->
+  <div class="col-8 col-offset-2 mb-5 ">
+    <p-toolbar>
+      <div class="p-toolbar-group-start">
+        <p-button [routerLink]="['/employees/blogs/list']" severity="secondary" label="Go Back" icon="pi pi-arrow-left"></p-button>
+      </div>
+    </p-toolbar>
+  </div>
+  <!-- Toolbar col ends -->
+
+
+  <!-- Card Col Starts -->
+  <div class="col-10 mt-8 md:col-6 lg:col-6 xl:col-4 sm:col-offset-1 md:col-offset-3 lg:col-offset-3 xl:col-offset-4">
+
+
+    <div class="card p-4 shadow-2 border-round w-full h-full ">
+      <div class="text-center mb-5">
+          <img src="assets/images/svg/edit-svg.svg" alt="Image" height="120" class="mb-3">
+          <div class="text-900 text-3xl font-medium mb-3">Edit Blog</div>
+      </div>
+  
+      <div>
+        <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
+          <label for="title1" class="block text-900 font-medium mb-2 bg-success">Title</label>
+          <input formControlName="title" id="title1" type="text" placeholder="Title" pInputText class="w-full mb-3">
+  
+          <label for="content1" class="block text-900 font-medium mb-2">Content</label>
+          <textarea formControlName="content" id="content1" rows="5" cols="30" pInputTextarea [autoResize]="true" class="w-full mb-3"></textarea>
+          <div class="mb-1">
+            <p-messages *ngIf="isSubmitClicked && !reactiveForm.valid" [(value)]="alertService.messages"  ></p-messages>
+            <p-messages *ngIf="isSubmitClicked && submitError" [(value)]="alertService.messages"  ></p-messages>
+            <p-messages *ngIf="isSubmitClicked && isValid" [(value)]="alertService.messages"  ></p-messages>
+          </div>
+          <button pButton pRipple label="Edit Blog" icon="pi pi-cog" class="w-full bg-help"></button>
+        </form>
+      </div>
+  </div>
+
+
+
+  </div>
+  <!-- Card Col End -->
+
+  </div>
+<!-- Grid End -->
+
