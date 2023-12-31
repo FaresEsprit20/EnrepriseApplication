@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip-outlined">
+      <rect width="64" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="outlined" clip-path="url(#clip-outlined)">
+    <g id="color-filter-sharp-svgrepo-com" transform="translate(-32 -45.796)">
+      <g id="circle-area-svgrepo-com" transform="translate(32 45.796)">
+        <path id="Path_466" data-name="Path 466" d="M0,0H63.647V63.647H0Z" fill="none"/>
+      </g>
+    </g>
+    <g id="color-filter-sharp-svgrepo-com-2" data-name="color-filter-sharp-svgrepo-com" transform="translate(-27.839 -67.933)">
+      <g id="Ellipse_60" data-name="Ellipse 60" transform="translate(31 71.796)" fill="none" stroke="#4b4b4b" stroke-width="6">
+        <ellipse cx="21.074" cy="21.253" rx="21.074" ry="21.253" stroke="none"/>
+        <ellipse cx="21.074" cy="21.253" rx="18.074" ry="18.253" fill="none"/>
+      </g>
+    </g>
+    <g id="color-filter-sharp-svgrepo-com-3" data-name="color-filter-sharp-svgrepo-com" transform="translate(-12.97 -53.766)">
+      <g id="Ellipse_60-2" data-name="Ellipse 60" transform="translate(30.97 71.766)" fill="none" stroke="#4b4b4b" stroke-width="6">
+        <circle cx="22" cy="22" r="22" stroke="none"/>
+        <circle cx="22" cy="22" r="19" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>
