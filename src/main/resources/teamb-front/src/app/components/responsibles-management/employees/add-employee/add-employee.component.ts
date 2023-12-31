@@ -1,17 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { EmployeeService } from '../../../../shared/services/employee.service';
 import { Subscription } from 'rxjs';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../../shared/ui/alert.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-add-employee',
   templateUrl: './add-employee.component.html',
   styles: [
-    `:host /deep/ .custom-calendar {
+    `:host ::ng-deep .custom-calendar  {
       width: 100% !important;
-  }
+    }
     :host {
       @keyframes slidedown-icon {
           0% {
@@ -36,77 +37,117 @@ import { AlertService } from '../../../../shared/ui/alert.service';
       }
   }`
   ],
+  encapsulation: ViewEncapsulation.None,
+  providers: [DatePipe],
   styleUrls: ['./add-employee.component.css']
 })
+
 export class AddEmployeeComponent implements OnInit, OnDestroy {
 
   reactiveForm: FormGroup;
   submitError: string = null;
   isSubmitClicked = false;
-  isValid: boolean = false
+  isValid: boolean = false;
   isSpinnerLoading = false;
   private empSubscription: Subscription;
 
-  constructor(private router: Router, private formBuilder: FormBuilder, private empService: EmployeeService,
-    public alertService: AlertService) { }
-
+  constructor(private router: Router, private formBuilder: FormBuilder, private empService: EmployeeService, 
+    public alertService: AlertService,private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.reactiveForm = this.formBuilder.group({
-      firstname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      firstname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern('^[a-zA-Z ]*$')]],
+      lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern('^[a-zA-Z ]*$')]],
       email: ['', [Validators.required, Validators.email]],
-      occupation: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      tel: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
-      password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      passwordConfirm: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      occupation: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern('^[a-zA-Z ]*$')]],
+      tel: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8), Validators.pattern('^[0-9]*$')]],
+      password: ['', [Validators.required, Validators.minLength(3)]],
+      passwordConfirm: ['', [Validators.required, Validators.minLength(3)]],
       date: ['', [Validators.required]],
-    });
+    }, { validators: this.passwordsMatchValidator.bind(this) });
+  }
+  
+  
+  passwordsMatchValidator(formGroup: FormGroup): { [key: string]: boolean } | null {
+    const password = formGroup.get('password').value;
+    const confirmPassword = formGroup.get('passwordConfirm').value;
+  
+    if (password !== confirmPassword) {
+      formGroup.get('passwordConfirm').setErrors({ passwordsNotMatched: true });
+      return { passwordsNotMatched: true };
+    } else {
+      formGroup.get('passwordConfirm').setErrors(null);
+      return null;
+    }
+  }
+  
+
+  passwordsMatch(): boolean {
+    const password = this.reactiveForm.get('password').value;
+    const confirmPassword = this.reactiveForm.get('passwordConfirm').value;
+    return password === confirmPassword;
   }
 
   ngOnDestroy(): void {
-    this.empSubscription?.unsubscribe()
+    this.empSubscription?.unsubscribe();
   }
-
 
   onSubmit() {
-    this.isSubmitClicked = true
-    if (this.reactiveForm.valid) {
-      // Reset submitError
+    this.isSubmitClicked = true;
+
+    if (this.reactiveForm.valid && this.passwordsMatch()) {
+      console.log('Form is valid. Proceeding with submission...');
+
       this.submitError = null;
+
       const body = {
-        name: this.reactiveForm.controls['title'].value,
-        description: this.reactiveForm.controls['content'].value
+        firstname: this.reactiveForm.controls['firstname'].value,
+        lastname: this.reactiveForm.controls['lastname'].value,
+        email: this.reactiveForm.controls['email'].value,
+        occupation: this.reactiveForm.controls['occupation'].value,
+        tel: this.reactiveForm.controls['tel'].value,
+        password: this.reactiveForm.controls['password'].value,
+        passwordMatches: this.reactiveForm.controls['passwordConfirm'].value,
+        birthDate: this.datePipe.transform(this.reactiveForm.controls['date'].value, 'yyyy-MM-dd'),
       };
-      this.isSpinnerLoading = true
-      //spinner load
+
+      console.log('Submitting body:', body);
+
+      this.isSpinnerLoading = true;
+
       setTimeout(() => {
-
-        this.empSubscription = this.empService.registerEmployee(body).subscribe(() => {
-          console.log("submitted  .....")
-          this.isValid = true
-          this.isSpinnerLoading = false
-          this.alertService.setInfoMessages("Blog Created Successfully")
-          setTimeout(() => {
-            this.router.navigateByUrl("/employees/blogs/list")
-          }, 3000)
-        },
-          (error) => {
-            this.isSpinnerLoading = false
-            this.submitError = `Submit failed. Please try again. ${error}`;
-            this.alertService.setErrorMessages(this.submitError)
+        this.empSubscription = this.empService.registerEmployee(body).subscribe(
+          () => {
+            console.log("Submitted successfully.");
+            this.isValid = true;
+            this.isSpinnerLoading = false;
+            this.alertService.setInfoMessages("Employee Created Successfully");
+            setTimeout(() => {
+              this.router.navigateByUrl("/responsibles/management/employees/list");
+            }, 3000);
           },
+          (error) => {
+            this.isSpinnerLoading = false;
+            this.submitError = `Submit failed. Please try again. ${error}`;
+            this.alertService.setErrorMessages(this.submitError);
+          }
         );
-
-        //spinner load end
-      }, 3000)
+      }, 3000);
     } else {
-      this.isSpinnerLoading = false
-      // Form is not valid, display an alert
+      this.isSpinnerLoading = false;
       this.submitError = 'Please fill in the required fields correctly.';
-      this.alertService.setWarnMessages(this.submitError)
+      this.alertService.setWarnMessages(this.submitError);
+      console.log('Form is invalid. Cannot submit.');
+
+      // Troubleshooting: Output specific validation errors
+      Object.keys(this.reactiveForm.controls).forEach(field => {
+        const control = this.reactiveForm.get(field);
+        console.log(`${field} errors:`, control.errors);
+      });
     }
   }
+
+ 
 
   
 }
