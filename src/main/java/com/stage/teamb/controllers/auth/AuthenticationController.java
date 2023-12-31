@@ -18,6 +18,15 @@ public class AuthenticationController {
 
     private final AuthenticationService authService;
 
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest loginRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authService.authenticate(loginRequest, request, response));
+    }
+
     @PostMapping("/register/employee")
     public ResponseEntity<AuthenticationResponse> registerEmployee(
             @RequestBody RegisterRequest request,
@@ -32,15 +41,6 @@ public class AuthenticationController {
             HttpServletResponse response
     ) {
         return ResponseEntity.ok(authService.registerResponsible(request, response));
-    }
-
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest loginRequest,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        return ResponseEntity.ok(authService.authenticate(loginRequest, request, response));
     }
 
     @PostMapping("/refresh-token")

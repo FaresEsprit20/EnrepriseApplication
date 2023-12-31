@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class ResponsibleDTO {
     private Long id;
-    private int registrationNumber;
+    private String registrationNumber;
     private String name;
     private String lastName;
     private List<Long> eventsId;

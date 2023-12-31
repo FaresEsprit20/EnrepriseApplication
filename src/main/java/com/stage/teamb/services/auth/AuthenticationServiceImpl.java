@@ -50,6 +50,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             SecurityContextHolder.getContextHolderStrategy();
     @Override
     public AuthenticationResponse registerEmployee(RegisterRequest request, HttpServletResponse response) {
+        if(!request.getPassword().equals(request.getPasswordMatches())){
+            throw new CustomException(400, Collections.singletonList("Passwords mismatch"));
+        }
         var employee = buildEmployeeFromRequest(request);
         var savedUser = employeeRepository.save(employee);
         var jwtToken = jwtService.generateToken(savedUser);
@@ -59,6 +62,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerResponsible(RegisterRequest request, HttpServletResponse response) {
+        if(!request.getPassword().equals(request.getPasswordMatches())){
+            throw new CustomException(400, Collections.singletonList("Passwords mismatch"));
+        }
         var responsible = buildResponsibleFromRequest(request);
         var savedUser = responsibleRepository.save(responsible);
         var jwtToken = jwtService.generateToken(savedUser);
@@ -70,7 +76,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Employee buildEmployeeFromRequest(RegisterRequest request) {
         return Employee.builder()
                 .name(request.getFirstname())
-                .registrationNumber(request.getRegistrationNumber())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -85,7 +90,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Responsible buildResponsibleFromRequest(RegisterRequest request) {
         return Responsible.builder()
                 .name(request.getFirstname())
-                .registrationNumber(request.getRegistrationNumber())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))

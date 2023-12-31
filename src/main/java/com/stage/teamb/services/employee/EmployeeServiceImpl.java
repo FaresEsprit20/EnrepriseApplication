@@ -13,8 +13,6 @@ import com.stage.teamb.models.Employee;
 import com.stage.teamb.repository.jpa.address.AddressRepository;
 import com.stage.teamb.repository.jpa.department.DepartmentRepository;
 import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
-import com.stage.teamb.repository.jpa.publication.PublicationRepository;
-import com.stage.teamb.repository.jpa.rating.RatingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,16 +28,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final AddressRepository addressRepository;
     private final DepartmentRepository departmentRepository;
-    private final RatingRepository ratingRepository;
-    private final PublicationRepository publicationRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, AddressRepository addressRepository, DepartmentRepository departmentRepository, RatingRepository ratingRepository, PublicationRepository publicationRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, AddressRepository addressRepository, DepartmentRepository departmentRepository) {
         this.employeeRepository = employeeRepository;
         this.addressRepository = addressRepository;
         this.departmentRepository = departmentRepository;
-        this.ratingRepository = ratingRepository;
-        this.publicationRepository = publicationRepository;
     }
 
 

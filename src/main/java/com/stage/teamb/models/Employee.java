@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -40,6 +41,10 @@ public class Employee extends Users {
   protected void onCreate() {
     this.setRole(UserRole.EMPLOYEE);
     createdAt = LocalDateTime.now();
+    // Generate and set the registrationNumber with "emp-" prefix and UUID
+    if (getRegistrationNumber() == null) {
+      setRegistrationNumber("emp-" + UUID.randomUUID());
+    }
   }
 
   @PreUpdate
@@ -48,7 +53,7 @@ public class Employee extends Users {
   }
 
   @Builder // Explicitly specify @Builder
-  public Employee(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
+  public Employee(Long id, String registrationNumber, String email, LocalDate birthDate, String lastName, String name,
                   Integer tel, String occupation, String password, UserRole role,
                   LocalDateTime createdAt, LocalDateTime updatedAt, Department department,
                             List<Rating> ratings, List<Publication> publications, List<Address> addresses) {
@@ -70,35 +75,7 @@ public class Employee extends Users {
     this.department = null;
   }
 
-  public void addRating(Rating rating) {
-    rating.setEmployee(this);
-    this.ratings.add(rating);
-  }
 
-  public void removeRating(Rating rating) {
-    rating.setEmployee(null);
-    this.ratings.remove(rating);
-  }
-
-  public void addPublication(Publication publication) {
-    publication.setEmployee(this);
-    this.publications.add(publication);
-  }
-
-  public void removePublication(Publication publication) {
-    publication.setEmployee(null);
-    this.publications.remove(publication);
-  }
-
-  public void addAddress(Address address) {
-    address.setEmployee(this);
-    this.addresses.add(address);
-  }
-
-  public void removeAddress(Address address) {
-    address.setEmployee(null);
-    this.addresses.remove(address);
-  }
 
 
   @Override

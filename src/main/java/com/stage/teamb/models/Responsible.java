@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @Entity
 @DiscriminatorValue("1")
-public class Responsible extends Users   {
+public class Responsible extends Users  {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,6 +29,10 @@ public class Responsible extends Users   {
     protected void onCreate() {
         this.setRole(UserRole.RESPONSIBLE);
         createdAt = LocalDateTime.now();
+        // Generate and set the registrationNumber with "emp-" prefix and UUID
+        if (getRegistrationNumber() == null) {
+            setRegistrationNumber("res-" + UUID.randomUUID());
+        }
     }
 
     @PreUpdate
@@ -35,7 +40,7 @@ public class Responsible extends Users   {
         updatedAt = LocalDateTime.now();
     }
     @Builder // Explicitly specify @Builder
-    public Responsible(Long id, int registrationNumber, String email, LocalDate birthDate, String lastName, String name,
+    public Responsible(Long id, String registrationNumber, String email, LocalDate birthDate, String lastName, String name,
                        Integer tel, String occupation, String password, UserRole role,
                        LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.RESPONSIBLE);

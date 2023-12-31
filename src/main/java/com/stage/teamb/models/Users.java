@@ -26,8 +26,8 @@ public class Users implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="users_sequence")
     public Long id;
-    @Column(unique = true)
-    private int registrationNumber;
+    @Column(name = "registration_number", unique = true)
+    private String registrationNumber;
     @Column(unique = true)
     private String email;
     private LocalDate birthDate;

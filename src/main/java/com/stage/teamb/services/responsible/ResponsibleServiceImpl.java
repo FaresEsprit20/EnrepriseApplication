@@ -71,7 +71,6 @@ public class ResponsibleServiceImpl implements ResponsibleService {
                     log.error("entity not found ");
                     return new RuntimeException("entity not found with id " + responsableDTO.getId());
                 });
-         existingResponsible.setRegistrationNumber(responsableDTO.getRegistrationNumber());
          existingResponsible.setName(existingResponsible.getName());
          existingResponsible.setLastName(existingResponsible.getLastName());
         try {

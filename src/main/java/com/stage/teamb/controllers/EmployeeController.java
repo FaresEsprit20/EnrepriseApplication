@@ -1,12 +1,17 @@
 package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.address.AddressDTO;
+import com.stage.teamb.dtos.auth.AuthenticationResponse;
+import com.stage.teamb.dtos.auth.RegisterRequest;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
+import com.stage.teamb.services.auth.AuthenticationService;
 import com.stage.teamb.services.employee.EmployeeService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +21,21 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, AuthenticationService authenticationService) {
         this.employeeService = employeeService;
+        this.authenticationService = authenticationService;
+    }
+
+    @PreAuthorize("hasRole('RESPONSIBLE')")
+    @PostMapping("/register/employee")
+    public ResponseEntity<AuthenticationResponse> registerEmployee(
+            @RequestBody RegisterRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authenticationService.registerEmployee(request, response));
     }
 
     @GetMapping("/{id}")
@@ -89,4 +105,7 @@ public class EmployeeController {
         DepartmentDTO department = employeeService.unassignDepartmentFromEmployee(employeeId);
         return ResponseEntity.ok(department);
     }
+
+
+
 }

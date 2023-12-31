@@ -1,6 +1,5 @@
 package com.stage.teamb.dtos.auth;
 
-import com.stage.teamb.models.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +12,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
+
     private String firstname;
     private String lastname;
-    private int registrationNumber;
     private LocalDate birthDate;
     private String email;
     private String password;
-    private UserRole role;
+    private String passwordMatches;
     private Integer tel;
     private String occupation;
+
+
 }

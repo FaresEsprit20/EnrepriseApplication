@@ -1,7 +1,11 @@
 package com.stage.teamb.controllers;
 
+import com.stage.teamb.dtos.auth.AuthenticationResponse;
+import com.stage.teamb.dtos.auth.RegisterRequest;
 import com.stage.teamb.dtos.responsible.ResponsibleDTO;
+import com.stage.teamb.services.auth.AuthenticationService;
 import com.stage.teamb.services.responsible.ResponsibleService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +22,22 @@ import java.util.List;
 public class ResponsibleController {
 
     private final ResponsibleService responsibleService;
+    private final AuthenticationService authenticationService;
+
+    @PreAuthorize("hasRole('RESPONSIBLE')")
+    @PostMapping("/register/responsible")
+    public ResponseEntity<AuthenticationResponse> registerResponsible(
+            @RequestBody RegisterRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authenticationService.registerResponsible(request, response));
+    }
+
 
     @Autowired
-    public ResponsibleController(ResponsibleService responsibleService) {
+    public ResponsibleController(ResponsibleService responsibleService, AuthenticationService authenticationService) {
         this.responsibleService = responsibleService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping("/all")
