@@ -121,13 +121,13 @@ public class EnterpriseController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/employees/{enterpriseId}")
+    @GetMapping("/employees/{enterpriseId}/find/all")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@PathVariable Long enterpriseId) {
         List<EmployeeDTO> employees = enterpriseService.getAllEmployees(enterpriseId);
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/responsibles/{enterpriseId}")
+    @GetMapping("/responsibles/{enterpriseId}/find/all")
     public ResponseEntity<List<ResponsibleDTO>> getAllResponsibles(@PathVariable Long enterpriseId) {
         List<ResponsibleDTO> responsibles = enterpriseService.getAllResponsibles(enterpriseId);
         return ResponseEntity.ok(responsibles);
@@ -158,6 +158,8 @@ public class EnterpriseController {
 //        EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
 //        return ResponseEntity.ok(enterprise);
 //    }
+
+
 
 
 }
