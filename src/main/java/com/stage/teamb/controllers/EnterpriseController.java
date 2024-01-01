@@ -76,4 +76,6 @@ public class EnterpriseController {
         EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
         return ResponseEntity.ok(enterprise);
     }
+
+    
 }
