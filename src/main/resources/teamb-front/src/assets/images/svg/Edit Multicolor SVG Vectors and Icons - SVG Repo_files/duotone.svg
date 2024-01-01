@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip-duotone">
+      <rect width="64" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="duotone" clip-path="url(#clip-duotone)">
+    <g id="color-filter-sharp-svgrepo-com" transform="translate(-32 -45.796)">
+      <g id="circle-area-svgrepo-com" transform="translate(32 45.796)">
+        <path id="Path_466" data-name="Path 466" d="M0,0H63.647V63.647H0Z" fill="none"/>
+      </g>
+    </g>
+    <g id="color-filter-sharp-svgrepo-com-2" data-name="color-filter-sharp-svgrepo-com" transform="translate(-26.648 -67.319)">
+      <ellipse id="Ellipse_60" data-name="Ellipse 60" cx="20.479" cy="20.946" rx="20.479" ry="20.946" transform="translate(31 71.796)" fill="#4b4b4b"/>
+    </g>
+    <g id="color-filter-sharp-svgrepo-com-3" data-name="color-filter-sharp-svgrepo-com" transform="translate(-12 -51.796)">
+      <circle id="Ellipse_60-2" data-name="Ellipse 60" cx="21" cy="21" r="21" transform="translate(31 71.796)" fill="#71bddc"/>
+    </g>
+  </g>
+</svg>

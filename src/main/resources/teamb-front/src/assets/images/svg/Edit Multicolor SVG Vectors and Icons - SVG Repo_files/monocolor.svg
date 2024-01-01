@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip-monocolor">
+      <rect width="64" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="monocolor" clip-path="url(#clip-monocolor)">
+    <path id="Subtraction_1" data-name="Subtraction 1" d="M10.713,37.718h0a20,20,0,1,1,27.516-25.96c-.833-.084-1.686-.127-2.537-.127a25.029,25.029,0,0,0-25,25c0,.36.008.726.023,1.086Z" transform="translate(3.642 3.863)" fill="#4b4b4b"/>
+    <g id="color-filter-sharp-svgrepo-com" transform="translate(20.342 21.425)">
+      <ellipse id="Ellipse_60" data-name="Ellipse 60" cx="21" cy="20.5" rx="21" ry="20.5" transform="translate(-0.342 -0.425)" fill="#4b4b4b"/>
+    </g>
+  </g>
+</svg>
