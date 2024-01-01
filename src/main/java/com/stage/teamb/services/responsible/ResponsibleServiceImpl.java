@@ -2,6 +2,7 @@ package com.stage.teamb.services.responsible;
 
 
 import com.stage.teamb.dtos.responsible.ResponsibleDTO;
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.mappers.ResponsibleMapper;
 import com.stage.teamb.models.Responsible;
 import com.stage.teamb.repository.jpa.responsible.ResponsibleRepository;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,13 @@ public class ResponsibleServiceImpl implements ResponsibleService {
     @Override
     public List<ResponsibleDTO> findAllResponsibles() {
         return ResponsibleMapper.toListDTO(responsibleRepository.findAll());
+    }
+
+    @Override
+    public ResponsibleDTO findResponsibleByEmail(String email) {
+        Responsible responsible = responsibleRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Responsible not found with Email " + email)));
+        return ResponsibleMapper.toDTO(responsible);
     }
 
     @Override

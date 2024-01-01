@@ -3,8 +3,10 @@ package com.stage.teamb.repository.jpa.employee;
 import com.stage.teamb.models.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,6 +40,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
             "WHERE e.id = :id")
     Employee findByIdEagerly(Long id);
 
+    @Query(value = "SELECT * FROM Employee e WHERE e.enterprise_id = :enterpriseId", nativeQuery = true)
+    List<Employee> findEmployeesByEnterpriseId(@Param("enterpriseId") Long enterpriseId);
     Optional<Employee> findByEmail(String email);
 
 }

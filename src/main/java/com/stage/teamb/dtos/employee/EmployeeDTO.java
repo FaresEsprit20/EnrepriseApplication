@@ -1,5 +1,6 @@
 package com.stage.teamb.dtos.employee;
 
+import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class EmployeeDTO {
     private String lastName;
     private String email;
     private String occupation;
+    private EnterpriseDTO enterpriseDTO;
     private Long departmentId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

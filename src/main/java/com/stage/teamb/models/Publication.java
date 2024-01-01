@@ -56,6 +56,7 @@ public class Publication implements Serializable  {
     }
 
 
+
     @Override
     public String toString() {
         return "Publication{" +

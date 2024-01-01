@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface ResponsibleService {
 
 
+    ResponsibleDTO findResponsibleByEmail(String email);
     List<ResponsibleDTO> findAllResponsibles();
 
     ResponsibleDTO findResponsibleById(Long id);

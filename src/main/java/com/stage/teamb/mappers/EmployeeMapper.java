@@ -20,6 +20,7 @@ public class EmployeeMapper {
                 .lastName(employee.getLastName())
                 .email(employee.getEmail())
                 .occupation(employee.getOccupation())
+                .enterpriseDTO(employee.getEnterprise()!= null ? EnterpriseMapper.toDTO(employee.getEnterprise()) : null)
                // .departmentId(employee.getDepartment() != null ? employee.getDepartment().getId() : null)
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())

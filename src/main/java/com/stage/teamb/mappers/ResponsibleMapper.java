@@ -16,6 +16,8 @@ public class ResponsibleMapper {
         responsableDTO.setName(responsible.getName());
         responsableDTO.setLastName(responsible.getLastName());
         responsableDTO.setRegistrationNumber(responsible.getRegistrationNumber());
+        responsableDTO.setEnterpriseDTO(responsible.getEnterprise()!= null ?
+                EnterpriseMapper.toDTO(responsible.getEnterprise()) : null);
         responsableDTO.setCreatedAt(responsible.getCreatedAt());
         responsableDTO.setUpdatedAt(responsible.getUpdatedAt());
         return responsableDTO;

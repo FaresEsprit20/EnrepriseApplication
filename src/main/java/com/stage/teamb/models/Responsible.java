@@ -1,10 +1,7 @@
 package com.stage.teamb.models;
 
 import com.stage.teamb.models.enums.UserRole;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -21,6 +18,10 @@ import java.util.UUID;
 @Entity
 @DiscriminatorValue("1")
 public class Responsible extends Users  {
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "enterprise_id", unique = true)
+    private Enterprise enterprise;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -41,9 +42,10 @@ public class Responsible extends Users  {
     }
     @Builder // Explicitly specify @Builder
     public Responsible(Long id, String registrationNumber, String email, LocalDate birthDate, String lastName, String name,
-                       Integer tel, String occupation, String password, UserRole role,
+                       Integer tel, String occupation, String password, UserRole role, Enterprise enterprise,
                        LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.RESPONSIBLE);
+        this.enterprise = enterprise;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -59,6 +61,7 @@ public class Responsible extends Users  {
                 ", name='" + getName() + '\'' +
                 ", tel=" + getTel() +
                 ", occupation='" + getOccupation() + '\'' +
+                ", enterprise='" + enterprise + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

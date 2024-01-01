@@ -1,14 +1,26 @@
 package com.stage.teamb.services.enterprise;
 
+import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseManagementDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseUpdateDTO;
+import com.stage.teamb.dtos.responsible.ResponsibleDTO;
+import com.stage.teamb.exception.CustomException;
+import com.stage.teamb.mappers.EmployeeMapper;
 import com.stage.teamb.mappers.EnterpriseMapper;
+import com.stage.teamb.mappers.ResponsibleMapper;
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Enterprise;
+import com.stage.teamb.models.Responsible;
+import com.stage.teamb.repository.jpa.employee.EmployeeRepository;
 import com.stage.teamb.repository.jpa.enterprise.EnterpriseRepository;
+import com.stage.teamb.repository.jpa.responsible.ResponsibleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +29,17 @@ import java.util.Optional;
 public class EnterpriseServiceImpl implements EnterpriseService {
 
     private final EnterpriseRepository enterpriseRepository;
+    private final ResponsibleRepository responsibleRepository;
+    private final EmployeeRepository employeeRepository;
 //    private final DepartmentRepository departmentRepository;
 
 
     @Autowired
-    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository) {
+    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository, ResponsibleRepository responsibleRepository, EmployeeRepository employeeRepository) {
         this.enterpriseRepository = enterpriseRepository;
         //this.departmentRepository = departmentRepository;
+        this.responsibleRepository = responsibleRepository;
+        this.employeeRepository = employeeRepository;
     }
 
 
@@ -39,15 +55,22 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public EnterpriseDTO saveEnterprise(EnterpriseCreateDTO enterpriseDTO) {
+        Optional<Responsible> responsible = responsibleRepository.findById(enterpriseDTO.getResponsibleId());
+        if(responsible.isEmpty()) {
+            throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+        }
+
         try {
           Enterprise enterprise =  Enterprise.builder()
                     .enterpriseName(enterpriseDTO.getEnterpriseName())
                     .enterpriseLocal(enterpriseDTO.getEnterpriseLocal())
                     .build();
+          enterprise.addResponsible(responsible.get());
             return EnterpriseMapper.toDTO(enterpriseRepository.save(enterprise));
         } catch (Exception exception) {
-            log.error("Address with not found.");
-            throw new RuntimeException("Can not save this entity  :   " + exception.getMessage());
+            log.error("Exception.");
+            throw new CustomException(500, Collections.singletonList("Can not save this entity  :   "
+                    + exception.getMessage()));
         }
     }
 
@@ -67,7 +90,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     }
 
     @Override
-    public EnterpriseDTO updateEnterprise(EnterpriseDTO enterpriseDTO) {
+    public EnterpriseDTO updateEnterprise(EnterpriseUpdateDTO enterpriseDTO) {
         Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
@@ -83,6 +106,106 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         }
     }
 
+    @Override
+    public EnterpriseDTO addEmployeeToEnterprise(EnterpriseManagementDTO enterpriseDTO) {
+        Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
+                .orElseThrow(() -> {
+                    log.error("entity not found ");
+                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                            + enterpriseDTO.getId()));
+                });
+        Optional<Employee> employee = employeeRepository.findById(enterpriseDTO.getObjectId());
+        if(employee.isEmpty()) {
+            throw new CustomException(404,Collections.singletonList("entity not found with id "
+                    + enterpriseDTO.getId()));
+        }
+        existingEnterprise.addEmployee(employee.get());
+        try {
+            return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
+        } catch (Exception exception) {
+            log.error("Could not update " + exception.getMessage());
+            throw new RuntimeException("Could not update " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public EnterpriseDTO deleteEmployeeFromEnterprise(EnterpriseManagementDTO enterpriseDTO) {
+        Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
+                .orElseThrow(() -> {
+                    log.error("entity not found ");
+                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                            + enterpriseDTO.getId()));
+                });
+        Optional<Employee> employee = employeeRepository.findById(enterpriseDTO.getObjectId());
+        if(employee.isEmpty()) {
+            throw new CustomException(404,Collections.singletonList("entity not found with id "
+                    + enterpriseDTO.getId()));
+        }
+        existingEnterprise.removeEmployee(employee.get());
+        try {
+            return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
+        } catch (Exception exception) {
+            log.error("Could not update " + exception.getMessage());
+            throw new RuntimeException("Could not update " + exception.getMessage());
+        }
+    }
+
+
+    @Override
+    public EnterpriseDTO addResponsibleToEnterprise(EnterpriseManagementDTO enterpriseDTO) {
+        Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
+                .orElseThrow(() -> {
+                    log.error("entity not found ");
+                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                            + enterpriseDTO.getId()));
+                });
+        Optional<Responsible> responsible = responsibleRepository.findById(enterpriseDTO.getObjectId());
+        if(responsible.isEmpty()) {
+            throw new CustomException(404,Collections.singletonList("entity not found with id "
+                    + enterpriseDTO.getId()));
+        }
+        existingEnterprise.addResponsible(responsible.get());
+        try {
+            return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
+        } catch (Exception exception) {
+            log.error("Could not update " + exception.getMessage());
+            throw new RuntimeException("Could not update " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public EnterpriseDTO deleteResponsibleFromEnterprise(EnterpriseManagementDTO enterpriseDTO) {
+        Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
+                .orElseThrow(() -> {
+                    log.error("entity not found ");
+                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                            + enterpriseDTO.getId()));
+                });
+        Optional<Responsible> responsible = responsibleRepository.findById(enterpriseDTO.getObjectId());
+        if(responsible.isEmpty()) {
+            throw new CustomException(404,Collections.singletonList("entity not found with id "
+                    + enterpriseDTO.getId()));
+        }
+        existingEnterprise.removeResponsible(responsible.get());
+        try {
+            return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
+        } catch (Exception exception) {
+            log.error("Could not update " + exception.getMessage());
+            throw new RuntimeException("Could not update " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public List<EmployeeDTO> getAllEmployees(Long enterpriseId) {
+        List<Employee> employees = employeeRepository.findEmployeesByEnterpriseId(enterpriseId);
+        return EmployeeMapper.toListDTO(employees);
+    }
+
+    @Override
+    public List<ResponsibleDTO> getAllResponsibles(Long enterpriseId) {
+        List<Responsible> responsibles = responsibleRepository.findResponsiblesByEnterpriseId(enterpriseId);
+        return ResponsibleMapper.toListDTO(responsibles);
+    }
 //    @Override
 //    public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
 //      return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));

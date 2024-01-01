@@ -28,6 +28,10 @@ public class Employee extends Users {
 //  @JoinColumn(name = "department_id", unique = true)
 //  private Department department;
 
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "enterprise_id", unique = true)
+    private Enterprise enterprise;
+
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
   private List<Rating> ratings;
 
@@ -54,10 +58,11 @@ public class Employee extends Users {
 
   @Builder // Explicitly specify @Builder
   public Employee(Long id, String registrationNumber, String email, LocalDate birthDate, String lastName, String name,
-                  Integer tel, String occupation, String password, UserRole role,
+                  Integer tel, String occupation, String password, UserRole role, Enterprise enterprise,
                   LocalDateTime createdAt, LocalDateTime updatedAt,
                             List<Rating> ratings, List<Publication> publications) {
     super(id, registrationNumber, email, birthDate, lastName, name, tel, occupation, password, UserRole.EMPLOYEE);
+    this.enterprise = enterprise;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
 //    this.department = department;
@@ -65,6 +70,7 @@ public class Employee extends Users {
     this.publications = publications;
 //    this.addresses = addresses;
   }
+
 
 
 //  public void setDepartmentForEmployee(Department department) {
@@ -89,6 +95,7 @@ public class Employee extends Users {
             ", name='" + getName() + '\'' +
             ", tel=" + getTel() +
             ", occupation='" + getOccupation() + '\'' +
+            ", enterprise='" + enterprise + '\'' +
             ", createdAt=" + createdAt +
             ", updatedAt=" + updatedAt +
 //            ", department=" + (department != null ? department.getId() : null) + // Print only department ID

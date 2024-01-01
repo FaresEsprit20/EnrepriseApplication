@@ -1,8 +1,13 @@
 package com.stage.teamb.repository.jpa.enterprise;
 
+import com.stage.teamb.models.Employee;
 import com.stage.teamb.models.Enterprise;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface EnterpriseRepository extends JpaRepository<Enterprise, Long> {
@@ -16,6 +21,8 @@ public interface EnterpriseRepository extends JpaRepository<Enterprise, Long> {
 //    @Query("SELECT e FROM Enterprise e LEFT JOIN FETCH e.departments d" +
 //            " LEFT JOIN FETCH d.employees WHERE e.id = :enterpriseId")
 //    Enterprise findByIdEagerly(Long enterpriseId);
+
+
 
 
 }

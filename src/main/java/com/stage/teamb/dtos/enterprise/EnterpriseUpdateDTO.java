@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EnterpriseCreateDTO {
-
+public class EnterpriseUpdateDTO {
+    private Long id;
     private String enterpriseName;
     private String enterpriseLocal;
     private Long responsibleId;
-//    private String[] departmentsIds;
-
 }

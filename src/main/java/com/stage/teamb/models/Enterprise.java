@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,6 +30,13 @@ public class Enterprise implements Serializable {
 //    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
 //    private List<Department> departments;
 
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
+    private List<Employee> employees;
+
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
+    private List<Responsible> responsibleList;
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -46,7 +54,36 @@ public class Enterprise implements Serializable {
                 ", enterpriseLocal='" + enterpriseLocal + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+
                 '}';
+    }
+
+   //helpers
+    public void addEmployee(Employee employee) {
+        if (employee != null) {
+            employee.setEnterprise(this);
+            employees.add(employee);
+        }
+    }
+    public void removeEmployee(Employee employee) {
+        if (employee != null) {
+            employee.setEnterprise(null);
+            employees.remove(employee);
+        }
+    }
+
+    public void addResponsible(Responsible responsible) {
+        if (responsible != null) {
+            responsible.setEnterprise(this);
+            responsibleList.add(responsible);
+        }
+    }
+
+    public void removeResponsible(Responsible responsible) {
+        if (responsible != null) {
+            responsible.setEnterprise(null);
+            responsibleList.remove(responsible);
+        }
     }
 
 
