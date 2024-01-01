@@ -15,6 +15,7 @@ public class ResponsibleDTO {
     private String registrationNumber;
     private String name;
     private String lastName;
+    private String occupation;
     private List<Long> eventsId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

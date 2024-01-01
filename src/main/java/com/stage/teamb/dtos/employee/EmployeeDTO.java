@@ -17,6 +17,7 @@ public class EmployeeDTO {
     private String name;
     private String lastName;
     private String email;
+    private String occupation;
     private Long departmentId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -19,6 +19,7 @@ public class EmployeeMapper {
                 .name(employee.getName())
                 .lastName(employee.getLastName())
                 .email(employee.getEmail())
+                .occupation(employee.getOccupation())
                 .departmentId(employee.getDepartment() != null ? employee.getDepartment().getId() : null)
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())
@@ -38,6 +39,7 @@ public class EmployeeMapper {
         employee.setName(employeeDTO.getName());
         employee.setLastName(employeeDTO.getLastName());
         employee.setEmail(employeeDTO.getEmail());
+        employee.setOccupation(employeeDTO.getOccupation());
         employee.setCreatedAt(employee.getCreatedAt());
         employee.setUpdatedAt(employee.getUpdatedAt());
         return employee;
