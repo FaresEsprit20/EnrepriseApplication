@@ -1,5 +1,6 @@
 package com.stage.teamb.controllers;
 
+import com.stage.teamb.dtos.department.DepartmentCreateDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
@@ -35,8 +36,8 @@ public class DepartmentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<DepartmentDTO> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
-        DepartmentDTO createdDepartment = departmentService.saveDepartment(departmentDTO);
+    public ResponseEntity<DepartmentCreateDTO> createDepartment(@RequestBody DepartmentCreateDTO departmentDTO) {
+        DepartmentCreateDTO createdDepartment = departmentService.saveDepartment(departmentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
     }
 

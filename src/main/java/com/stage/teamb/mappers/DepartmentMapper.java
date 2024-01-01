@@ -42,4 +42,6 @@ public class DepartmentMapper {
                 .map(DepartmentMapper::toEntity)
                 .collect(Collectors.toList());
     }
+    
+
 }

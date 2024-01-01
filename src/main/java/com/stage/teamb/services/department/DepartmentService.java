@@ -1,5 +1,6 @@
 package com.stage.teamb.services.department;
 
+import com.stage.teamb.dtos.department.DepartmentCreateDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
@@ -15,7 +16,7 @@ public interface DepartmentService {
 
     DepartmentDTO findDepartmentById(Long id);
 
-    DepartmentDTO saveDepartment(DepartmentDTO departmentDTO);
+    DepartmentCreateDTO saveDepartment(DepartmentCreateDTO departmentDTO);
 
     void deleteDepartmentById(Long id);
 

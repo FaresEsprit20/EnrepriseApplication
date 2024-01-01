@@ -1,6 +1,7 @@
 package com.stage.teamb.controllers;
 
 import com.stage.teamb.dtos.department.DepartmentDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import com.stage.teamb.services.enterprise.EnterpriseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class EnterpriseController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<EnterpriseDTO> createEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
+    public ResponseEntity<EnterpriseDTO> createEnterprise(@RequestBody EnterpriseCreateDTO enterpriseDTO) {
         EnterpriseDTO createdEnterprise = enterpriseService.saveEnterprise(enterpriseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEnterprise);
     }
@@ -77,5 +78,5 @@ public class EnterpriseController {
         return ResponseEntity.ok(enterprise);
     }
 
-    
+
 }

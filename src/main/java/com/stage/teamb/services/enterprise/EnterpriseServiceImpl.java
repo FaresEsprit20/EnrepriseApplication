@@ -1,6 +1,7 @@
 package com.stage.teamb.services.enterprise;
 
 import com.stage.teamb.dtos.department.DepartmentDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EnterpriseMapper;
@@ -41,9 +42,13 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     }
 
     @Override
-    public EnterpriseDTO saveEnterprise(EnterpriseDTO enterpriseDTO) {
+    public EnterpriseDTO saveEnterprise(EnterpriseCreateDTO enterpriseDTO) {
         try {
-            return EnterpriseMapper.toDTO(enterpriseRepository.save(EnterpriseMapper.toEntity(enterpriseDTO)));
+          Enterprise enterprise =  Enterprise.builder()
+                    .enterpriseName(enterpriseDTO.getEnterpriseName())
+                    .enterpriseLocal(enterpriseDTO.getEnterpriseLocal())
+                    .build();
+            return EnterpriseMapper.toDTO(enterpriseRepository.save(enterprise));
         } catch (Exception exception) {
             log.error("Address with not found.");
             throw new RuntimeException("Can not save this entity  :   " + exception.getMessage());

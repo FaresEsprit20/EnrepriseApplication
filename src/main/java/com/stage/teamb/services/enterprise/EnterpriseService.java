@@ -1,6 +1,7 @@
 package com.stage.teamb.services.enterprise;
 
 import com.stage.teamb.dtos.department.DepartmentDTO;
+import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import com.stage.teamb.models.Enterprise;
 
@@ -14,7 +15,7 @@ public interface EnterpriseService {
 
     EnterpriseDTO findEnterpriseById(Long id);
 
-    EnterpriseDTO saveEnterprise(EnterpriseDTO enterpriseDTO);
+    EnterpriseDTO saveEnterprise(EnterpriseCreateDTO enterpriseDTO);
 
     void deleteEnterpriseById(Long id);
     EnterpriseDTO updateEnterprise(EnterpriseDTO enterpriseDTO);

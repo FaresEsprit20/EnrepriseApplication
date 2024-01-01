@@ -1,6 +1,7 @@
 package com.stage.teamb.services.department;
 
 
+import com.stage.teamb.dtos.department.DepartmentCreateDTO;
 import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
@@ -49,9 +50,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentDTO saveDepartment(DepartmentDTO departmentDTO) {
+    public DepartmentCreateDTO saveDepartment(DepartmentCreateDTO departmentDTO) {
         try {
-            return DepartmentMapper.toDTO(departmentRepository.save(DepartmentMapper.toEntity(departmentDTO)));
+            return departmentDTO;
         }catch (Exception exception){
             log.error("Address with not found.");
             throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
