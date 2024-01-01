@@ -1,6 +1,5 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
 import com.stage.teamb.services.enterprise.EnterpriseService;
@@ -53,30 +52,30 @@ public class EnterpriseController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/departments/{enterpriseId}")
-    public ResponseEntity<List<DepartmentDTO>> getDepartmentsByEnterpriseId(@PathVariable Long enterpriseId) {
-        List<DepartmentDTO> departments = enterpriseService.findDepartmentsByEnterpriseId(enterpriseId);
-        return ResponseEntity.ok(departments);
-    }
-
-    @PostMapping("/departments/{enterpriseId}")
-    public ResponseEntity<DepartmentDTO> associateDepartmentForEnterprise(
-            @PathVariable Long enterpriseId, @RequestBody DepartmentDTO departmentDTO) {
-        DepartmentDTO createdDepartment = enterpriseService.associateDepartmentWithEnterprise(enterpriseId, departmentDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
-    }
-
-    @DeleteMapping("/departments/{departmentId}")
-    public ResponseEntity<DepartmentDTO> disassociateDepartmentFromEnterprise(@PathVariable Long departmentId) {
-        DepartmentDTO disassociatedDepartment = enterpriseService.disassociateDepartmentFromEnterprise(departmentId);
-        return ResponseEntity.ok(disassociatedDepartment);
-    }
-
-    @GetMapping("/departments/{departmentId}/enterprise")
-    public ResponseEntity<EnterpriseDTO> getEnterpriseByDepartmentId(@PathVariable Long departmentId) {
-        EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
-        return ResponseEntity.ok(enterprise);
-    }
+//    @GetMapping("/departments/{enterpriseId}")
+//    public ResponseEntity<List<DepartmentDTO>> getDepartmentsByEnterpriseId(@PathVariable Long enterpriseId) {
+//        List<DepartmentDTO> departments = enterpriseService.findDepartmentsByEnterpriseId(enterpriseId);
+//        return ResponseEntity.ok(departments);
+//    }
+//
+//    @PostMapping("/departments/{enterpriseId}")
+//    public ResponseEntity<DepartmentDTO> associateDepartmentForEnterprise(
+//            @PathVariable Long enterpriseId, @RequestBody DepartmentDTO departmentDTO) {
+//        DepartmentDTO createdDepartment = enterpriseService.associateDepartmentWithEnterprise(enterpriseId, departmentDTO);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
+//    }
+//
+//    @DeleteMapping("/departments/{departmentId}")
+//    public ResponseEntity<DepartmentDTO> disassociateDepartmentFromEnterprise(@PathVariable Long departmentId) {
+//        DepartmentDTO disassociatedDepartment = enterpriseService.disassociateDepartmentFromEnterprise(departmentId);
+//        return ResponseEntity.ok(disassociatedDepartment);
+//    }
+//
+//    @GetMapping("/departments/{departmentId}/enterprise")
+//    public ResponseEntity<EnterpriseDTO> getEnterpriseByDepartmentId(@PathVariable Long departmentId) {
+//        EnterpriseDTO enterprise = enterpriseService.findEnterpriseByDepartmentId(departmentId);
+//        return ResponseEntity.ok(enterprise);
+//    }
 
 
 }

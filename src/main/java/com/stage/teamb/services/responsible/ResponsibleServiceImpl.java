@@ -23,7 +23,6 @@ public class ResponsibleServiceImpl implements ResponsibleService {
         this.responsibleRepository = responsibleRepository;
     }
 
-
     @Override
     public List<ResponsibleDTO> findAllResponsibles() {
         return ResponsibleMapper.toListDTO(responsibleRepository.findAll());

@@ -1,13 +1,9 @@
 package com.stage.teamb.services.enterprise;
 
-import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseCreateDTO;
 import com.stage.teamb.dtos.enterprise.EnterpriseDTO;
-import com.stage.teamb.mappers.DepartmentMapper;
 import com.stage.teamb.mappers.EnterpriseMapper;
-import com.stage.teamb.models.Department;
 import com.stage.teamb.models.Enterprise;
-import com.stage.teamb.repository.jpa.department.DepartmentRepository;
 import com.stage.teamb.repository.jpa.enterprise.EnterpriseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +17,13 @@ import java.util.Optional;
 public class EnterpriseServiceImpl implements EnterpriseService {
 
     private final EnterpriseRepository enterpriseRepository;
-    private final DepartmentRepository departmentRepository;
+//    private final DepartmentRepository departmentRepository;
 
 
     @Autowired
-    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository, DepartmentRepository departmentRepository) {
+    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository) {
         this.enterpriseRepository = enterpriseRepository;
-        this.departmentRepository = departmentRepository;
+        //this.departmentRepository = departmentRepository;
     }
 
 
@@ -87,47 +83,47 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         }
     }
 
-    @Override
-    public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
-      return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));
-    }
+//    @Override
+//    public List<DepartmentDTO> findDepartmentsByEnterpriseId(Long enterpriseId) {
+//      return DepartmentMapper.toListDTO(departmentRepository.findAllDepartmentsByEnterprise(enterpriseId));
+//    }
+//
+//    @Override
+//    public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {
+//        // Find the enterprise
+//        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
+//                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+//        // Create a new Department entity and set its values
+//        Department newDepartment = DepartmentMapper.toEntity(departmentDTO);
+//        // Associate the department with the enterprise
+//        newDepartment.setEnterpriseForDepartment(enterprise);
+//        // Save the new department to the database
+//        Department savedDepartment = departmentRepository.save(newDepartment);
+//        // Map the saved department back to a DTO and return it
+//        return DepartmentMapper.toDTO(savedDepartment);
+//    }
+//
+//
+//    @Override
+//    public DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId) {
+//        // Find the department
+//        Department department = departmentRepository.findById(departmentId)
+//                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+//        // Disassociate the department from the enterprise
+//        department.removeEnterpriseFromDepartment();
+//        // Save the department to update the association
+//        Department savedDepartment = departmentRepository.save(department);
+//        // Map the saved department back to a DTO and return it
+//        return DepartmentMapper.toDTO(savedDepartment);
+//    }
 
-    @Override
-    public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {
-        // Find the enterprise
-        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
-                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
-        // Create a new Department entity and set its values
-        Department newDepartment = DepartmentMapper.toEntity(departmentDTO);
-        // Associate the department with the enterprise
-        newDepartment.setEnterpriseForDepartment(enterprise);
-        // Save the new department to the database
-        Department savedDepartment = departmentRepository.save(newDepartment);
-        // Map the saved department back to a DTO and return it
-        return DepartmentMapper.toDTO(savedDepartment);
-    }
 
-
-    @Override
-    public DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId) {
-        // Find the department
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-        // Disassociate the department from the enterprise
-        department.removeEnterpriseFromDepartment();
-        // Save the department to update the association
-        Department savedDepartment = departmentRepository.save(department);
-        // Map the saved department back to a DTO and return it
-        return DepartmentMapper.toDTO(savedDepartment);
-    }
-
-
-    @Override
-    public EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId) {
-        Enterprise enterprise = enterpriseRepository.findEnterpriseByDepartment(departmentId).orElseThrow(
-                () -> new RuntimeException("Enterprise or Department Not Found"));
-        return EnterpriseMapper.toDTO(enterprise);
-    }
+//    @Override
+//    public EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId) {
+//        Enterprise enterprise = enterpriseRepository.findEnterpriseByDepartment(departmentId).orElseThrow(
+//                () -> new RuntimeException("Enterprise or Department Not Found"));
+//        return EnterpriseMapper.toDTO(enterprise);
+//    }
 
 
     @Override

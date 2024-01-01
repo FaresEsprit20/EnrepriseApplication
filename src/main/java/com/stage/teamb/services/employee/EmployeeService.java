@@ -1,7 +1,5 @@
 package com.stage.teamb.services.employee;
 
-import com.stage.teamb.dtos.address.AddressDTO;
-import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.models.Employee;
 
@@ -20,15 +18,15 @@ public interface EmployeeService {
     EmployeeDTO updateEmployee(EmployeeDTO employeeDTO);
 
 
-    AddressDTO associateEmployeeWithAddress(Long addressId, Long employeeId);
+//    AddressDTO associateEmployeeWithAddress(Long addressId, Long employeeId);
 
-    List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId);
+//    List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId);
 
-    AddressDTO disassociateEmployeeFromAddress(Long addressId);
-
-    DepartmentDTO assignDepartmentToEmployee(Long employeeId, Long departmentId);
-
-    DepartmentDTO unassignDepartmentFromEmployee(Long employeeId);
+//    AddressDTO disassociateEmployeeFromAddress(Long addressId);
+//
+//    DepartmentDTO assignDepartmentToEmployee(Long employeeId, Long departmentId);
+//
+//    DepartmentDTO unassignDepartmentFromEmployee(Long employeeId);
 
 
     EmployeeDTO findEmployeeByEmail(String email);

@@ -1,9 +1,7 @@
 package com.stage.teamb.controllers;
 
-import com.stage.teamb.dtos.address.AddressDTO;
 import com.stage.teamb.dtos.auth.AuthenticationResponse;
 import com.stage.teamb.dtos.auth.RegisterRequest;
-import com.stage.teamb.dtos.department.DepartmentDTO;
 import com.stage.teamb.dtos.employee.EmployeeDTO;
 import com.stage.teamb.services.auth.AuthenticationService;
 import com.stage.teamb.services.employee.EmployeeService;
@@ -68,43 +66,43 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/department/find/all/{id}")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeesFromDepartment(@PathVariable Long id) {
-        List<EmployeeDTO> employeeDTOList = employeeService.findEmployeesByDepartmentId(id);
-        return ResponseEntity.ok(employeeDTOList);
-    }
-
-    @PostMapping("/{employeeId}/address/{addressId}")
-    public ResponseEntity<AddressDTO> associateEmployeeWithAddress(
-            @PathVariable Long employeeId, @PathVariable Long addressId) {
-        AddressDTO address = employeeService.associateEmployeeWithAddress(addressId, employeeId);
-        return ResponseEntity.ok(address);
-    }
-
-    @DeleteMapping("/{addressId}/disassociate")
-    public ResponseEntity<AddressDTO> disassociateEmployeeFromAddress(@PathVariable Long addressId) {
-        AddressDTO address = employeeService.disassociateEmployeeFromAddress(addressId);
-        return ResponseEntity.ok(address);
-    }
-
-    @GetMapping("/{departmentId}/employees")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeesByDepartment(@PathVariable Long departmentId) {
-        List<EmployeeDTO> employees = employeeService.findEmployeesByDepartmentId(departmentId);
-        return ResponseEntity.ok(employees);
-    }
-
-    @PostMapping("/{employeeId}/department/{departmentId}")
-    public ResponseEntity<DepartmentDTO> assignDepartmentToEmployee(
-            @PathVariable Long employeeId, @PathVariable Long departmentId) {
-        DepartmentDTO department = employeeService.assignDepartmentToEmployee(employeeId, departmentId);
-        return ResponseEntity.ok(department);
-    }
-
-    @DeleteMapping("/{employeeId}/unassign")
-    public ResponseEntity<DepartmentDTO> unassignDepartmentFromEmployee(@PathVariable Long employeeId) {
-        DepartmentDTO department = employeeService.unassignDepartmentFromEmployee(employeeId);
-        return ResponseEntity.ok(department);
-    }
+//    @GetMapping("/department/find/all/{id}")
+//    public ResponseEntity<List<EmployeeDTO>> getEmployeesFromDepartment(@PathVariable Long id) {
+//        List<EmployeeDTO> employeeDTOList = employeeService.findEmployeesByDepartmentId(id);
+//        return ResponseEntity.ok(employeeDTOList);
+//    }
+//
+//    @PostMapping("/{employeeId}/address/{addressId}")
+//    public ResponseEntity<AddressDTO> associateEmployeeWithAddress(
+//            @PathVariable Long employeeId, @PathVariable Long addressId) {
+//        AddressDTO address = employeeService.associateEmployeeWithAddress(addressId, employeeId);
+//        return ResponseEntity.ok(address);
+//    }
+//
+//    @DeleteMapping("/{addressId}/disassociate")
+//    public ResponseEntity<AddressDTO> disassociateEmployeeFromAddress(@PathVariable Long addressId) {
+//        AddressDTO address = employeeService.disassociateEmployeeFromAddress(addressId);
+//        return ResponseEntity.ok(address);
+//    }
+//
+//    @GetMapping("/{departmentId}/employees")
+//    public ResponseEntity<List<EmployeeDTO>> getEmployeesByDepartment(@PathVariable Long departmentId) {
+//        List<EmployeeDTO> employees = employeeService.findEmployeesByDepartmentId(departmentId);
+//        return ResponseEntity.ok(employees);
+//    }
+//
+//    @PostMapping("/{employeeId}/department/{departmentId}")
+//    public ResponseEntity<DepartmentDTO> assignDepartmentToEmployee(
+//            @PathVariable Long employeeId, @PathVariable Long departmentId) {
+//        DepartmentDTO department = employeeService.assignDepartmentToEmployee(employeeId, departmentId);
+//        return ResponseEntity.ok(department);
+//    }
+//
+//    @DeleteMapping("/{employeeId}/unassign")
+//    public ResponseEntity<DepartmentDTO> unassignDepartmentFromEmployee(@PathVariable Long employeeId) {
+//        DepartmentDTO department = employeeService.unassignDepartmentFromEmployee(employeeId);
+//        return ResponseEntity.ok(department);
+//    }
 
 
 

@@ -9,7 +9,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
@@ -27,8 +26,8 @@ public class Enterprise implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
-    private List<Department> departments;
+//    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.MERGE)
+//    private List<Department> departments;
 
     @PrePersist
     protected void onCreate() {
