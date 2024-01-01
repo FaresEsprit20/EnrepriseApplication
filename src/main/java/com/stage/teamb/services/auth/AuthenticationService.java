@@ -23,7 +23,7 @@ public interface AuthenticationService {
 
     Responsible buildResponsibleFromRequest(RegisterRequest request);
 
-    AuthenticationResponse authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
+    AuthenticationResponseDetails authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
 
 
     @PreAuthorize("hasAnyRole('RESPONSIBLE', 'EMPLOYEE')")

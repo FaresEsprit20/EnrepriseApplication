@@ -101,7 +101,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+    public AuthenticationResponseDetails authenticate(AuthenticationRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -130,7 +130,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // Save the token in a cookie
         //saveTokenInCookie(response, jwtToken);
         log.debug("JWT Token generated. Expiry: {}", jwtService.extractExpiration(jwtToken));
-        return buildAuthResponse(jwtToken, refreshToken);
+        return buildAuthResponseDetails(jwtToken, refreshToken,user.get().getRole().name(),
+                user.get().getId(),user.get().getEmail());
     }
 
     @Override
@@ -229,6 +230,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return user.getRole();
         }
         throw new CustomException(401, Collections.singletonList("User Not Authenticated"));
+    }
+
+    private AuthenticationResponseDetails buildAuthResponseDetails(String accessToken, String refreshToken
+            ,  String role, Long userId, String email) {
+        return AuthenticationResponseDetails.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .userId(userId)
+                .role(role)
+                .email(email)
+                .build();
     }
 
     private AuthenticationResponse buildAuthResponse(String accessToken, String refreshToken) {
