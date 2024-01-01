@@ -1,0 +1,147 @@
+<div class="card flex flex-column align-items-center overflow-hidden">
+    <div class="flex flex-column align-items-center gap-2">
+      <span style="visibility: hidden;"
+        class="slidedown-icon h-2rem w-2rem bg-primary border-circle inline-flex align-items-center justify-content-center">
+      </span>
+    </div>
+  </div>
+  
+  <!-- Grid Start -->
+  <div class="grid">
+  
+    <!-- Toolbar col starts -->
+    <div class="col-8 col-offset-2 mb-5">
+      <p-toolbar>
+        <div class="p-toolbar-group-start">
+          <p-button [routerLink]="['/responsibles/management/employees/list']" severity="secondary" label="Go Back"
+            icon="pi pi-arrow-left"></p-button>
+        </div>
+      </p-toolbar>
+    </div>
+    <!-- Toolbar col ends -->
+  
+    <!-- Card Col Starts -->
+    <div class="col-10 mt-8 md:col-6 lg:col-6 xl:col-4 sm:col-offset-1 md:col-offset-3 lg:col-offset-3 xl:col-offset-4">
+      <div class="card p-4 shadow-2 border-round w-full h-full">
+        <div class="text-center mb-5">
+          <img src="assets/images/svg/create-employee-svg.svg" alt="Image" height="120" class="mb-3">
+          <div class="text-900 text-3xl font-medium mb-3">Create Employee</div>
+        </div>
+        <div>
+          <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
+  
+            <!-- firstName Input -->
+            <label for="firstname1" class="block text-900 font-medium mb-2">First Name</label>
+            <input formControlName="firstname" id="firstname1" type="text" pInputText placeholder="First Name"
+              class="w-full mb-3" />
+            <small *ngIf="reactiveForm.get('firstname').invalid && reactiveForm.get('firstname').touched" class="p-error">
+              <ng-container *ngIf="reactiveForm.get('firstname').hasError('required')">First Name is
+                required</ng-container>
+              <ng-container *ngIf="reactiveForm.get('firstname').hasError('pattern')">Only alphabets and spaces are
+                allowed</ng-container>
+              <ng-container *ngIf="reactiveForm.get('firstname').hasError('minlength')">Ensure this value has at least 3
+                characters</ng-container>
+            </small>
+  
+            <!-- lastName Input -->
+            <label for="lastname1" class="block text-900 font-medium mb-2">Last Name</label>
+            <input formControlName="lastname" id="lastname1" type="text" pInputText placeholder="Last Name"
+              class="w-full mb-3" />
+            <small *ngIf="reactiveForm.get('lastname').invalid && reactiveForm.get('lastname').touched" class="p-error">
+              <ng-container *ngIf="reactiveForm.get('lastname').hasError('required')">Last Name is required</ng-container>
+              <ng-container *ngIf="reactiveForm.get('lastname').hasError('pattern')">Only alphabets and spaces are
+                allowed</ng-container>
+              <ng-container *ngIf="reactiveForm.get('lastname').hasError('minlength')">Ensure this value has at least 3
+                characters</ng-container>
+            </small>
+  
+            <!-- Email Input -->
+            <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+            <input formControlName="email" id="email1" type="text" pInputText placeholder="Email" class="w-full mb-3" />
+            <small *ngIf="reactiveForm.get('email').invalid && reactiveForm.get('email').touched" class="p-error">
+              <ng-container *ngIf="reactiveForm.get('email').hasError('required')">Email is required</ng-container>
+              <ng-container *ngIf="reactiveForm.get('email').hasError('email')">Ensure this value is in Email
+                format</ng-container>
+            </small>
+  
+            <!-- Occupation Input -->
+            <label for="occupation1" class="block text-900 font-medium mb-2">Occupation</label>
+            <input formControlName="occupation" id="occupation1" type="text" pInputText placeholder="Occupation"
+              class="w-full mb-3" />
+            <small *ngIf="reactiveForm.get('occupation').invalid && reactiveForm.get('occupation').touched"
+              class="p-error">
+              <ng-container *ngIf="reactiveForm.get('occupation').hasError('required')">Occupation is
+                required</ng-container>
+              <ng-container *ngIf="reactiveForm.get('occupation').hasError('pattern')">Only alphabets and spaces are
+                allowed</ng-container>
+              <ng-container *ngIf="reactiveForm.get('occupation').hasError('minlength')">Ensure this value has at least 3
+                characters</ng-container>
+            </small>
+  
+            <!-- Tel Input -->
+            <label for="tel1" class="block text-900 font-medium mb-2">Tel</label>
+            <input pInputText id="tel1" formControlName="tel" type="text" class="w-100 mb-3 custom-tel" />
+            <small *ngIf="reactiveForm.get('tel').invalid && reactiveForm.get('tel').touched" class="p-error">
+              <ng-container *ngIf="reactiveForm.get('tel').hasError('required')">Tel is required</ng-container>
+              <ng-container *ngIf="reactiveForm.get('tel').hasError('pattern')">Please enter a valid numeric
+                value</ng-container>
+              <ng-container *ngIf="reactiveForm.get('tel').hasError('minlength')">Ensure this value is 8
+                characters</ng-container>
+              <ng-container *ngIf="reactiveForm.get('tel').hasError('maxlength')">Ensure this value is 8
+                characters</ng-container>
+            </small>
+  
+  
+            <!-- Password Input -->
+            <label for="password1" class="block text-900 font-medium mb-2">Password</label>
+            <input id="password1" type="password" formControlName="password" pInputText placeholder="Password"
+              class="w-full mb-3">
+            <div class="mb-3" *ngIf="reactiveForm.get('password').invalid && reactiveForm.get('password').touched"
+              class="p-error">
+              <small *ngIf="reactiveForm.get('password').hasError('required')">Password is required</small>
+              <small *ngIf="reactiveForm.get('password').hasError('minlength')">Ensure this value is at least 8
+                characters</small>
+            </div>
+  
+            <!-- Confirm Password Input -->
+            <label for="passwordConfirm1" class="block text-900 font-medium mb-2">Confirm Password</label>
+            <input id="passwordConfirm1" type="password" formControlName="passwordConfirm" pInputText
+              placeholder="Confirm Password" class="w-full mb-3">
+            <div class="mb-3"
+              *ngIf="reactiveForm.get('passwordConfirm').invalid && reactiveForm.get('passwordConfirm').touched"
+              class="p-error">
+              <small *ngIf="reactiveForm.get('passwordConfirm').hasError('required')">Confirm Password is required</small>
+              <small *ngIf="reactiveForm.get('passwordConfirm').hasError('minlength')">Ensure this value is at least 8
+                characters</small>
+              <small *ngIf="!passwordsMatch() && reactiveForm.get('passwordConfirm').touched">Passwords do not
+                match</small>
+            </div>
+  
+  
+            <!-- Birth Date Input -->
+            <label for="date1" class="block text-900 font-medium mb-2">Birth Date</label>
+            <p-calendar styleClass="w-100 mb-3 custom-calendar" [iconDisplay]="'input'" dateFormat="yy-mm-dd"
+              formControlName="date" [showIcon]="true"></p-calendar>
+            <div class="mb-3" *ngIf="reactiveForm.get('date').invalid && reactiveForm.get('date').touched"
+              class="p-error">
+              <small *ngIf="reactiveForm.get('date').hasError('required')">Birth Date is required</small>
+            </div>
+  
+            <div class="mb-1">
+              <div class="flex justify-content-center mb-3">
+                <p-progressSpinner *ngIf="isSpinnerLoading" styleClass="w-4rem h-4rem" strokeWidth="8"
+                  fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+              </div>
+              
+              <p-messages *ngIf="isSubmitClicked && !reactiveForm.valid" [(value)]="alertService.messages"></p-messages>
+              <p-messages *ngIf="isSubmitClicked && submitError" [(value)]="alertService.messages"></p-messages>
+              <p-messages *ngIf="isSubmitClicked && isValid" [(value)]="alertService.messages"></p-messages>
+            </div>
+            <button pButton pRipple label="Create Employee" icon="pi pi-plus" class="w-full"></button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Card Col End -->
+  </div>
+  <!-- Grid End -->
