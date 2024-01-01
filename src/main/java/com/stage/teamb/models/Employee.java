@@ -29,7 +29,7 @@ public class Employee extends Users {
 //  private Department department;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JoinColumn(name = "enterprise_id", unique = true)
+    @JoinColumn(name = "enterprise_id")
     private Enterprise enterprise;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)

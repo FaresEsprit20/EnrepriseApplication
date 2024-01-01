@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Responsible extends Users  {
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JoinColumn(name = "enterprise_id", unique = true)
+    @JoinColumn(name = "enterprise_id")
     private Enterprise enterprise;
 
     private LocalDateTime createdAt;
