@@ -68,6 +68,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
           enterprise.addResponsible(responsible.get());
             return EnterpriseMapper.toDTO(enterpriseRepository.save(enterprise));
         } catch (Exception exception) {
+            exception.printStackTrace();
             log.error("Exception.");
             throw new CustomException(500, Collections.singletonList("Can not save this entity  :   "
                     + exception.getMessage()));

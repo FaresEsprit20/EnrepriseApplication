@@ -3,8 +3,8 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { EmployeeService } from '../../../shared/services/employee.service';
 import { AlertService } from '../../../shared/ui/alert.service';
+import { ResponsibleService } from '../../../shared/services/responsible.service';
 
 @Component({
   selector: 'app-create-responsible',
@@ -50,7 +50,7 @@ export class CreateResponsibleComponent implements OnInit, OnDestroy {
   isSpinnerLoading = false;
   private empSubscription: Subscription;
 
-  constructor(private router: Router, private formBuilder: FormBuilder, private empService: EmployeeService, 
+  constructor(private router: Router, private formBuilder: FormBuilder, private empService: ResponsibleService, 
     public alertService: AlertService,private datePipe: DatePipe) { }
 
   ngOnInit() {
@@ -115,12 +115,12 @@ export class CreateResponsibleComponent implements OnInit, OnDestroy {
       this.isSpinnerLoading = true;
 
       setTimeout(() => {
-        this.empSubscription = this.empService.registerEmployee(body).subscribe(
+        this.empSubscription = this.empService.registerResponsible(body).subscribe(
           () => {
             console.log("Submitted successfully.");
             this.isValid = true;
             this.isSpinnerLoading = false;
-            this.alertService.setInfoMessages("Employee Created Successfully");
+            this.alertService.setInfoMessages("Responsible Created Successfully");
             setTimeout(() => {
               this.router.navigateByUrl("/responsibles/management/employees/list");
             }, 3000);

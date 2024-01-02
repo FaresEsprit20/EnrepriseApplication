@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -59,28 +60,43 @@ public class Enterprise implements Serializable {
     }
 
    //helpers
-    public void addEmployee(Employee employee) {
-        if (employee != null) {
-            employee.setEnterprise(this);
-            employees.add(employee);
-        }
-    }
+   // Helper methods for Employee
+   public void addEmployee(Employee employee) {
+       if (employee != null) {
+           if (employees == null) {
+               employees = new ArrayList<>();
+           }
+
+           if (!employees.contains(employee)) {
+               employee.setEnterprise(this);
+               employees.add(employee);
+           }
+       }
+   }
+
     public void removeEmployee(Employee employee) {
-        if (employee != null) {
+        if (employee != null && employees != null) {
             employee.setEnterprise(null);
             employees.remove(employee);
         }
     }
 
+    // Helper methods for Responsible
     public void addResponsible(Responsible responsible) {
         if (responsible != null) {
-            responsible.setEnterprise(this);
-            responsibleList.add(responsible);
+            if (responsibleList == null) {
+                responsibleList = new ArrayList<>();
+            }
+
+            if (!responsibleList.contains(responsible)) {
+                responsible.setEnterprise(this);
+                responsibleList.add(responsible);
+            }
         }
     }
 
     public void removeResponsible(Responsible responsible) {
-        if (responsible != null) {
+        if (responsible != null && responsibleList != null) {
             responsible.setEnterprise(null);
             responsibleList.remove(responsible);
         }

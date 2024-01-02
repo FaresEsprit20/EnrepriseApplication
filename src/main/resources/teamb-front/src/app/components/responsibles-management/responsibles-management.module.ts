@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { CreateResponsibleComponent } from './create-responsible/create-responsible.component';
 import { SharedModule } from '../../shared/modules/shared.module';
 import { UpdateResponsibleComponent } from './update-responsible/update-responsible.component';
+import { ResponsiblesListComponent } from './responsibles-list/responsibles-list.component';
+import { StatsComponent } from './stats/stats.component';
 
 
 
@@ -13,7 +15,9 @@ import { UpdateResponsibleComponent } from './update-responsible/update-responsi
 @NgModule({
   declarations: [
     CreateResponsibleComponent,
-    UpdateResponsibleComponent
+    UpdateResponsibleComponent,
+    ResponsiblesListComponent,
+    StatsComponent
   ],
   imports: [
     CommonModule,
@@ -25,7 +29,9 @@ import { UpdateResponsibleComponent } from './update-responsible/update-responsi
   ],
   exports: [
     CreateResponsibleComponent,
-    UpdateResponsibleComponent
+    UpdateResponsibleComponent,
+    ResponsiblesListComponent,
+    StatsComponent
   ]
 })
 export class ResponsiblesManagementModule { }

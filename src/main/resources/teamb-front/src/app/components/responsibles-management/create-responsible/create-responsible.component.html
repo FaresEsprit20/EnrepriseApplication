@@ -13,7 +13,7 @@
     <div class="col-8 col-offset-2 mb-5">
       <p-toolbar>
         <div class="p-toolbar-group-start">
-          <p-button [routerLink]="['/responsibles/management/employees/list']" severity="secondary" label="Go Back"
+          <p-button [routerLink]="['/responsibles/list']" severity="secondary" label="Go Back"
             icon="pi pi-arrow-left"></p-button>
         </div>
       </p-toolbar>
@@ -24,8 +24,8 @@
     <div class="col-10 mt-8 md:col-6 lg:col-6 xl:col-4 sm:col-offset-1 md:col-offset-3 lg:col-offset-3 xl:col-offset-4">
       <div class="card p-4 shadow-2 border-round w-full h-full">
         <div class="text-center mb-5">
-          <img src="assets/images/svg/create-employee-svg.svg" alt="Image" height="120" class="mb-3">
-          <div class="text-900 text-3xl font-medium mb-3">Create Employee</div>
+          <img src="assets/images/svg/create-res-svg.svg" alt="Image" height="120" class="mb-3">
+          <div class="text-900 text-3xl font-medium mb-3">Create Responsible</div>
         </div>
         <div>
           <form [formGroup]="reactiveForm" (ngSubmit)="onSubmit()">
@@ -137,7 +137,7 @@
               <p-messages *ngIf="isSubmitClicked && submitError" [(value)]="alertService.messages"></p-messages>
               <p-messages *ngIf="isSubmitClicked && isValid" [(value)]="alertService.messages"></p-messages>
             </div>
-            <button pButton pRipple label="Create Employee" icon="pi pi-plus" class="w-full"></button>
+            <button pButton pRipple label="Create Responsible" icon="pi pi-plus" class="w-full"></button>
           </form>
         </div>
       </div>

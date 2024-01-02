@@ -5,6 +5,7 @@ import { AlertService } from '../../../../shared/ui/alert.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-create-enterprise',
@@ -49,11 +50,13 @@ export class CreateEnterpriseComponent implements OnInit, OnDestroy {
   isValid: boolean = false;
   isSpinnerLoading = false;
   private empSubscription: Subscription;
+  userId:number
 
   constructor(private router: Router, private formBuilder: FormBuilder, private enterpriseService:EnterpriseService, 
-    public alertService: AlertService,private datePipe: DatePipe) { }
+    public alertService: AlertService, private authService:AuthService) { }
 
   ngOnInit() {
+    this.userId = Number.parseInt(this.authService.getUserId())
     this.reactiveForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       dep: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -74,8 +77,9 @@ export class CreateEnterpriseComponent implements OnInit, OnDestroy {
       this.submitError = null;
 
       const body = {
-        name: this.reactiveForm.controls['name'].value,
-        dep: this.reactiveForm.controls['dep'].value,
+        enterpriseName: this.reactiveForm.controls['name'].value,
+        enterpriseLocal: this.reactiveForm.controls['dep'].value,
+        responsibleId: this.userId
       };
 
       console.log('Submitting body:', body);
@@ -113,5 +117,6 @@ export class CreateEnterpriseComponent implements OnInit, OnDestroy {
       });
     }
   }
+
 
 }

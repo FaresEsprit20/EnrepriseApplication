@@ -1,1 +1,113 @@
-<p>enterprise-list works!</p>
+<div class="card  flex flex-column align-items-center overflow-hidden">
+    <div class="flex flex-column align-items-center gap-2">
+      <span style="visibility: hidden;"
+        class="slidedown-icon h-2rem w-2rem bg-primary border-circle inline-flex align-items-center justify-content-center">
+      </span>
+    </div>
+  </div>
+  <!-- Grid Start -->
+  <div class="grid">
+  
+    <!-- Toast Component with Close Button -->
+    <p-toast position="bottom-center" key="bc"></p-toast>
+  
+  
+  
+    <!-- Toolbar starts -->
+    <div class="col-8 col-offset-2 mb-5 ">
+  
+      <p-toolbar>
+        <div class="p-toolbar-group-start">
+  
+          <app-search (search)="handleSearch($event)" [placeholderItem]="'Search By Enterprise Name or Main Department'"></app-search>
+        </div>
+        <div class="p-toolbar-group-end">
+          <p-button [style]="{'background-color': 'var(--green-500)', 'color': '#ffffff'}" (click)="navigateToAddEnterprise()" severity="info" label="Create" icon="pi pi-plus"></p-button>
+        </div>
+      </p-toolbar>
+  
+    </div>
+    <!-- Toolbar ends -->
+  
+  
+    <!-- Alert Component with Close Button Start -->
+    <div class="col-8 col-offset-2 mb-5 ">
+      <div class="card">
+        <p-messages *ngIf="enterprises?.length === 0 && !isLoading" [(value)]="alertService.messages"></p-messages>
+      </div>
+    </div>
+    <!-- Alert Component with Close Button End -->
+  
+    <!-- Skeleting component Loading starts-->
+    <div class="col-6 col-offset-3 mt-5  mb-5 ">
+      <app-skeleton *ngIf="isLoading"></app-skeleton>
+    </div>
+    <!-- Skeleting component Loading ends-->
+  
+  
+    <div *ngIf="!isLoading"
+      class="col-10  md:col-6 lg:col-6 xl:col-4 sm:col-offset-1 md:col-offset-3 lg:col-offset-3 xl:col-offset-4">
+  
+      <div class="card">
+        <!-- Alert Component with Close Button -->
+        <p-messages *ngIf="searchResult?.length === 0 && searchResult" [(value)]="alertService.messages"></p-messages>
+  
+      </div>
+  
+  
+      <div pAnimateOnScroll enterClass="fadein" leaveClass="fadeout" class="card animation-duration-1000 mb-3"
+        *ngFor="let emp of searchResult || enterprises ">
+        <p-panel [toggleable]="true" [collapsed] ="true">
+          <ng-template pTemplate="header">
+            <div class="flex align-items-center gap-2">
+              <p-avatar icon="pi pi-desktop" [style]="{'background-color': 'var(--green-500)', 'color': '#ffffff'}"
+                size="large" shape="circle" />
+              <span class="font-bold">{{ emp.enterpriseName| titlecase }}</span>
+                <p>
+                    <p-chip label="Enterprise"></p-chip> 
+                </p>
+          
+            </div>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            
+          </ng-template>
+  
+          <ng-template pTemplate="icons">
+            <button class="p-panel-header-icon p-link mr-2" >
+              <span class="pi pi-cog"></span>
+            </button>
+  
+          </ng-template>
+  
+          <p-fieldset legend="More Info">
+            <div class="card flex justify-content-center">
+                <p-accordion >
+                   
+                    <p-accordionTab header="Main Department">
+                        <p>
+                            {{ emp.enterpriseLocal }}
+                        </p>
+                    </p-accordionTab>
+                
+                    <p-accordionTab header="Data of creation">
+                        <p>
+                           {{ emp.createdAt | dateAgo }}
+                        </p>
+                    </p-accordionTab>
+                  
+                </p-accordion>
+            </div>
+            
+          </p-fieldset>
+        </p-panel>
+      </div>
+  
+    </div>
+  
+  
+  
+  
+  
+  </div>
+  <!-- Grid End -->
