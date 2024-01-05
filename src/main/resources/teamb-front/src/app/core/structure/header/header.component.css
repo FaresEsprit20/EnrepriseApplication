@@ -1,0 +1,10 @@
+/* Add this to your styles.css or component-specific styles file */
+@media (max-width: 768px) {
+    .p-menubar-horizontal {
+      display: none;
+    }
+  
+    .p-menubar-vertical {
+      display: block;
+    }
+}  
