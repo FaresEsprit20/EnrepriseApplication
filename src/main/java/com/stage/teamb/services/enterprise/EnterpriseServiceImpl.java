@@ -50,14 +50,15 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public EnterpriseDTO findEnterpriseById(Long id) {
-        return EnterpriseMapper.toDTO(enterpriseRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+        return EnterpriseMapper.toDTO(enterpriseRepository.findById(id)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Enterprise Not Found "))));
     }
 
     @Override
     public EnterpriseDTO saveEnterprise(EnterpriseCreateDTO enterpriseDTO) {
         Optional<Responsible> responsible = responsibleRepository.findById(enterpriseDTO.getResponsibleId());
         if(responsible.isEmpty()) {
-            throw new CustomException(403, Collections.singletonList("Forbidden Action"));
+            throw new CustomException(404, Collections.singletonList("Forbidden Action, Responsible Not found"));
         }
 
         try {
@@ -68,7 +69,6 @@ public class EnterpriseServiceImpl implements EnterpriseService {
           enterprise.addResponsible(responsible.get());
             return EnterpriseMapper.toDTO(enterpriseRepository.save(enterprise));
         } catch (Exception exception) {
-            exception.printStackTrace();
             log.error("Exception.");
             throw new CustomException(500, Collections.singletonList("Can not save this entity  :   "
                     + exception.getMessage()));
@@ -77,17 +77,17 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public void deleteEnterpriseById(Long id) {
-        if (enterpriseRepository.existsById(id)) {
+        if (!enterpriseRepository.existsById(id)) {
+            log.error("Entity Not Exist");
+            throw new CustomException(404, Collections.singletonList("Entity enterprise Not Exist"));
+        }
             try {
                 enterpriseRepository.deleteById(id);
             } catch (Exception exception) {
                 log.error("Can not delete this entity" + exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   " + exception.getMessage());
+                throw new CustomException(500, Collections.singletonList("Can not delete this entity  :" +
+                        "   " + exception.getMessage()));
             }
-        } else {
-            log.error("Entity Not Exist");
-            throw new RuntimeException("Entity Not Exist");
-        }
     }
 
     @Override
@@ -95,7 +95,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
-                    return new RuntimeException("entity not found with id " + enterpriseDTO.getId());
+                    return new CustomException(404, Collections.singletonList("entity enterprise " +
+                            "not found with id " + enterpriseDTO.getId()));
                 });
         existingEnterprise.setEnterpriseLocal(enterpriseDTO.getEnterpriseLocal());
         existingEnterprise.setEnterpriseName(enterpriseDTO.getEnterpriseName());
@@ -103,7 +104,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {
             log.error("Could not update " + exception.getMessage());
-            throw new RuntimeException("Could not update " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not update enterprise" + exception.getMessage()));
         }
     }
 
@@ -125,7 +126,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {
             log.error("Could not update " + exception.getMessage());
-            throw new RuntimeException("Could not update " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could Add Employee To enterprise  "
+                    + exception.getMessage()));
         }
     }
 
@@ -146,8 +148,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {
-            log.error("Could not update " + exception.getMessage());
-            throw new RuntimeException("Could not update " + exception.getMessage());
+            log.error("Could delete employee from enterprise " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not delete employee from enterprise "
+                    + exception.getMessage()));
         }
     }
 
@@ -169,8 +172,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {
-            log.error("Could not update " + exception.getMessage());
-            throw new RuntimeException("Could not update " + exception.getMessage());
+            log.error("Could not add " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not add  responsible to enterprise "
+                    + exception.getMessage()));
         }
     }
 
@@ -178,8 +182,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     public EnterpriseDTO deleteResponsibleFromEnterprise(EnterpriseManagementDTO enterpriseDTO) {
         Enterprise existingEnterprise = enterpriseRepository.findById(enterpriseDTO.getId())
                 .orElseThrow(() -> {
-                    log.error("entity not found ");
-                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                    log.error("entity enterprise not found ");
+                    return new CustomException(404,Collections.singletonList("entity enterprise not found with id "
                             + enterpriseDTO.getId()));
                 });
         Optional<Responsible> responsible = responsibleRepository.findById(enterpriseDTO.getObjectId());
@@ -191,8 +195,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         try {
             return EnterpriseMapper.toDTO(enterpriseRepository.save(existingEnterprise));
         } catch (Exception exception) {
-            log.error("Could not update " + exception.getMessage());
-            throw new RuntimeException("Could not update " + exception.getMessage());
+            log.error("Could not delete " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not delete responsible from enterprise "
+                    + exception.getMessage()));
         }
     }
 
@@ -216,7 +221,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 //    public DepartmentDTO associateDepartmentWithEnterprise(Long enterpriseId, DepartmentDTO departmentDTO) {
 //        // Find the enterprise
 //        Enterprise enterprise = enterpriseRepository.findById(enterpriseId)
-//                .orElseThrow(() -> new RuntimeException("Enterprise not found with id " + enterpriseId));
+//                .orElseThrow(() -> new CustomException("Enterprise not found with id " + enterpriseId));
 //        // Create a new Department entity and set its values
 //        Department newDepartment = DepartmentMapper.toEntity(departmentDTO);
 //        // Associate the department with the enterprise
@@ -232,7 +237,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 //    public DepartmentDTO disassociateDepartmentFromEnterprise(Long departmentId) {
 //        // Find the department
 //        Department department = departmentRepository.findById(departmentId)
-//                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
+//                .orElseThrow(() -> new CustomException("Department not found with id " + departmentId));
 //        // Disassociate the department from the enterprise
 //        department.removeEnterpriseFromDepartment();
 //        // Save the department to update the association
@@ -245,7 +250,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 //    @Override
 //    public EnterpriseDTO findEnterpriseByDepartmentId(Long departmentId) {
 //        Enterprise enterprise = enterpriseRepository.findEnterpriseByDepartment(departmentId).orElseThrow(
-//                () -> new RuntimeException("Enterprise or Department Not Found"));
+//                () -> new CustomException("Enterprise or Department Not Found"));
 //        return EnterpriseMapper.toDTO(enterprise);
 //    }
 

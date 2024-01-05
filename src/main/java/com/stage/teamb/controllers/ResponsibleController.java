@@ -3,6 +3,7 @@ package com.stage.teamb.controllers;
 import com.stage.teamb.dtos.auth.AuthenticationResponse;
 import com.stage.teamb.dtos.auth.RegisterRequest;
 import com.stage.teamb.dtos.responsible.ResponsibleDTO;
+import com.stage.teamb.exception.CustomException;
 import com.stage.teamb.services.auth.AuthenticationService;
 import com.stage.teamb.services.responsible.ResponsibleService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,7 +46,7 @@ public class ResponsibleController {
         try {
             List<ResponsibleDTO> responsibleDTOList = responsibleService.findAllResponsibles();
             return ResponseEntity.ok(responsibleDTOList);
-        } catch (RuntimeException exception) {
+        } catch (CustomException exception) {
             log.error("Error retrieving responsibles: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error retrieving responsibles: " + exception.getMessage());
@@ -57,7 +58,7 @@ public class ResponsibleController {
         try {
             ResponsibleDTO responsibleDTO = responsibleService.findResponsibleById(id);
             return ResponseEntity.ok(responsibleDTO);
-        } catch (RuntimeException exception) {
+        } catch (CustomException exception) {
             log.error("Responsible not found: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Responsible not found with id: " + id);
@@ -69,7 +70,7 @@ public class ResponsibleController {
         try {
             ResponsibleDTO createdResponsible = responsibleService.saveResponsible(responsibleDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdResponsible);
-        } catch (RuntimeException exception) {
+        } catch (CustomException exception) {
             log.error("Could not create responsible: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Could not create responsible: " + exception.getMessage());
@@ -82,7 +83,7 @@ public class ResponsibleController {
             responsibleDTO.setId(id); // Ensure the ID matches the path variable
             ResponsibleDTO updatedResponsible = responsibleService.updateResponsible(responsibleDTO);
             return ResponseEntity.ok(updatedResponsible);
-        } catch (RuntimeException exception) {
+        } catch (CustomException exception) {
             log.error("Could not update responsible: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Could not update responsible: " + exception.getMessage());
@@ -94,7 +95,7 @@ public class ResponsibleController {
         try {
             responsibleService.deleteResponsibleById(id);
             return ResponseEntity.ok("Responsible deleted successfully");
-        } catch (RuntimeException exception) {
+        } catch (CustomException exception) {
             log.error("Could not delete responsible: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Could not delete responsible: " + exception.getMessage());

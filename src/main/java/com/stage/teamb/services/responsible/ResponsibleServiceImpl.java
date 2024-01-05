@@ -39,7 +39,8 @@ public class ResponsibleServiceImpl implements ResponsibleService {
 
     @Override
     public ResponsibleDTO findResponsibleById(Long id) {
-        return ResponsibleMapper.toDTO(responsibleRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+        return ResponsibleMapper.toDTO(responsibleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(404,Collections.singletonList("Responsible Not Found "))));
     }
 
     @Override
@@ -48,12 +49,12 @@ public class ResponsibleServiceImpl implements ResponsibleService {
     }
 
     @Override
-    public ResponsibleDTO saveResponsible(ResponsibleDTO responsableDTO) {
+    public ResponsibleDTO saveResponsible(ResponsibleDTO responsibleDTO) {
         try {
-            return ResponsibleMapper.toDTO(responsibleRepository.save(ResponsibleMapper.toEntity(responsableDTO)));
+            return ResponsibleMapper.toDTO(responsibleRepository.save(ResponsibleMapper.toEntity(responsibleDTO)));
         }catch (Exception exception){
             log.error("Responsible with not found.");
-            throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Can not save this entity  :   "+exception.getMessage()));
         }
     }
 
@@ -64,20 +65,20 @@ public class ResponsibleServiceImpl implements ResponsibleService {
                 responsibleRepository.deleteById(id);
             }catch (Exception exception) {
                 log.error("Can not delete this entity"+exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   "+exception.getMessage());
+                throw new CustomException(500, Collections.singletonList("Can not delete this entity  :   "+exception.getMessage()));
             }
         } else {
             log.error("Entity Not Exist");
-            throw new RuntimeException("Entity Not Exist");
+            throw new CustomException(404, Collections.singletonList("Entity Not Exist"));
         }
     }
 
     @Override
-    public ResponsibleDTO updateResponsible(ResponsibleDTO responsableDTO) {
-        Responsible existingResponsible= responsibleRepository.findById(responsableDTO.getId())
+    public ResponsibleDTO updateResponsible(ResponsibleDTO responsibleDTO) {
+        Responsible existingResponsible= responsibleRepository.findById(responsibleDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
-                    return new RuntimeException("entity not found with id " + responsableDTO.getId());
+                    return new CustomException(404, Collections.singletonList("entity not found with id " + responsibleDTO.getId()));
                 });
          existingResponsible.setName(existingResponsible.getName());
          existingResponsible.setLastName(existingResponsible.getLastName());
@@ -85,7 +86,7 @@ public class ResponsibleServiceImpl implements ResponsibleService {
             return ResponsibleMapper.toDTO(responsibleRepository.save(existingResponsible));
         }catch (Exception exception){
             log.error("Could not update "+exception.getMessage());
-            throw new RuntimeException("Could not update "+exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not update Responsible "+exception.getMessage()));
         }
     }
 

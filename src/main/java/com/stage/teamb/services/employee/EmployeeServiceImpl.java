@@ -18,14 +18,10 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-//    private final AddressRepository addressRepository;
-//    private final DepartmentRepository departmentRepository;
 
     @Autowired
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
-//        this.addressRepository = addressRepository;
-//        this.departmentRepository = departmentRepository;
     }
 
 
@@ -36,7 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDTO findEmployeeById(Long id) {
-        return EmployeeMapper.toDTO(employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found ")));
+        return EmployeeMapper.toDTO(employeeRepository.findById(id)
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Employee Not Found "))));
     }
 
     @Override
@@ -45,23 +42,24 @@ public class EmployeeServiceImpl implements EmployeeService {
             return EmployeeMapper.toDTO(employeeRepository.save(EmployeeMapper.toEntity(employeeDTO)));
         }catch (Exception exception){
             log.error("Address with not found.");
-            throw new RuntimeException("Can not save this entity  :   "+exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Can not save this entity Employee  :   "
+                    +exception.getMessage()));
         }
     }
 
     @Override
     public void deleteEmployeeById(Long id) {
-        if (employeeRepository.existsById(id)) {
+        if (!employeeRepository.existsById(id)) {
+            log.error("Entity Not Exist");
+            throw new CustomException(404,Collections.singletonList(("Entity Employee Not Exist")));
+        }
             try{
                 employeeRepository.deleteById(id);
             }catch (Exception exception) {
                 log.error("Can not delete this entity"+exception.getMessage());
-                throw new RuntimeException("Can not delete this entity  :   "+exception.getMessage());
+                throw new CustomException(500,Collections.singletonList("Can not delete this entity  :   "
+                        +exception.getMessage()));
             }
-        } else {
-            log.error("Entity Not Exist");
-            throw new RuntimeException("Entity Not Exist");
-        }
     }
 
     @Override
@@ -69,7 +67,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee existingEmployee = employeeRepository.findById(employeeDTO.getId())
                 .orElseThrow(() -> {
                     log.error("entity not found ");
-                    return new RuntimeException("entity not found with id " + employeeDTO.getId());
+                    return new CustomException(404,Collections.singletonList("entity not found with id "
+                            + employeeDTO.getId()));
                 });
          existingEmployee.setName(employeeDTO.getName());
          existingEmployee.setLastName(employeeDTO.getLastName());
@@ -78,72 +77,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             return EmployeeMapper.toDTO(employeeRepository.save(existingEmployee));
         }catch (Exception exception){
             log.error("Could not update "+exception.getMessage());
-            throw new RuntimeException("Could not update "+exception.getMessage());
+            throw new CustomException(500,Collections.singletonList("Could not update "+exception.getMessage()));
         }
     }
 
 
-//    @Override
-//    public AddressDTO associateEmployeeWithAddress(Long addressId, Long employeeId) {
-//        Address address = addressRepository.findById(addressId)
-//                .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
-//        Employee employee = employeeRepository.findById(employeeId)
-//                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-//        // Perform validation here, if necessary
-//        // Associate the employee with the address
-//        address.setEmployeeForAddress(employee);
-//        return AddressMapper.toDTO(addressRepository.save(address));
-//    }
-//
-//    @Override
-//    public AddressDTO disassociateEmployeeFromAddress(Long addressId) {
-//        Address address = addressRepository.findByIdWithEmployee(addressId)
-//                .orElseThrow(() -> new RuntimeException("Address not found with id " + addressId));
-//        // Perform validation here, if necessary
-//        if (address.getEmployee() == null) {
-//            throw new RuntimeException("Address is not associated with an employee.");
-//        }
-//        // Disassociate the employee from the address
-//        address.removeEmployeeFromAddress();
-//        return AddressMapper.toDTO(addressRepository.save(address));
-//    }
-
-
-//    @Override
-//    public List<EmployeeDTO> findEmployeesByDepartmentId(Long departmentId) {
-//       return EmployeeMapper.toListDTO(employeeRepository.findAllEmployeesByDepartmentId(departmentId));
-//    }
-
-
-//    @Override
-//    public DepartmentDTO assignDepartmentToEmployee(Long employeeId, Long departmentId) {
-//        Employee employee = employeeRepository.findById(employeeId)
-//                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-//        Department department = departmentRepository.findById(departmentId)
-//                .orElseThrow(() -> new RuntimeException("Department not found with id " + departmentId));
-//        // Assign the department to the employee
-//        employee.setDepartmentForEmployee(department);
-//        try {
-//            return DepartmentMapper.toDTO(departmentRepository.save(department));
-//        } catch (Exception exception) {
-//            log.error("Could not assign department: " + exception.getMessage());
-//            throw new RuntimeException("Could not assign department: " + exception.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public DepartmentDTO unassignDepartmentFromEmployee(Long employeeId) {
-//        Employee employee = employeeRepository.findById(employeeId)
-//                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
-//        // Unassign the department from the employee
-//        employee.removeDepartmentFromEmployee();
-//        try {
-//            return DepartmentMapper.toDTO(departmentRepository.save(employee.getDepartment()));
-//        } catch (Exception exception) {
-//            log.error("Could not unassign department: " + exception.getMessage());
-//            throw new RuntimeException("Could not unassign department: " + exception.getMessage());
-//        }
-//    }
 
     @Override
     public EmployeeDTO findEmployeeByEmail(String email) {

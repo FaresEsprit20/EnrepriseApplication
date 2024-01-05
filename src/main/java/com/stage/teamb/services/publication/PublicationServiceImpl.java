@@ -43,7 +43,7 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public List<PublicationGetDTO> findAllByEmployeeId(Long employeeId) {
         List<Publication> publications = Optional.ofNullable(publicationRepository.findByEmployeeId(employeeId))
-                .orElseThrow(() -> new RuntimeException("Publications not found for employee with id " + employeeId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Publications not found for employee with id " + employeeId)));
         return PublicationMapper.toListGetDTO(publications);
     }
 
@@ -115,7 +115,7 @@ public class PublicationServiceImpl implements PublicationService {
     public PublicationGetDTO createPublication(PublicationCreateDTO publicationDTO, Long employeeId) {
         // Find the employee
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Employee not found with id " + employeeId)));
         // Create a new Publication entity and set its values
         Publication newPublication =  Publication.builder()
                 .name(publicationDTO.getName())
@@ -130,14 +130,14 @@ public class PublicationServiceImpl implements PublicationService {
             return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Error while creating publication: " + exception.getMessage());
-            throw new RuntimeException("Error while creating publication: " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Error while creating publication: " + exception.getMessage()));
         }
     }
 
     @Override
     public PublicationDTO updatePublication(Long publicationId, PublicationDTO publicationDTO) {
         Publication existingPublication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Publication not found with id " + publicationId)));
         // Update the existing publication with the values from the DTO
         existingPublication.setName(publicationDTO.getName());
         existingPublication.setDescription(publicationDTO.getDescription());
@@ -145,14 +145,14 @@ public class PublicationServiceImpl implements PublicationService {
             return PublicationMapper.toDTO(publicationRepository.save(existingPublication));
         } catch (Exception exception) {
             log.error("Could not update publication: " + exception.getMessage());
-            throw new RuntimeException("Could not update publication: " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not update publication: " + exception.getMessage()));
         }
     }
 
     @Override
     public void deletePublication(Long publicationId) {
         Publication existingPublication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Publication not found with id " + publicationId)));
         // Delete the publication
         publicationRepository.delete(existingPublication);
     }
@@ -167,9 +167,9 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public PublicationGetDTO associateEmployeeWithPublication(Long publicationId, Long employeeId) {
         Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Publication not found with id " + publicationId)));
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id " + employeeId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Employee not found with id " + employeeId)));
         // Associate the publication with the employee
         publication.setEmployeeForPublication(employee);
         try {
@@ -178,14 +178,14 @@ public class PublicationServiceImpl implements PublicationService {
             return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Could not associate employee with publication: " + exception.getMessage());
-            throw new RuntimeException("Could not associate employee with publication: " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not associate employee with publication: " + exception.getMessage()));
         }
     }
 
     @Override
     public PublicationGetDTO disassociateEmployeeFromPublication(Long publicationId) {
         Publication publication = publicationRepository.findById(publicationId)
-                .orElseThrow(() -> new RuntimeException("Publication not found with id " + publicationId));
+                .orElseThrow(() -> new CustomException(404, Collections.singletonList("Publication not found with id " + publicationId)));
         // Dissociate the publication from the employee
         publication.removeEmployeeForPublication();
         try {
@@ -194,7 +194,7 @@ public class PublicationServiceImpl implements PublicationService {
             return PublicationMapper.toGetDTO(savedPublication);
         } catch (Exception exception) {
             log.error("Could not disassociate employee from publication: " + exception.getMessage());
-            throw new RuntimeException("Could not disassociate employee from publication: " + exception.getMessage());
+            throw new CustomException(500, Collections.singletonList("Could not disassociate employee from publication: " + exception.getMessage()));
         }
     }
 
