@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip-sharp">
+      <rect width="64" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="sharp" clip-path="url(#clip-sharp)">
+    <g id="color-filter-sharp-svgrepo-com" transform="translate(-32 -45.796)">
+      <g id="circle-area-svgrepo-com" transform="translate(32 45.796)">
+        <path id="Path_466" data-name="Path 466" d="M0,0H63.647V63.647H0Z" fill="none"/>
+      </g>
+    </g>
+    <g id="Rectangle_129" data-name="Rectangle 129" transform="translate(6 5)" fill="none" stroke="#4b4b4b" stroke-width="6">
+      <rect width="40" height="40" stroke="none"/>
+      <rect x="3" y="3" width="34" height="34" fill="none"/>
+    </g>
+    <g id="Path_468" data-name="Path 468" transform="translate(12.076 12)" fill="#4b4b4b">
+      <path d="M 47.07426071166992 44.65917205810547 L 9.186050415039062 44.65917205810547 L 28.30816459655762 13.50026416778564 L 47.07426071166992 44.65917205810547 Z" stroke="none"/>
+      <path d="M 28.2921085357666 17.35012435913086 L 12.76003265380859 42.65917205810547 L 43.53500366210938 42.65917205810547 L 28.2921085357666 17.35012435913086 M 28.32422256469727 9.650394439697266 L 50.61352157592773 46.65917205810547 L 5.612064361572266 46.65917205810547 L 28.32422256469727 9.650394439697266 Z" stroke="none" fill="#4b4b4b"/>
+    </g>
+  </g>
+</svg>
